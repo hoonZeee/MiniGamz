@@ -1,0 +1,21 @@
+# Node.js 관련
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+package-lock.json
+
+# 환경 설정 파일
+.env
+
+# 운영 체제 관련 파일
+.DS_Store
+Thumbs.db
+
+# IDE 관련 파일
+.vscode/
+.idea/
+
+# 로그 파일
+logs/
+*.log
