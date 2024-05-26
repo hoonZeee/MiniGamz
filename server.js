@@ -66,6 +66,7 @@ app.post('/process/login',(req,res)=>{
 
     })
 });
+
 app.post('/process/checkduplicate', (req, res) => {
     const userId = req.body.id;
 
