@@ -1,4 +1,6 @@
-# TODO:
-- 2024.05.24
-  - npm install express socket.io
-  - node start
+수정사항 
+5/27 이지훈
+    -db, main, baseballgame 파일 합치기
+    -server.js 업데이트
+    -main에서 각각 페이지로 접속 구현 (과정에서 기존 진호,주헌이 만든 로그인및 회원가입페이지를 정인이 구현한 페이지로 대체)
+    
