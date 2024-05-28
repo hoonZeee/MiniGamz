@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up 페이지 (feat. MySQL, NodeJS)</title>
+    <link rel="stylesheet" href="/css/jstyles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-wrapper">
+            <h1>사용자 등록 페이지</h1>
+            <form method="post" action="/process/adduser" name="join" class="form" id="signupForm">
+                <div class="input-group">
+                    <i class='bx bxs-user'></i>
+                    <input type="text" placeholder="사용자명" name="name">
+                </div>
+                <div class="input-group">
+                    <i class='bx bxs-user'></i>
+                    <input type="text" placeholder="닉네임" name="nickname">
+                </div>
+                <div class="input-group">
+                    <i class='bx bxs-user'></i>
+                    <input type="text" placeholder="아이디" name="id" id="userId">
+                    <button type="button" onclick="checkDuplicate()">중복 확인</button>
+                    <span id="idCheckResult"></span>
+                </div>
+                <div class="password-container">
+                    <div class="input-group">
+                        <i class='bx bxs-lock-alt'></i>
+                        <input type="password" id="password1" name="password" placeholder="패스워드">
+                        <span class="toggle-password" onclick="togglePassword('password1')">👁️</span>
+                    </div>
+                </div>
+                <div class="password-container">
+                    <div class="input-group">
+                        <i class='bx bxs-lock-alt'></i>
+                        <input type="password" id="password2" placeholder="패스워드 확인">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="securityQuestion">본인 확인 질문을 선택하세요</label>
+                    <select id="securityQuestion" name="securityQuestion" onchange="setAnswerInputName()">
+                        <option value="highschool">출신 고등학교 이름은 무엇인가요?</option>
+                        <option value="person">어렸을 때 존경했던 인물은 누구인가요?</option>
+                        <option value="alias">어릴 적 별명은 무엇이었나요?</option>
+                        <option value="travel">가장 인상 깊었던 여행지는 어디인가요?</option>
+                        <option value="movie">가장 좋아하는 영화는 무엇인가요?</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <i class='bx bxs-lock-alt'></i>
+                    <input type="text" id="securityAnswer" placeholder="질문의 답변을 입력하세요" name="highschool">
+                </div>
+            
+                    <button type="button" onclick="playSound();submitForm() ">회원가입</button>
+                    <audio id="halo" src="/sound/halo.mp3" type= "audio/mp3"></audio>   
+            </form>
+        </div>
+    </div>
+    <script>
+        function togglePassword(fieldId) {
+            var passwordField = document.getElementById(fieldId);
+            var passwordFieldType = passwordField.getAttribute('type');
+            if (passwordFieldType === 'password') {
+                passwordField.setAttribute('type', 'text');
+            } else {
+                passwordField.setAttribute('type', 'password');
+            }
+        }
+
+        function checkDuplicate() {
+            var userId = document.getElementById('userId').value;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/process/checkduplicate', true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                    var response = xhr.responseText;
+                    var idCheckResult = document.getElementById('idCheckResult');
+                    idCheckResult.innerText = response === 'duplicate' ? '이미 사용 중인 아이디입니다.' : '사용 가능한 아이디입니다.';
+                    idCheckResult.className = response;
+                }
+            };
+            xhr.send('id=' + encodeURIComponent(userId));
+        }
+
+        function setAnswerInputName() {
+            var questionSelect = document.getElementById('securityQuestion');
+            var selectedQuestion = questionSelect.value;
+            var answerInput = document.getElementById('securityAnswer');
+            answerInput.name = selectedQuestion;
+        }
+
+        function submitForm() {
+            var p1 = document.getElementById('password1').value;
+            var p2 = document.getElementById('password2').value;
+            if (p1 !== p2) {
+                alert('비밀번호가 일치하지 않습니다.');
+                return;
+            }
+            var form = document.getElementById('signupForm');
+            var formData = new FormData(form);
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/process/adduser', true);
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    var response = JSON.parse(xhr.responseText);
+                    alert(response.message);
+                    if (response.success) {
+                        window.location.href = response.redirectUrl;
+                    }
+                }
+            };
+            var object = {};
+            formData.forEach((value, key) => { object[key] = value });
+            xhr.send(JSON.stringify(object));
+        }
+
+        function playSound() {
+            const sound = document.getElementById('halo');
+            if(sound == undefined)
+                console.log("undefined");
+            console.log("playSound on");
+            sound.play().catch(error => {
+                console.error('Audio playback failed:', error);
+            });
+        }
+    </script>
+</body>
+</html>

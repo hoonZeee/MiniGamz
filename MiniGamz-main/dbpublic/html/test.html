@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Audio Test</title>
+</head>
+<body>
+    <button onclick="playSound()">Play Sound</button>
+    <audio id="halo" src="../../mainpublic/sound/minions_hello__Sound_0663.mp3" type= "audio\mp3"></audio>
+    <script>
+        function playSound() {
+            var sound = document.getElementById('halo');
+            sound.play();
+        }
+    </script>
+</body>
+</html>
