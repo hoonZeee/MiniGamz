@@ -43,3 +43,4 @@ socket.on('chat message', function(msg) {
     item.textContent = msg;
     messages.appendChild(item);
 });
+
