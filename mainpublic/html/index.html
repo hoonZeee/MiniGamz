@@ -12,22 +12,87 @@
 </head>
 <body>
     <header>
+        <nav>
+            <div class="logo">
+                <h2>Mini Gemz</h2>
+            </div>
+            <div class="menu">
+                <ul>
+                    <li><a href="#community">커뮤니티</a></li>
+                    <li><a href="#inquiry">문의 게시판</a></li>
+                    <li><a href="#chat">프로필</a></li>
+                </ul>
+            </div>
+            <div class="auth">
+                <ul>
+                    <li><a href="login.html">로그인</a></li>
+                    <li><a href="signup.html">회원가입</a></li>
+                </ul>
+            </div>
+        </nav>
         <div class="minion-header">
             <img src="/images/minion_header.png" alt="Minion Header Image">
         </div>
-        <h1>미니겜즈에 오신것을 환영합니다!</h1>
     </header>
-    <nav>
-        <ul>
-            <li><a href="#community">커뮤니티</a></li>
-            <li><a href="#inquiry">문의 게시판</a></li>
-            <li><a href="#chat">라이브 채팅</a></li>
-            <li><a href="login.html">로그인</a></li>
-            <li><a href="signup.html">회원가입</a></li>
-            <li><a href="baseball.html">숫자야구</a></li>
-        </ul>
-    </nav>
+    
     <main>
+        <section class="games-section">
+            <h2>인기 게임</h2>
+            <div class="games-grid">
+                <div class="game">
+                    <a href="baseball.html">
+                     <img src="/images/baseball.png" alt="숫자야구">
+                    </a> 
+                    <a href="baseball.html">
+                     <h3>숫자야구</h3>
+                    </a> 
+                </div>
+                <div class="game">
+                    <img src="/images/ex1.png" alt="감옥탈출 리마스터">
+                    <h3>감옥탈출 리마스터</h3>
+                </div>
+                <div class="game">
+                    <img src="/images/ex1.png" alt="슈의 라면가게">
+                    <h3>슈의 라면가게</h3>
+                </div>
+                <div class="game">
+                    <img src="/images/ex1.png" alt="버블 슈터 (Bubble Shooter)">
+                    <h3>버블 슈터</h3>
+                </div>
+                <div class="game">
+                    <img src="/images/ex1.png" alt="파니팡 파니하우스 풀버전">
+                    <h3>파니팡 파니하우스 풀버전</h3>
+                </div>
+                <div class="game">
+                    <img src="/images/ex1.png" alt="동물구출 대작전">
+                    <h3>동물구출 대작전</h3>
+                </div>
+                <div class="game">
+                    <img src="/images/ex1.png" alt="백중탈출2 리메이크">
+                    <h3>백중탈출2 리메이크</h3>
+                </div>
+                <div class="game">
+                    <img src="/images/ex1.png" alt="아이탈출1 - 탈출게임">
+                    <h3>아이탈출1 - 탈출게임</h3>
+                </div>
+                <div class="game">
+                    <img src="/images/ex1.png" alt="사쿠란보 DDR">
+                    <h3>사쿠란보 DDR</h3>
+                </div>
+                <div class="game">
+                    <img src="/images/ex1.png" alt="죽림고수">
+                    <h3>죽림고수</h3>
+                </div>
+                <div class="game">
+                    <img src="/images/ex1.png" alt="버터플라이">
+                    <h3>버터플라이</h3>
+                </div>
+                <div class="game">
+                    <img src="/images/ex1.png" alt="펭귄콩콩">
+                    <h3>펭귄콩콩 - 야후꾸러기 마법학교 미니게임</h3>
+                </div>
+            </div>
+        </section>
         <section id="community">
             <h2>커뮤니티</h2>
             <div class="post">
@@ -51,20 +116,19 @@
                 <button type="submit">제출</button>
             </form>
         </section>
-        <section id="chat">
-            <h2>라이브 채팅</h2>
-            <form id="chat-form">
-                <input id="username" type="text" placeholder="유저명" required>
-                <input id="chat-message" type="text" placeholder="메시지 입력" required>
-                <button type="submit">전송</button>
-            </form>
-            <ul id="messages"></ul>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2024 S/W 팀프로젝트</p>
-    </footer>
+        <div id="toggle-chat" class="chat-container">
+            <section id="chat">
+                <h2>라이브 채팅</h2>
+                <ul id="messages"></ul>
+                <form id="chat-form">
+                    <input id="username" type="text" placeholder="유저명" required>
+                    <input id="chat-message" type="text" placeholder="메시지 입력" required>
+                    <button type="submit">전송</button>
+                </form>
+            </section>
+        </div>
     <script src="/socket.io/socket.io.js"></script>
+    <button id="toggle-chat-btn" data-open-text="라이브 채팅 열기">닫기</button>
     <script>
         // 로그인 버튼을 클릭하면 login.html 페이지로 이동하는 함수
         function redirectToLogin() {
