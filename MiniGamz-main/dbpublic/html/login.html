@@ -7,20 +7,22 @@
 </head>
 <body>
     <div class="container" id="container">
+        <img src="/images/idmini.png" alt="Minion" class="minion">
         <div class="form-wrapper">
             <div class="form sign-in">
                 <h1>사용자 로그인</h1>
-                <form method="post" action="/process/login">
+                <form id="loginForm" method="post" action="/process/login" onsubmit="handleSubmit(event)">
                     <div class="input-group">
                         <i class='bx bxs-user'></i>
-                        <input type="text" placeholder="아이디" name="id">
+                        <input type="text" placeholder="아이디" name="id" required>
                     </div>
                     <div class="input-group">
                         <i class='bx bxs-lock-alt'></i>
-                        <input type="password" placeholder="패스워드" name="password">
+                        <input type="password" placeholder="패스워드" name="password" required>
                         <span class="toggle-password" onclick="togglePassword('password')">👁️</span>
                     </div>
                     <button type="submit">로그인</button>
+                    <audio id="sound" src="/sound/halo.mp3" preload="auto"></audio>
                 </form>
                 <p>
                     <span>Forgot password?</span>
@@ -61,6 +63,24 @@
 
         const findPassword = () => {
             window.location.href = 'find.html'; // 이 줄을 수정하여 비밀번호 찾기 페이지로 리다이렉트
+        }
+
+        const playSound = () => {
+            const sound = document.getElementById('sound');
+            if (sound.paused) {
+                sound.currentTime = 0; // 처음부터 재생
+                sound.play().catch(error => {
+                    console.error('Failed to play sound:', error);
+                });
+            }
+        }
+
+        const handleSubmit = (event) => {
+            event.preventDefault();
+            playSound();
+            // 로그인 처리를 위한 추가 코드 삽입
+            const form = document.getElementById('loginForm');
+            setTimeout(() => form.submit(), 500); // 약간의 지연 후 폼을 제출하여 소리가 끝날 때까지 기다림
         }
     </script>
 </body>

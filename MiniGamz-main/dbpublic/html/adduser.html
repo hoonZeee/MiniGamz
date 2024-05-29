@@ -51,81 +51,11 @@
                     <i class='bx bxs-lock-alt'></i>
                     <input type="text" id="securityAnswer" placeholder="질문의 답변을 입력하세요" name="highschool">
                 </div>
-            
-                    <button type="button" onclick="playSound();submitForm() ">회원가입</button>
-                    <audio id="halo" src="/sound/halo.mp3" type= "audio/mp3"></audio>   
+                <button type="submit">회원가입</button>
             </form>
         </div>
     </div>
-    <script>
-        function togglePassword(fieldId) {
-            var passwordField = document.getElementById(fieldId);
-            var passwordFieldType = passwordField.getAttribute('type');
-            if (passwordFieldType === 'password') {
-                passwordField.setAttribute('type', 'text');
-            } else {
-                passwordField.setAttribute('type', 'password');
-            }
-        }
-
-        function checkDuplicate() {
-            var userId = document.getElementById('userId').value;
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', '/process/checkduplicate', true);
-            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-                    var response = xhr.responseText;
-                    var idCheckResult = document.getElementById('idCheckResult');
-                    idCheckResult.innerText = response === 'duplicate' ? '이미 사용 중인 아이디입니다.' : '사용 가능한 아이디입니다.';
-                    idCheckResult.className = response;
-                }
-            };
-            xhr.send('id=' + encodeURIComponent(userId));
-        }
-
-        function setAnswerInputName() {
-            var questionSelect = document.getElementById('securityQuestion');
-            var selectedQuestion = questionSelect.value;
-            var answerInput = document.getElementById('securityAnswer');
-            answerInput.name = selectedQuestion;
-        }
-
-        function submitForm() {
-            var p1 = document.getElementById('password1').value;
-            var p2 = document.getElementById('password2').value;
-            if (p1 !== p2) {
-                alert('비밀번호가 일치하지 않습니다.');
-                return;
-            }
-            var form = document.getElementById('signupForm');
-            var formData = new FormData(form);
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', '/process/adduser', true);
-            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    var response = JSON.parse(xhr.responseText);
-                    alert(response.message);
-                    if (response.success) {
-                        window.location.href = response.redirectUrl;
-                    }
-                }
-            };
-            var object = {};
-            formData.forEach((value, key) => { object[key] = value });
-            xhr.send(JSON.stringify(object));
-        }
-
-        function playSound() {
-            const sound = document.getElementById('halo');
-            if(sound == undefined)
-                console.log("undefined");
-            console.log("playSound on");
-            sound.play().catch(error => {
-                console.error('Audio playback failed:', error);
-            });
-        }
-    </script>
+    <script src="/js/jscripts.js"></script>
 </body>
 </html>
+

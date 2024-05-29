@@ -93,11 +93,21 @@ io.on('connection', (socket) => {
 });
 
 app.post('/process/login', (req, res) => {
+
     console.log('/process/login 호출됨' + req)
     const paramId = req.body.id;
     const paramPassword = req.body.password;
 
     console.log('로그인 요청' + paramId + '' + paramPassword);
+    
+    if (!paramId || !paramPassword) {
+        res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' });
+        res.write('<h2>로그인 실패. 아이디와 비밀번호를 입력해 주세요.</h2>');
+        res.end();
+        return;
+    }
+    
+    
     pool.getConnection((err, conn) => {
 
         if (err) {
@@ -189,7 +199,7 @@ app.post('/process/adduser', (req, res) => {
                 if (err) {
                     console.log('SQL 실행시 오류 발생');
                     console.dir(err);
-                    res.status(500).json({ success: false, message: 'SQL query 실행 실패' });
+                    res.status(500).json({ success: false, message: '다시 시도해주세요' });
                     return;
                 }
 
