@@ -18,8 +18,8 @@
                     </div>
                     <div class="input-group">
                         <i class='bx bxs-lock-alt'></i>
-                        <input type="password" placeholder="패스워드" name="password" required>
-                        <span class="toggle-password" onclick="togglePassword('password')">👁️</span>
+                        <input type="password" placeholder="패스워드" name="password" id="password" required>
+                        <span class="toggle-password" onclick="togglePassword()">👁️</span>
                     </div>
                     <button type="submit">로그인</button>
                     <audio id="sound" src="/sound/halo.mp3" preload="auto"></audio>
@@ -47,8 +47,8 @@
             container.classList.add('sign-in');
         }, 200);
 
-        const togglePassword = (fieldId) => {
-            const passwordField = document.querySelector(`input[name=${fieldId}]`);
+        const togglePassword = () => {
+            const passwordField = document.getElementById('password');
             const passwordFieldType = passwordField.getAttribute('type');
             if (passwordFieldType === 'password') {
                 passwordField.setAttribute('type', 'text');
@@ -85,4 +85,3 @@
     </script>
 </body>
 </html>
-
