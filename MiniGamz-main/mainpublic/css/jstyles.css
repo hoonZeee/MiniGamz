@@ -90,7 +90,7 @@ html, body {
     position: absolute;
     top: -37px;
     left: 50%;
-    width: 280px; /* 미니언의 크기 조절 */
+    width: 268px; /* 로그인 미니언의 크기 조절 */
     transform: translateX(-50%);
     z-index: 2;
 }
