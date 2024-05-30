@@ -32,12 +32,14 @@ html, body {
 }
 
 .form-wrapper {
+    position: relative;
     width: 100%;
     max-width: 28rem;
     padding: 2rem;
     background-color: var(--white);
     border-radius: 1.5rem;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    text-align: center;
 }
 
 .form {
@@ -88,7 +90,7 @@ html, body {
 
 .minion {
     position: absolute;
-    top: -37px;
+    top: -214px;
     left: 50%;
     width: 268px; /* 로그인 미니언의 크기 조절 */
     transform: translateX(-50%);
@@ -97,7 +99,7 @@ html, body {
 
 .minions {
     position: absolute;
-    top: 0px;
+    top: -px;
     left: 33%;
     width: 140px; /* 미니언의 크기 조절 */
     transform: translateX(-50%);

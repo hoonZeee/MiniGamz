@@ -93,7 +93,6 @@ io.on('connection', (socket) => {
 });
 
 app.post('/process/login', (req, res) => {
-
     console.log('/process/login 호출됨' + req)
     const paramId = req.body.id;
     const paramPassword = req.body.password;
@@ -107,9 +106,7 @@ app.post('/process/login', (req, res) => {
         return;
     }
     
-    
     pool.getConnection((err, conn) => {
-
         if (err) {
             conn.release();
             console.log('Mysql getConnection error. aborted')
@@ -129,26 +126,22 @@ app.post('/process/login', (req, res) => {
                     res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' })
                     res.write('<h1>SQL query 실행 실패</h1>')
                     res.end();
-                    return
+                    return;
                 }
                 if (rows.length > 0) {
                     console.log('아이디[%s], 패스워드가 일치하는 사용자 [%s] 찾음', paramId, rows[0].name);
-                    res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' })
-                    res.write('<h2>로그인 성공</h2>')
-                    res.end();
-                    return
-                }
-                else {
+                    res.redirect('/');    //로그인성공시 메인화면으로
+                    return;
+                } else {
                     console.log('아이디[%s], 패스워드가 일치없음', paramId);
                     res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' })
                     res.write('<h2>로그인 실패. 아이디와 패스워드를 확인하세요.</h2>')
                     res.end();
-                    return
+                    return;
                 }
             }
-        )
-
-    })
+        );
+    });
 });
 
 app.post('/process/checkduplicate', (req, res) => {
