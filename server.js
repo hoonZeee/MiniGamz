@@ -37,7 +37,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'mainpublic')));
 app.use(express.static(path.join(__dirname, 'basepublic')));
-app.use('/dbpublic', static(path.join(__dirname, 'dbpublic')));
+app.use(express.static(path.join(__dirname, 'dbpublic')));
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'mainpublic/html', 'index.html'));
@@ -50,6 +50,9 @@ app.get('/signup.html', (req, res) => {
 });
 app.get('/baseball.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'basepublic/html', 'baseball.html'));
+});
+app.get('/find.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dbpublic/html', 'find.html'));
 });
 
 app.post('/guess', (req, res) => {
@@ -95,8 +98,15 @@ app.post('/process/login', (req, res) => {
     const paramPassword = req.body.password;
 
     console.log('로그인 요청' + paramId + '' + paramPassword);
+    
+    if (!paramId || !paramPassword) {
+        res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' });
+        res.write('<h2>로그인 실패. 아이디와 비밀번호를 입력해 주세요.</h2>');
+        res.end();
+        return;
+    }
+    
     pool.getConnection((err, conn) => {
-
         if (err) {
             conn.release();
             console.log('Mysql getConnection error. aborted')
@@ -116,26 +126,22 @@ app.post('/process/login', (req, res) => {
                     res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' })
                     res.write('<h1>SQL query 실행 실패</h1>')
                     res.end();
-                    return
+                    return;
                 }
                 if (rows.length > 0) {
                     console.log('아이디[%s], 패스워드가 일치하는 사용자 [%s] 찾음', paramId, rows[0].name);
-                    res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' })
-                    res.write('<h2>로그인 성공</h2>')
-                    res.end();
-                    return
-                }
-                else {
+                    res.redirect('/');    //로그인성공시 메인화면으로
+                    return;
+                } else {
                     console.log('아이디[%s], 패스워드가 일치없음', paramId);
                     res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' })
                     res.write('<h2>로그인 실패. 아이디와 패스워드를 확인하세요.</h2>')
                     res.end();
-                    return
+                    return;
                 }
             }
-        )
-
-    })
+        );
+    });
 });
 
 app.post('/process/checkduplicate', (req, res) => {
@@ -167,60 +173,109 @@ app.post('/process/checkduplicate', (req, res) => {
 });
 
 app.post('/process/adduser', (req, res) => {
-    console.log('/process/adduser 호출됨' + req)
-    const paramNickName = req.body.nickname;
-    const paramName = req.body.name;
-    const paramId = req.body.id;
-    const paramPassword = req.body.password;
+    console.log('/process/adduser 호출됨');
+    const { nickname, name, id, password, highschool, person, alias, travel, movie } = req.body;
 
     pool.getConnection((err, conn) => {
-
         if (err) {
-            conn.release();
-            console.log('Mysql getConnection error. aborted')
-            res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' })
-            res.write('<h1>DB서버 연결 실패</h1>')
-            res.end();
+            console.log('Mysql getConnection error. aborted');
+            res.status(500).json({ success: false, message: 'DB서버 연결 실패' });
             return;
         }
-        console.log('데이터베이스 연결 끈 get ㅎㅎ');
-        const exec = conn.query('insert into users (nickname, name, id, password) values(?,?,?,?);',
-            [paramNickName, paramName, paramId, paramPassword],
+        const exec = conn.query(
+            'INSERT INTO users (nickname, name, id, password, highschool, person, alias, travel, movie) VALUES (?,?,?,?,?,?,?,?,?);',
+            [nickname, name, id, password, highschool, person, alias, travel, movie],
             (err, result) => {
                 conn.release();
-                console.log('실행된 SQL: ' + exec.sql)
+                console.log('실행된 SQL: ' + exec.sql);
 
                 if (err) {
-                    console.log('SQL 실행시 오류 발생')
+                    console.log('SQL 실행시 오류 발생');
                     console.dir(err);
-                    res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' })
-                    res.write('<h1>SQL query 실행 실패</h1>')
-                    res.end();
-                    return
+                    res.status(500).json({ success: false, message: '다시 시도해주세요' });
+                    return;
                 }
 
                 if (result) {
-                    console.dir(result)
-                    console.log('Inserted 성공')
-
-                    res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' })
-                    res.write('<h2>사용자 추가 성공</h2>')
-                    res.end();
-                }
-                else {
-                    console.log('Inserted 실패')
-
-                    res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' })
-                    res.write('<h1>사용자 추가 실패</h1>')
-                    res.end();
+                    console.dir(result);
+                    console.log('Inserted 성공');
+                    res.status(200).json({ success: true, message: '회원가입 성공!', redirectUrl: '/' });
+                } else {
+                    console.log('Inserted 실패');
+                    res.status(500).json({ success: false, message: '회원가입 실패ㅜㅜ' });
                 }
             }
-        )
-    })
+        );
+    });
+});
+
+app.post('/process/findid', (req, res) => {
+    const { name, securityQuestion, securityAnswer } = req.body;
+
+    // 보안 질문에 해당하는 컬럼명을 미리 정의된 목록에서 검증
+    const validSecurityQuestions = ['highschool', 'person', 'alias', 'travel', 'movie'];
+    if (!validSecurityQuestions.includes(securityQuestion)) {
+        res.status(400).json({ success: false, message: '유효하지 않은 보안 질문입니다.' });
+        return;
+    }
+
+    pool.getConnection((err, conn) => {
+        if (err) {
+            console.log('Mysql getConnection error:', err);
+            res.status(500).send('서버 에러');
+            return;
+        }
+
+        const query = `SELECT id FROM users WHERE name = ? AND ${securityQuestion} = ?`;
+        conn.query(query, [name, securityAnswer], (err, rows) => {
+            conn.release();
+
+            if (err) {
+                console.log('Mysql query error:', err);
+                res.status(500).send('서버 에러');
+                return;
+            }
+
+            if (rows.length > 0) {
+                res.status(200).json({ success: true, id: rows[0].id });
+            } else {
+                res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+            }
+        });
+    });
+});
+
+// 비밀번호 찾기
+app.post('/process/findpassword', (req, res) => {
+    const { name, id } = req.body;
+
+    pool.getConnection((err, conn) => {
+        if (err) {
+            console.log('Mysql getConnection error:', err);
+            res.status(500).send('서버 에러');
+            return;
+        }
+
+        const query = 'SELECT password FROM users WHERE name = ? AND id = ?';
+        conn.query(query, [name, id], (err, rows) => {
+            conn.release();
+
+            if (err) {
+                console.log('Mysql query error:', err);
+                res.status(500).send('서버 에러');
+                return;
+            }
+
+            if (rows.length > 0) {
+                res.status(200).json({ success: true, password: rows[0].password });
+            } else {
+                res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+            }
+        });
+    });
 });
 
 server.listen(PORT, () => {
     console.log(`http://localhost:${PORT} 에서 실행 중..`);
-    console.log('add server is running on http://localhost:3000/dbpublic/adduser.html')
-    console.log('add server is running on http://localhost:3000/dbpublic/login.html')
 });
+
