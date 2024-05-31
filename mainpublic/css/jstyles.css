@@ -99,9 +99,9 @@ html, body {
 
 .minions {
     position: absolute;
-    top: -px;
+    top: 0px;
     left: 33%;
-    width: 140px; /* 미니언의 크기 조절 */
+    width: 150px; /* 미니언의 크기 조절 */
     transform: translateX(-50%);
     z-index: 2;
 }
