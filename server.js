@@ -33,12 +33,21 @@ const pool = mysql.createPool({
     debug: false
 });
 
-// 서버 시작 시 테이블이 없으면 생성
+// 데이터베이스 및 테이블 생성
 pool.getConnection((err, conn) => {
     if (err) {
         console.error('MySQL 연결 실패:', err);
         return;
     }
+
+    const createDatabaseQuery = `
+    CREATE DATABASE IF NOT EXISTS test;
+    `;
+
+    const useDatabaseQuery = `
+    USE test;
+    `;
+    
     const createTableQuery = `
     CREATE TABLE IF NOT EXISTS users (
         id varchar(100) NOT NULL COMMENT '사용자 로그인 아이디',
