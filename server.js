@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const path = require('path');
 const socketIo = require('socket.io');
-const mysql = require('mysql'); // npm install mysql
+const mysql = require('mysql');
 const static = require('serve-static');
 
 const app = express();
@@ -31,6 +31,36 @@ const pool = mysql.createPool({
     password: '1234',
     database: 'test',
     debug: false
+});
+
+// 서버 시작 시 테이블이 없으면 생성
+pool.getConnection((err, conn) => {
+    if (err) {
+        console.error('MySQL 연결 실패:', err);
+        return;
+    }
+    const createTableQuery = `
+    CREATE TABLE IF NOT EXISTS users (
+        id varchar(100) NOT NULL COMMENT '사용자 로그인 아이디',
+        name varchar(100) NOT NULL COMMENT '사용자의 이름',
+        nickname varchar(100) DEFAULT NULL COMMENT '사용자의 닉네임',
+        password varchar(300) NOT NULL COMMENT '로그인 암호, 패스워드',
+        highschool varchar(300) DEFAULT NULL COMMENT '본인확인 고등학교',
+        person varchar(300) DEFAULT NULL COMMENT '본인확인 인물',
+        alias varchar(300) DEFAULT NULL COMMENT '본인확인 별명',
+        travel varchar(300) DEFAULT NULL COMMENT '본인확인 여행',
+        movie varchar(300) DEFAULT NULL COMMENT '본인확인 영화',
+        PRIMARY KEY (id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+    `;
+    conn.query(createTableQuery, (err, result) => {
+        conn.release();
+        if (err) {
+            console.error('테이블 생성 실패:', err);
+        } else {
+            console.log('테이블 생성 성공!');
+        }
+    });
 });
 
 app.use(express.urlencoded({ extended: true }));
@@ -93,7 +123,7 @@ io.on('connection', (socket) => {
 });
 
 app.post('/process/login', (req, res) => {
-    console.log('/process/login 호출됨' + req)
+    console.log('/process/login 호출됨' + req);
     const paramId = req.body.id;
     const paramPassword = req.body.password;
 
@@ -109,9 +139,9 @@ app.post('/process/login', (req, res) => {
     pool.getConnection((err, conn) => {
         if (err) {
             conn.release();
-            console.log('Mysql getConnection error. aborted')
-            res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' })
-            res.write('<h1>DB서버 연결 실패</h1>')
+            console.log('Mysql getConnection error. aborted');
+            res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' });
+            res.write('<h1>DB서버 연결 실패</h1>');
             res.end();
             return;
         }
@@ -123,19 +153,19 @@ app.post('/process/login', (req, res) => {
 
                 if (err) {
                     console.dir(err);
-                    res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' })
-                    res.write('<h1>SQL query 실행 실패</h1>')
+                    res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' });
+                    res.write('<h1>SQL query 실행 실패</h1>');
                     res.end();
                     return;
                 }
                 if (rows.length > 0) {
                     console.log('아이디[%s], 패스워드가 일치하는 사용자 [%s] 찾음', paramId, rows[0].name);
-                    res.redirect('/');    //로그인성공시 메인화면으로
+                    res.redirect('/');    //로그인 성공시 메인화면으로
                     return;
                 } else {
                     console.log('아이디[%s], 패스워드가 일치없음', paramId);
-                    res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' })
-                    res.write('<h2>로그인 실패. 아이디와 패스워드를 확인하세요.</h2>')
+                    res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' });
+                    res.write('<h2>로그인 실패. 아이디와 패스워드를 확인하세요.</h2>');
                     res.end();
                     return;
                 }
@@ -278,4 +308,3 @@ app.post('/process/findpassword', (req, res) => {
 server.listen(PORT, () => {
     console.log(`http://localhost:${PORT} 에서 실행 중..`);
 });
-
