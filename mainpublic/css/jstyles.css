@@ -99,7 +99,7 @@ html, body {
 
 .minions {
     position: absolute;
-    top: 1px;
+    top: 0px;
     left: 33%;
     width: 150px; /* 미니언의 크기 조절 */
     transform: translateX(-50%);
