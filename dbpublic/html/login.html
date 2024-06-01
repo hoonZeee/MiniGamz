@@ -12,6 +12,7 @@
             <div class="form sign-in">
                 <h1>사용자 로그인</h1>
                 <form id="loginForm" method="post" action="/process/login" onsubmit="handleSubmit(event)">
+                    <input type="hidden" name="redirectUrl" value="">
                     <div class="input-group">
                         <i class='bx bxs-user'></i>
                         <input type="text" placeholder="아이디" name="id" required>
@@ -78,10 +79,15 @@
         const handleSubmit = (event) => {
             event.preventDefault();
             playSound();
-            // 로그인 처리를 위한 추가 코드 삽입
             const form = document.getElementById('loginForm');
             setTimeout(() => form.submit(), 500); // 약간의 지연 후 폼을 제출하여 소리가 끝날 때까지 기다림
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const redirectUrl = params.get('redirectUrl') || '/';
+            document.querySelector('input[name="redirectUrl"]').value = redirectUrl;
+        });
     </script>
 </body>
 </html>
