@@ -3,7 +3,7 @@ const http = require('http');
 const path = require('path');
 const socketIo = require('socket.io');
 const mysql = require('mysql');
-const static = require('serve-static');
+const session = require('express-session');
 
 const app = express();
 const server = http.createServer(app);
@@ -29,7 +29,7 @@ const pool = mysql.createPool({
     host: '127.0.0.1',
     user: 'root',
     password: '1234',
-    database: 'test',
+    database: 'user',
     debug: false
 });
 
@@ -78,6 +78,12 @@ app.use(express.static(path.join(__dirname, 'mainpublic')));
 app.use(express.static(path.join(__dirname, 'basepublic')));
 app.use(express.static(path.join(__dirname, 'dbpublic')));
 
+app.use(session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: true
+}));
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'mainpublic/html', 'index.html'));
 });
@@ -92,6 +98,13 @@ app.get('/baseball.html', (req, res) => {
 });
 app.get('/find.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'dbpublic/html', 'find.html'));
+});
+app.get('/profile.html', (req, res) => {
+    if (req.session.user) {
+        res.sendFile(path.join(__dirname, 'dbpublic/html', 'profile.html'));
+    } else {
+        res.redirect('/login.html?redirectUrl=/profile.html'); // 로그인하지 않은 경우 로그인 페이지로 리디렉션
+    }
 });
 
 app.post('/guess', (req, res) => {
@@ -135,6 +148,7 @@ app.post('/process/login', (req, res) => {
     console.log('/process/login 호출됨' + req);
     const paramId = req.body.id;
     const paramPassword = req.body.password;
+    const redirectUrl = req.body.redirectUrl || '/';
 
     console.log('로그인 요청' + paramId + '' + paramPassword);
     
@@ -154,7 +168,7 @@ app.post('/process/login', (req, res) => {
             res.end();
             return;
         }
-        const exec = conn.query('select `id`, `name` from `users` where `id`=? and `password`=?',
+        const exec = conn.query('select `id`, `name`, `nickname` from `users` where `id`=? and `password`=?',
             [paramId, paramPassword],
             (err, rows) => {
                 conn.release();
@@ -169,7 +183,8 @@ app.post('/process/login', (req, res) => {
                 }
                 if (rows.length > 0) {
                     console.log('아이디[%s], 패스워드가 일치하는 사용자 [%s] 찾음', paramId, rows[0].name);
-                    res.redirect('/');    //로그인 성공시 메인화면으로
+                    req.session.user = { id: rows[0].id, name: rows[0].name, nickname: rows[0].nickname }; // 세션에 사용자 정보 저장
+                    res.redirect(redirectUrl);    // 로그인 성공시 리디렉션 URL로 이동
                     return;
                 } else {
                     console.log('아이디[%s], 패스워드가 일치없음', paramId);
@@ -311,6 +326,49 @@ app.post('/process/findpassword', (req, res) => {
                 res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
             }
         });
+    });
+});
+
+app.get('/api/profile', (req, res) => { // 프로필 정보 API
+    if (req.session.user) {
+        res.json(req.session.user);
+    } else {
+        res.status(401).json({ error: '사용자가 로그인하지 않았습니다.' });
+    }
+});
+
+app.post('/api/change-password', (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: '로그인 상태가 아닙니다.' });
+    }
+
+    const { newPassword } = req.body;
+    const userId = req.session.user.id;
+
+    pool.getConnection((err, conn) => {
+        if (err) {
+            console.error('MySQL 연결 실패:', err);
+            return res.status(500).json({ error: '서버 에러' });
+        }
+
+        const query = 'UPDATE users SET password = ? WHERE id = ?';
+        conn.query(query, [newPassword, userId], (err, result) => {
+            conn.release();
+            if (err) {
+                console.error('비밀번호 변경 실패:', err);
+                return res.status(500).json({ error: '비밀번호 변경 실패' });
+            }
+            res.json({ success: true });
+        });
+    });
+});
+
+app.post('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({ error: '로그아웃 실패' });
+        }
+        res.redirect('/');
     });
 });
 
