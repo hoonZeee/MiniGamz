@@ -28,8 +28,13 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: '127.0.0.1',
     user: 'root',
+<<<<<<< HEAD
     password: '1234',
     database: 'test',
+=======
+    password: '0000',
+    database: 'user',
+>>>>>>> main
     debug: false
 });
 
@@ -77,6 +82,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'mainpublic')));
 app.use(express.static(path.join(__dirname, 'basepublic')));
 app.use(express.static(path.join(__dirname, 'dbpublic')));
+app.use(express.static(path.join(__dirname, 'minion-bird-public/public')));
 
 app.use(session({
     secret: 'your_secret_key',
@@ -95,6 +101,9 @@ app.get('/signup.html', (req, res) => {
 });
 app.get('/baseball.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'basepublic/html', 'baseball.html'));
+});
+app.get('/minionbird.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'minion-bird-public/public/html', 'minionbird.html'));
 });
 app.get('/find.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'dbpublic/html', 'find.html'));
@@ -374,4 +383,9 @@ app.post('/logout', (req, res) => {
 
 server.listen(PORT, () => {
     console.log(`http://localhost:${PORT} 에서 실행 중..`);
+<<<<<<< HEAD
 });
+=======
+});
+
+>>>>>>> main

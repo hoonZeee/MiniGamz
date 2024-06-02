@@ -38,3 +38,10 @@
   -로그인시 세션 유지하여 프로필 페이지에 유저 정보 확인가능 // 로그인 한 후 로그인, 회원가입란이 사라지고 로그아웃 으로 바뀜(누르면 로그아웃)  
   -server.js, index, login.html 변경한 파일 업데이트  
   -profile.html dbpublic에 추가 업데이트  
+
+6.2 정현성<br/>
+   -server.js, index 게임이미지 추가 및 변경한 파일 업데이트 
+   -minion bird game 구현
+   -main에서 미니언버드게임 페이지로 접속 업데이트
+   -minion bird game 에 pause 및 restart 추가
+   -페이지 안에 뒤로가기 버튼 추가로 메인페이지로 이동 추가
