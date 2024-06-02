@@ -28,13 +28,8 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: '127.0.0.1',
     user: 'root',
-<<<<<<< HEAD
     password: '1234',
     database: 'test',
-=======
-    password: '0000',
-    database: 'user',
->>>>>>> main
     debug: false
 });
 
@@ -383,9 +378,4 @@ app.post('/logout', (req, res) => {
 
 server.listen(PORT, () => {
     console.log(`http://localhost:${PORT} 에서 실행 중..`);
-<<<<<<< HEAD
 });
-=======
-});
-
->>>>>>> main
