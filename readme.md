@@ -40,8 +40,8 @@
   -profile.html dbpublic에 추가 업데이트  
 
 6.2 정현성<br/>
--server.js, index 게임이미지 추가 및 변경한 파일 업데이트 
--minion bird game 구현
--main에서 미니언버드게임 페이지로 접속 업데이트
--minion bird game 에 pause 및 restart 추가
--페이지 안에 뒤로가기 버튼 추가로 메인페이지로 이동 추가
+   -server.js, index 게임이미지 추가 및 변경한 파일 업데이트 
+   -minion bird game 구현
+   -main에서 미니언버드게임 페이지로 접속 업데이트
+   -minion bird game 에 pause 및 restart 추가
+   -페이지 안에 뒤로가기 버튼 추가로 메인페이지로 이동 추가
