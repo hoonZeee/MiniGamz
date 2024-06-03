@@ -1,0 +1,54 @@
+# Node.js를 위한 .gitignore
+
+# Node 모듈
+/node_modules
+/npm-debug.log
+/yarn-error.log
+
+# 환경 변수 파일
+.env
+.env.local
+.env.*.local
+
+# 로그 파일
+/logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 빌드 디렉토리
+/dist
+/build
+
+# 임시 파일
+/tmp
+/temp
+*.tmp
+*.temp
+
+# 편집기와 IDE 관련 파일
+.vscode
+.idea
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# 테스트 관련 파일
+/coverage
+/jest
+/.nyc_output
+
+# TypeScript 빌드 아웃풋
+*.tsbuildinfo
+
+# Babel과 관련된 파일
+.babelrc
+.eslintcache
+
+# 로컬 실행 파일
+*.local
+
+# 리눅스 및 맥OS에서 생성되는 파일
+*.swp
+*~
