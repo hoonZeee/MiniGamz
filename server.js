@@ -30,8 +30,6 @@ const pool = mysql.createPool({
     user: 'root',
     password: '1234',
     database: 'test',
-    password: '00000000',
-    database: 'user',
     debug: false
 });
 
