@@ -47,4 +47,9 @@
    -minion bird game 에 pause 및 restart 추가
    -페이지 안에 뒤로가기 버튼 추가로 메인페이지로 이동 추가
 
-6.3 옥주헌 <br/>
+6.3 옥주헌<br/>
+  - package.json 버전 및 express-session 추가
+  - .gitignore 추가
+  - adminpublic 폴더를 /admin 경로로 서빙하도록 설정을 추가
+  - admin 경로에서 admin.html 파일을 서빙하도록 추가
+  - adminPage 추가 (host:3000/admin)
