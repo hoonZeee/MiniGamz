@@ -28,8 +28,13 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: '127.0.0.1',
     user: 'root',
+<<<<<<< HEAD
     password: '1234',
     database: 'test',
+=======
+    password: '00000000',
+    database: 'user',
+>>>>>>> main
     debug: false
 });
 
@@ -79,6 +84,9 @@ app.use(express.static(path.join(__dirname, 'basepublic')));
 app.use(express.static(path.join(__dirname, 'dbpublic')));
 app.use(express.static(path.join(__dirname, 'minion-bird-public/public')));
 
+// adminpublic 폴더를 /admin 경로로 서빙
+app.use('/admin', express.static(path.join(__dirname, 'adminpublic')));
+
 app.use(session({
     secret: 'your_secret_key',
     resave: false,
@@ -100,6 +108,9 @@ app.get('/baseball.html', (req, res) => {
 app.get('/minionbird.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'minion-bird-public/public/html', 'minionbird.html'));
 });
+app.get('/inquiry.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'inquiry/html', 'inquiry.html'));
+});
 app.get('/find.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'dbpublic/html', 'find.html'));
 });
@@ -109,6 +120,11 @@ app.get('/profile.html', (req, res) => {
     } else {
         res.redirect('/login.html?redirectUrl=/profile.html'); // 로그인하지 않은 경우 로그인 페이지로 리디렉션
     }
+});
+
+// /admin 경로로 admin.html 파일 제공
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'adminpublic', 'admin.html'));
 });
 
 app.post('/guess', (req, res) => {

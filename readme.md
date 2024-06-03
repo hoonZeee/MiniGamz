@@ -30,6 +30,7 @@
 5/31 권진호<br/>
   -서버에 데이터베이스 생성및 연동 그리고 회원가입 로그인 실행잘되는것까지 확인완료
   -server.js 변경한 파일 업데이트<br/>  
+  -문의게시판 생성
 
 6/1 고태현<br/>
   -npm install express-session (세션 사용을 위해 패키지 설치)  
@@ -45,3 +46,10 @@
    -main에서 미니언버드게임 페이지로 접속 업데이트
    -minion bird game 에 pause 및 restart 추가
    -페이지 안에 뒤로가기 버튼 추가로 메인페이지로 이동 추가
+
+6.3 옥주헌<br/>
+  - package.json 버전 및 express-session 추가
+  - .gitignore 추가
+  - adminpublic 폴더를 /admin 경로로 서빙하도록 설정을 추가
+  - admin 경로에서 admin.html 파일을 서빙하도록 추가
+  - adminPage 추가 (host:3000/admin)
