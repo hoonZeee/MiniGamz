@@ -28,13 +28,10 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: '127.0.0.1',
     user: 'root',
-<<<<<<< HEAD
     password: '1234',
     database: 'test',
-=======
     password: '00000000',
     database: 'user',
->>>>>>> main
     debug: false
 });
 
