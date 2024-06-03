@@ -41,11 +41,11 @@
   -profile.html dbpublic에 추가 업데이트  
 
 6.2 정현성<br/>
-   -server.js, index 게임이미지 추가 및 변경한 파일 업데이트 
-   -minion bird game 구현
-   -main에서 미니언버드게임 페이지로 접속 업데이트
-   -minion bird game 에 pause 및 restart 추가
-   -페이지 안에 뒤로가기 버튼 추가로 메인페이지로 이동 추가
+  - server.js, index 게임이미지 추가 및 변경한 파일 업데이트 
+  - minion bird game 구현
+  - main에서 미니언버드게임 페이지로 접속 업데이트
+  - minion bird game 에 pause 및 restart 추가
+  - 페이지 안에 뒤로가기 버튼 추가로 메인페이지로 이동 추가
 
 6.3 옥주헌<br/>
   - package.json 버전 및 express-session 추가
@@ -58,4 +58,7 @@
   - DB 쿼리수정 닉네임 UNIQUE 적용 + 실시간 중복 확인 기능
   - 회원가입 성공 시 폭죽 스크롤버그 없앰
   - DB이름 변경 test -> user
+
+6.3 정현성<br/>
+  - 게임 난이도조절 스코어 20점 마다 속도증가 설정추가
     
