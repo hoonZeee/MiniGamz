@@ -52,3 +52,10 @@
   - adminpublic 폴더를 /admin 경로로 서빙하도록 설정을 추가
   - admin 경로에서 admin.html 파일을 서빙하도록 추가
   - adminPage 추가 (host:3000/admin)
+
+6.3 황정인<br/>
+  - 아이디 비밀번호(영어,숫자 허용 + 글자수 제한)
+  - DB 쿼리수정 닉네임 UNIQUE 적용 + 실시간 중복 확인 기능
+  - 회원가입 성공 시 폭죽 스크롤버그 없앰
+  - DB이름 변경 test -> user
+    
