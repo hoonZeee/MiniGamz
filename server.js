@@ -29,7 +29,7 @@ const pool = mysql.createPool({
     host: '127.0.0.1',
     user: 'root',
     password: '1234',
-    database: 'test',
+    database: 'user',
     debug: false
 });
 
@@ -41,11 +41,11 @@ pool.getConnection((err, conn) => {
     }
 
     const createDatabaseQuery = `
-    CREATE DATABASE IF NOT EXISTS test;
+    CREATE DATABASE IF NOT EXISTS user;
     `;
 
     const useDatabaseQuery = `
-    USE test;
+    USE user;
     `;
     
     const createTableQuery = `
@@ -59,7 +59,8 @@ pool.getConnection((err, conn) => {
         alias varchar(300) DEFAULT NULL COMMENT '본인확인 별명',
         travel varchar(300) DEFAULT NULL COMMENT '본인확인 여행',
         movie varchar(300) DEFAULT NULL COMMENT '본인확인 영화',
-        PRIMARY KEY (id)
+        PRIMARY KEY (id),
+        UNIQUE KEY unique_nickname (nickname)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
     `;
     conn.query(createTableQuery, (err, result) => {
@@ -71,6 +72,7 @@ pool.getConnection((err, conn) => {
         }
     });
 });
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -213,6 +215,34 @@ app.post('/process/login', (req, res) => {
     });
 });
 
+app.post('/process/checknickname', (req, res) => {
+    const nickname = req.body.nickname;
+
+    pool.getConnection((err, conn) => {
+        if (err) {
+            console.log('Mysql getConnection error:', err);
+            res.status(500).send('서버 에러');
+            return;
+        }
+
+        conn.query('SELECT * FROM users WHERE nickname = ?', nickname, (err, rows) => {
+            conn.release();
+
+            if (err) {
+                console.log('Mysql query error:', err);
+                res.status(500).send('서버 에러');
+                return;
+            }
+
+            if (rows.length > 0) {
+                res.send('duplicate');
+            } else {
+                res.send('not_duplicate');
+            }
+        });
+    });
+});
+
 app.post('/process/checkduplicate', (req, res) => {
     const userId = req.body.id;
 
@@ -244,7 +274,15 @@ app.post('/process/checkduplicate', (req, res) => {
 app.post('/process/adduser', (req, res) => {
     console.log('/process/adduser 호출됨');
     const { nickname, name, id, password, highschool, person, alias, travel, movie } = req.body;
+    // 아이디 자릿수 제한 제거, 영어와 숫자만 체크
+    if (!/^[A-Za-z0-9]+$/.test(id)) {
+        return res.json({ success: false, message: '아이디는 영어와 숫자만 가능합니다.' });
+    }
 
+    // 비밀번호 자릿수 제한 유지
+    if (!/^[A-Za-z0-9]{4,15}$/.test(password)) {
+        return res.json({ success: false, message: '패스워드는 4~15자리의 영어와 숫자만 가능합니다.' });
+    }
     pool.getConnection((err, conn) => {
         if (err) {
             console.log('Mysql getConnection error. aborted');
