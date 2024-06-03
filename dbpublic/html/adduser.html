@@ -16,25 +16,26 @@
                 </div>
                 <div class="input-group">
                     <i class='bx bxs-user'></i>
-                    <input type="text" placeholder="닉네임" name="nickname">
-                </div>
+                    <input type="text" placeholder="닉네임" name="nickname" id="nickname" oninput="checkNickname()">
+                    <span id="nicknameCheckResult"></span>
+                </div>                
                 <div class="input-group">
                     <i class='bx bxs-user'></i>
-                    <input type="text" placeholder="아이디" name="id" id="userId">
+                    <input type="text" placeholder="아이디" name="id" id="userId" pattern="[A-Za-z0-9]+" title="아이디는 영어와 숫자만 가능합니다.">
                     <button type="button" onclick="checkDuplicate()">중복 확인</button>
                     <span id="idCheckResult"></span>
                 </div>
                 <div class="password-container">
                     <div class="input-group">
                         <i class='bx bxs-lock-alt'></i>
-                        <input type="password" id="password1" name="password" placeholder="패스워드">
+                        <input type="password" id="password1" name="password" placeholder="패스워드" pattern="[A-Za-z0-9]{4,15}" title="패스워드는 4~15자리의 영어와 숫자만 가능합니다." minlength="4" maxlength="15">
                         <span class="toggle-password"></span>
                     </div>
                 </div>
                 <div class="password-container">
                     <div class="input-group">
                         <i class='bx bxs-lock-alt'></i>
-                        <input type="password" id="password2" placeholder="패스워드 확인">
+                        <input type="password" id="password2" placeholder="패스워드 확인" pattern="[A-Za-z0-9]{4,15}" title="패스워드는 4~15자리의 영어와 숫자만 가능합니다." minlength="4" maxlength="15">
                     </div>
                 </div>
                 <div class="input-group">
