@@ -28,7 +28,7 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: '127.0.0.1',
     user: 'root',
-    password: '0000',
+    password: '00000000',
     database: 'user',
     debug: false
 });
@@ -99,6 +99,9 @@ app.get('/baseball.html', (req, res) => {
 });
 app.get('/minionbird.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'minion-bird-public/public/html', 'minionbird.html'));
+});
+app.get('/inquiry.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'inquiry/html', 'inquiry.html'));
 });
 app.get('/find.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'dbpublic/html', 'find.html'));
