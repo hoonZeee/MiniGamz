@@ -80,7 +80,7 @@ app.use(express.static(path.join(__dirname, 'mainpublic')));
 app.use(express.static(path.join(__dirname, 'basepublic')));
 app.use(express.static(path.join(__dirname, 'dbpublic')));
 app.use(express.static(path.join(__dirname, 'minion-bird-public/public')));
-
+app.use(express.static(path.join(__dirname, 'shootingpublic')));
 // adminpublic 폴더를 /admin 경로로 서빙
 app.use('/admin', express.static(path.join(__dirname, 'adminpublic')));
 
@@ -102,6 +102,9 @@ app.get('/signup.html', (req, res) => {
 app.get('/baseball.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'basepublic/html', 'baseball.html'));
 });
+app.get('/shooting', (req, res) => {
+    res.sendFile(path.join(__dirname, 'shootingpublic/html', 'shooting.html'));
+  });
 app.get('/minionbird.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'minion-bird-public/public/html', 'minionbird.html'));
 });
