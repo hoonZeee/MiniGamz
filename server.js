@@ -100,6 +100,9 @@ app.get('/baseball.html', (req, res) => {
 app.get('/minionbird.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'minion-bird-public/public/html', 'minionbird.html'));
 });
+app.get('/inquiry.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'inquiry/html', 'inquiry.html'));
+});
 app.get('/find.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'dbpublic/html', 'find.html'));
 });
