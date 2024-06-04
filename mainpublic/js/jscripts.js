@@ -122,8 +122,8 @@ function pop() {
         p.x = window.innerWidth * 0.5;
         p.y = window.innerHeight + (Math.random() * window.innerHeight * 0.3);
         p.vel = {
-            x: (Math.random() - 0.5) * 20,
-            y: Math.random() * -40 - 30
+            x: (Math.random() - 0.5) * 30, //x속도 (빠를수록 널리퍼짐)
+            y: Math.random() * -25 - 20 //y속도 (속도줄여서 천천히 떨어지게)
         };
         p.mass = Math.random() * 0.2 + 0.8;
         particles.push(p);
@@ -145,7 +145,7 @@ function render() {
         p.x += p.vel.x;
         p.y += p.vel.y;
         
-        p.vel.y += 1.5;
+        p.vel.y += 1.0;
         p.vel.x *= 0.99;
         if (p.y > window.innerHeight * 1.5) {
             p.remove();
