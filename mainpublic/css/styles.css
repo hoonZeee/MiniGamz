@@ -7,15 +7,36 @@
     --gray-2: #757575;
 }
 
-.fixed-image {
-    position: fixed;
-    top: -170px;
-    left: 10%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 250px; /* 최대 너비를 설정하여 반응형 유지 */
-    z-index: 1000; /* 다른 요소보다 위에 표시되도록 설정 */
+.gamja-flower-regular {
+    font-family: "Gamja Flower", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    }
+
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    font-family: "Gamja Flower", cursive;
+    
 }
+  
+
+.container {
+    display: flex;
+    justify-content: space-between; /* 두 섹션 사이에 공간을 균등하게 배분 */
+    align-items: flex-start; /* 섹션을 위쪽에 정렬 */
+    gap: 20px; /* 두 섹션 사이의 간격 */
+    padding: 20px;
+}
+
+.content-section {
+    flex: 1; /* 두 섹션이 동일한 너비를 갖도록 설정 */
+    min-width: 10px; /* 각 섹션의 최소 너비를 설정 */
+    border-radius: 1rem;
+    padding: 1em;
+}
+
 
 .form button {
     cursor: pointer;
@@ -30,16 +51,13 @@
 }
 
 * {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Gamja Flower', cursive;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-html, body {
-    min-height: 100vh; /* Changed from height: 100vh */
-    overflow: auto; /* Changed from overflow: hidden */
-}
+
 
 .input-group input {
     width: 100%;
@@ -92,12 +110,13 @@ header nav {
     display: flex;
     margin: 0;
     padding: 0;
-}
+} 
 
 .menu li,
 .auth li {
     margin: 0 10px;
-}
+    font-size: 20px;
+}/* 폰트 크기 변경 부분 */
 
 .menu a,
 .auth a {
@@ -167,39 +186,6 @@ main {
     padding: 20px;
 }
 
-.games-section {
-    text-align: center;
-}
-
-.games-section h2 {
-    margin-bottom: 20px;
-}
-
-.games-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-}
-
-.game {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    width: 200px;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.game img {
-    width: 100%;
-    border-radius: 5px;
-}
-
-.game h3 {
-    font-size: 16px;
-    margin: 10px 0;
-}
 
 section {
     margin-bottom: 2em;
@@ -209,12 +195,6 @@ section {
     background-color: #fff;
     padding: 1em;
     margin-bottom: 1em;
-}
-.game img {
-    width: 200px; /* 고정 크기 설정 */
-    height: 150px; /* 고정 크기 설정 */
-    object-fit: cover; /* 이미지 비율 유지하며 크기 맞추기 */
-    border-radius: 5px;
 }
 
 form {
@@ -264,13 +244,14 @@ footer {
     padding: 1em;
     background-color: var(--white);
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    font-size: 20px;
+    width: 30%;
 }
 
 #community .post, #inquiry form {
     border-radius: 1rem;
     padding: 1em;
     background-color: var(--gray);
-   
 }
 
 
@@ -290,7 +271,7 @@ footer {
 
 #toggle-chat-btn.small {
     padding: 5px 10px;
-    font-size: 14px;
+    font-size: 18px;
 }
 
 /* 라이브 채팅 컨테이너 스타일 */
@@ -453,7 +434,7 @@ left: 50%;
 transform: translateX(-50%);
 color: #ffffff;
 margin-top: 0; /* 기존 마진 제거 */
-font-family: "Oswald", sans-serif;
+font-family:'Gamja Flower', cursive;
 font-weight: 400;
 font-size: 30px;
 text-shadow: 0 1px 0 #17d5af;
@@ -476,7 +457,7 @@ opacity: 0;
 
 
 .ch-info-back>h4 {
-font-family: "Oswald", sans-serif;
+font-family:'Gamja Flower', cursive;
 font-weight: 400;
 font-size: 30px;
 color: #fff;
@@ -485,6 +466,7 @@ text-align: center;
 text-transform: uppercase;
 padding: 0;
 margin: 60px 0px 0px 0px;
+white-space: nowrap; 
 }
 
 .ch-info-back>p {

@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <title>Sign Up 페이지 (feat. MySQL, NodeJS)</title>
     <link rel="stylesheet" href="/css/jstyles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Permanent+Marker&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <div class="form-wrapper">
+            <img src="/images/adduser1.png" alt="Minion" class="adduser1">
+            <img src="/images/adduser2.png" alt="Minion" class="adduser2">
+            <img src="/images/adduser3.png" alt="Minion" class="adduser3">
+            <div class="form sign-up"></div>
             <h1>사용자 등록 페이지</h1>
             <form method="post" action="/process/adduser" name="join" class="form" id="signupForm">
                 <div class="input-group">
@@ -40,7 +45,7 @@
                 </div>
                 <div class="input-group">
                     <label for="securityQuestion">본인 확인 질문을 선택하세요</label>
-                    <select id="securityQuestion" name="securityQuestion" onchange="setAnswerInputName()">
+                    <select id="securityQuestion" name="securityQuestion" onchange="setAnswerInputName()" style ="font-size: 15px;">
                         <option value="highschool">출신 고등학교 이름은 무엇인가요?</option>
                         <option value="person">어렸을 때 존경했던 인물은 누구인가요?</option>
                         <option value="alias">어릴 적 별명은 무엇이었나요?</option>

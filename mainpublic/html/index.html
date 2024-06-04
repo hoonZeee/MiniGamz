@@ -5,15 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2024 S/W 팀 프로젝트</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Oswald&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Permanent+Marker&display=swap" rel="stylesheet">
     <style>
-    
-        
-        body, html {
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-    
 
         .hidden {
             opacity: 0;
@@ -37,6 +31,9 @@
         .spacer {
             height: 200px;
         }
+        nav * {
+            font-family: "Gamja Flower", cursive;
+        }
     </style>
 </head>
 <body>
@@ -44,7 +41,7 @@
         <nav>
             <div class="logo">
                 <a href="/">
-                    <h2>Mini Gemz</h2>
+                    <h2>Mini Gamz</h2>
                 </a>
             </div>
             <div class="menu">
@@ -100,7 +97,7 @@
                         </li>
                         <li>
                             <div class="ch-item">
-                                <div class="ch-info" onclick="location.href='bird.html'">
+                                <div class="ch-info" onclick="location.href='minionbird.html'">
                                     <div class="ch-info-front">
                                         <img src="/images/minionbird.png" alt="미니언버드" style="width: 100%; height: auto;">
                                         <h4 style="margin-top: 0;">미니언버드</h4>
@@ -148,67 +145,68 @@
         
         <div class="spacer"></div>
         <div class="spacer"></div>
-        
-        <div class="content-section hidden" id="community">
-            <img src="/images/twomini.png" alt="고정 이미지" class="fixed-image">
-            <h2 style="margin-bottom: 20px; padding-left: 10px;">커뮤니티</h2>
-            <div class="post"style="margin-bottom: 20px;">
-                <h3>게시물 제목</h3>
-                <p>내용</p>
-            </div>
-            <div class="post">
-                <h3>게시물 제목</h3>
-                <p>내용</p>
-            </div>
-        </div>
-
-        <div class="spacer"></div>
-        <div class="spacer"></div>
-        
-        <div class="content-section hidden" id="community">
-                <div class="inquiry-form">
-                    <img src="/images/threemini.png" alt="고정 이미지" style="margin-left: 350px;">
-                    <h1 style="margin-bottom: 20px; padding-left: 10px;">문의 게시판</h1>
-                    <form id="inquiry-form">
-                        <div class="input-group">
-                            <i class='bx bxs-user'></i>
-                            <input type="text" placeholder="이름" name="name" id="name" required>
-                        </div>
-                        <div class="input-group">
-                            <i class='bx bxs-envelope'></i>
-                            <input type="email" placeholder="이메일" name="email" id="email" required>
-                        </div>
-                        <div class="input-group">
-                            <i class='bx bxs-message-alt'></i>
-    
-                            <textarea placeholder="문의 내용" name="message" id="message" rows="4" required></textarea>
-                        </div>
-                        <button type="submit" style = "width: 100px;font-size: 16px; ">제출</button>
-                    </form>
+         <div class="container">
+            <div class="content-section hidden" id="community">
+                <img src="/images/twomini.png" alt="고정 이미지" style="width: 40%; display: block; margin: auto;">
+                <h2 style="margin-bottom: 20px; padding-left: 10px;">커뮤니티</h2>
+                <div class="post"style="margin-bottom: 20px;">
+                    <h3>게시물 제목</h3>
+                    <p>내용</p>
+                </div>
+                <div class="post">
+                    <h3>게시물 제목</h3>
+                    <p>내용</p>
                 </div>
             </div>
-        </div>
+
+            <div class="spacer"></div>
+            <div class="spacer"></div>
+            
+            <div class="content-section hidden" id="community">
+                    <div class="inquiry-form">
+                        <img src="/images/threemini.png" alt="고정 이미지"  style="width: 50%; display: block; margin: auto;margin-top: -55px;">
+                        <h1 style="margin-bottom: 20px; padding-left: 10px;">문의 게시판</h1>
+                        <form id="inquiry-form">
+                            <div class="input-group">
+                                <i class='bx bxs-user'></i>
+                                <input type="text" placeholder="이름" name="name" id="name" required style="font-size: 24px;">
+                            </div>
+                            <div class="input-group">
+                                <i class='bx bxs-envelope'></i>
+                                <input type="email" placeholder="이메일" name="email" id="email" required style="font-size: 24px;">
+                            </div>
+                            <div class="input-group">
+                                <i class='bx bxs-message-alt'></i>
         
-        <div class="spacer"></div>
+                                <textarea placeholder="문의 내용" name="message" id="message" rows="4" required style="font-size: 24px;"></textarea>
+                            </div>
+                            <button type="submit" style = "width: 100px;font-size: 16px; ">제출</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="spacer"></div>
 
         
-            <div id="toggle-chat" class="chat-container">
-                <section id="chat">
-                    <h2>라이브 채팅</h2>
-                    <ul id="messages"></ul>
-                    <form id="chat-form">
-                        <input id="username" type="text" placeholder="유저명" required>
-                        <input id="chat-message" type="text" placeholder="메시지 입력" required>
-                        <button type="submit">전송</button>
-                    </form>
-                </section>
-            </div>
-            <button id="toggle-chat-btn" data-open-text="라이브 채팅 열기">닫기</button>
-        </div>
+                <div id="toggle-chat" class="chat-container">
+                    <section id="chat">
+                        <h2>라이브 채팅</h2>
+                        <ul id="messages"></ul>
+                        <form id="chat-form">
+                            <input id="username" type="text" placeholder="유저명" required>
+                            <input id="chat-message" type="text" placeholder="메시지 입력" required>
+                            <button type="submit">전송</button>
+                        </form>
+                    </section>
+                </div>
+             </div>
+            <script src="/socket.io/socket.io.js"></script>
+        <button id="toggle-chat-btn" data-open-text="라이브 채팅 열기">닫기</button>
     </main>
+        
+
     
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/mainpublic/js/scripts.js"></script>
     <script>
         function checkLoginStatus() {
             fetch('/api/profile')
@@ -283,19 +281,9 @@
     });
 
     // 라이브 채팅창 토글 기능 추가
-    const toggleChatBtn = document.getElementById("toggle-chat-btn");
-    const chatContainer = document.getElementById("toggle-chat");
 
-    toggleChatBtn.addEventListener("click", function() {
-        if (chatContainer.style.display === "none" || chatContainer.style.display === "") {
-            chatContainer.style.display = "block";
-            toggleChatBtn.textContent = "닫기";
-        } else {
-            chatContainer.style.display = "none";
-            toggleChatBtn.textContent = "라이브 채팅 열기";
-        }
-    });
 });
     </script>
+    <script src="/js/scripts.js"></script>
 </body>
 </html>
