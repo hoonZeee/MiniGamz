@@ -203,6 +203,7 @@
             
             <div class="spacer"></div>
 
+
         <div id="toggle-chat" class="chat-container">
             <section id="chat">
                 <h2>라이브 채팅</h2>
@@ -216,6 +217,7 @@
         </div>
     <script src="/socket.io/socket.io.js"></script>
     <button id="toggle-chat-btn" data-open-text="라이브 채팅 열기">닫기</button>
+
     </main>
         
 
@@ -283,9 +285,12 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+
+            // 기존 기능
             checkLoginStatus();
             document.getElementById('profileLink').addEventListener('click', redirectToProfile);
         
+            // 애니메이션 효과 적용
             const sections = document.querySelectorAll('.content-section');
             const observer = new IntersectionObserver(entries => {
                 entries.forEach(entry => {
@@ -302,8 +307,10 @@
             sections.forEach(section => {
                 observer.observe(section);
             });
+            // 라이브 채팅창 토글 기능 추가
         });
         
+
     </script>
     <script src="/js/scripts.js"></script>
 </body>
