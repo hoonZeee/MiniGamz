@@ -12,6 +12,9 @@ let isGamePaused = false;
 let frameCount = 0;
 let score = 0;
 let animationFrameId;
+let pipeSpeed = 2; // 초기 파이프 속도
+let gravity = 0.1; // 초기 중력
+let pipeGap = 200;  // 초기 파이프 수직 간격
 
 // 이미지 로드
 const backgroundImg = new Image();
@@ -37,14 +40,12 @@ const bird = {
     y: 150,
     width: 34,
     height: 24,
-    gravity: 0.1,  // 중력
     lift: -5,  // 점프 범위
     velocity: 0
 };
 
 const pipes = [];
 const pipeWidth = 52;
-const pipeGap = 200;  // 파이프 수직 간격
 const pipeHorizontalGap = 300; // 파이프 수평 간격
 
 function allImagesLoaded(callback) {
@@ -163,15 +164,15 @@ function createPipe() {
 function update() {
     if (isGameOver || isGamePaused) return;
 
-    bird.velocity += bird.gravity;
+    bird.velocity += gravity;
     bird.y += bird.velocity;
 
-    if (frameCount % pipeHorizontalGap === 0) {  // 파이프 생성 주기를 증가시더 넓은 간격을 유지
+    if (frameCount % pipeHorizontalGap === 0) {  // 파이프 생성 주기를 증가시켜 더 넓은 간격을 유지
         createPipe();
     }
 
     for (let i = pipes.length - 1; i >= 0; i--) {
-        pipes[i].x -= 2;
+        pipes[i].x -= pipeSpeed;
 
         if (
             bird.x < pipes[i].x + pipes[i].width &&
@@ -185,6 +186,12 @@ function update() {
         if (pipes[i].x + pipes[i].width < 0) {
             pipes.splice(i, 1);
             score++;
+            if (score % 20 === 0) { // 스코어가 20점마다 속도 증가 및 파이프 간격 감소
+                pipeSpeed += 0.5;
+                gravity += 0.01;
+                pipeGap -= 10;
+                if (pipeGap < 100) pipeGap = 100; // 파이프 간격의 최소값 설정
+            }
         }
     }
 
@@ -220,7 +227,7 @@ function render() {
 
 function endGame() {
     isGameOver = true;
-    isGameStarted = false;  // 게임이 끝났음 표시
+    isGameStarted = false;  // 게임이 끝났음을 표시
     cancelAnimationFrame(animationFrameId);  // 게임 루프 중지
     bgmSound.pause(); // 배경 음악 중지
     bgmSound.currentTime = 0; // 배경 음악 위치 초기화
@@ -254,6 +261,9 @@ function resetGame() {
     pipes.length = 0;
     score = 0;
     frameCount = 0;
+    pipeSpeed = 2; // 초기 파이프 속도 재설정
+    gravity = 0.1; // 초기 중력 재설정
+    pipeGap = 200; // 초기 파이프 수직 간격 재설정
     isGameOver = false;
 }
 
@@ -269,3 +279,4 @@ function gameLoop() {
 allImagesLoaded(() => {
     startButton.style.display = 'block';
 });
+
