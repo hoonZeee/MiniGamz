@@ -213,6 +213,7 @@ app.delete('/api/posts/:id', (req, res) => {
         }
     });
 });
+
 //커뮤니티 게시판
 
 // MySQL 데이터베이스 및 테이블 생성
@@ -225,8 +226,10 @@ app.use(express.static(path.join(__dirname, 'dbpublic')));
 app.use(express.static(path.join(__dirname, 'minion-bird-public/public')));
 app.use(express.static(path.join(__dirname, 'shootingpublic')));
 app.use(express.static(path.join(__dirname, 'minion-jump-public')));
-// adminpublic 폴더를 /admin 경로로 서빙
-app.use('/admin', express.static(path.join(__dirname, 'adminpublic')));
+
+// admin 라우터 불러오는 부분
+const adminRouter = require('./routes/admin');
+app.use('/admin', adminRouter); //admin 라우터 사용
 
 app.use(session({
     secret: 'your_secret_key',
@@ -270,10 +273,6 @@ app.get('/profile.html', (req, res) => {
     } else {
         res.redirect('/login.html?redirectUrl=/profile.html'); // 로그인하지 않은 경우 로그인 페이지로 리디렉션
     }
-});
-// /admin 경로로 admin.html 파일 제공
-app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'adminpublic', 'admin.html'));
 });
 
 app.post('/guess', (req, res) => {
