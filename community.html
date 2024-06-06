@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>미니겜즈 문의 게시판</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Permanent+Marker&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Gamja Flower", cursive, Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            text-align: center;
+            background-size: cover;
+            font-size: 20px;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            margin: 20px 0;
+            color: #ffcc00;
+            text-shadow: 2px 2px #000;
+            display: inline-block;
+            position: relative;
+        }
+
+        h1::before {
+            content: "";
+            background: url('/images/icon.png') no-repeat;
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            left: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        table {
+            margin: 20px auto;
+            width: 80%;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #ffcc00;
+            color: #333;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #ffcc00;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #ff9900;
+        }
+
+        form {
+            display: inline;
+        }
+
+        #newPostForm {
+            margin: 20px auto;
+            width: 80%;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 5px;
+            display: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin: 10px 0;
+        }
+
+        header {
+            position: relative;
+            text-align: center;
+        }
+
+        header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ffd200;
+            color: #000;
+            padding: 10px;
+        }
+
+        .logo {
+            margin-left: 20px;
+        }
+
+        .menu ul, .auth ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        .menu li, .auth li {
+            margin: 0 10px;
+        }
+
+        .menu a, .auth a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .auth {
+            margin-right: 20px;
+        }
+
+        .header-text {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .minion-header {
+            margin-bottom: 20px;
+        }
+
+        .minion-header img {
+            max-width: 60%;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: rgb(255, 213, 4);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .fa-2x {
+            font-size: 2em;
+        }
+
+        .fa {
+            position: relative;
+            display: table-cell;
+            width: 60px;
+            height: 36px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 20px;
+        }
+
+        .main-menu:hover, nav.main-menu.expanded {
+            width: 250px;
+            overflow: visible;
+        }
+
+        .main-menu {
+            background: #ffcc00;
+            border-right: 1px solid #e5e5e5;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            height: 100%;
+            left: 0;
+            width: 60px;
+            overflow: hidden;
+            -webkit-transition: width .05s linear;
+            transition: width .05s linear;
+            -webkit-transform: translateZ(0) scale(1, 1);
+            z-index: 1000;
+        }
+
+        .main-menu>ul {
+            margin: 7px 0;
+        }
+
+        .main-menu li {
+            position: relative;
+            display: block;
+            width: 250px;
+        }
+
+        .main-menu li>a {
+            position: relative;
+            display: table;
+            border-collapse: collapse;
+            border-spacing: 0;
+            color: #999;
+            font-family: Arial;
+            font-size: 14px;
+            text-decoration: none;
+            -webkit-transform: translateZ(0) scale(1, 1);
+            -webkit-transition: all .1s linear;
+            transition: all .1s linear;
+        }
+
+        .main-menu .nav-icon {
+            position: relative;
+            display: table-cell;
+            width: 60px;
+            height: 36px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 18px;
+        }
+
+        .main-menu .nav-text {
+            position: relative;
+            display: table-cell;
+            vertical-align: middle;
+            width: 190px;
+            font-family: 'Titillium Web', sans-serif;
+        }
+
+        .main-menu>ul.logout {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+        }
+
+        .no-touch .scrollable.hover {
+            overflow-y: hidden;
+        }
+
+        .no-touch .scrollable.hover:hover {
+            overflow-y: auto;
+            overflow: visible;
+        }
+
+        a:hover, a:focus {
+            text-decoration: none;
+        }
+
+        nav {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+        }
+
+        nav ul, nav li {
+            outline: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .main-menu li:hover>a, nav.main-menu li.active>a, .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus, .dropdown-menu>.active>a, .dropdown-menu>.active>a:hover, .dropdown-menu>.active>a:focus, .no-touch .dashboard-page nav.dashboard-menu ul li:hover a, .dashboard-page nav.dashboard-menu ul li.active a {
+            color: #000000;
+            background-color: #fefbd5;
+        }
+
+        .area {
+            float: left;
+            background: #e2e2e2;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo"></div>
+    </nav>
+    <div class="minion-header">
+        <img src="/images/minion_header.png" alt="Minion Header Image">
+    </div>
+    <h1>미니겜즈 문의 게시판</h1>
+
+    <button onclick="toggleNewPostForm()">새 글 쓰기</button>
+
+    <div id="newPostForm">
+        <form id="postForm">
+            <label for="title">제목</label>
+            <input type="text" id="title" name="title" required>
+            <label for="content">내용</label>
+            <textarea id="content" name="content" required></textarea>
+            <button type="submit">등록</button>
+        </form>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>작성일</th>
+                <th>비고</th>
+            </tr>
+        </thead>
+        <tbody id="postsList">
+            <!-- 게시글 목록이 여기에 추가됩니다 -->
+        </tbody>
+    </table>
+
+    <!-- The Modal -->
+    <div id="postModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <p id="modalContent"></p>
+        </div>
+    </div>
+
+    <script>
+        const postsList = document.getElementById('postsList');
+        const postForm = document.getElementById('postForm');
+        const postModal = document.getElementById('postModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        const span = document.getElementsByClassName('close')[0];
+
+        const posts = [
+            { number: 1, title: '게시글 제목1', author: '작성자1', date: '2022-01-01', content: '게시글 내용1' },
+            { number: 2, title: '게시글 제목2', author: '작성자2', date: '2022-01-02', content: '게시글 내용2' },
+        ];
+
+        function displayPosts() {
+            postsList.innerHTML = '';
+            posts.forEach(post => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${post.number}</td>
+                    <td><a href="#" onclick="openModal(${post.number})">${post.title}</a></td>
+                    <td>${post.author}</td>
+                    <td>${post.date}</td>
+                    <td><button onclick="deletePost(${post.number})">삭제</button></td>
+                `;
+                postsList.appendChild(row);
+            });
+        }
+
+        function openModal(postNumber) {
+            const post = posts.find(p => p.number === postNumber);
+            modalTitle.innerText = post.title;
+            modalContent.innerText = post.content;
+            postModal.style.display = 'block';
+        }
+
+        span.onclick = function() {
+            postModal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target === postModal) {
+                postModal.style.display = 'none';
+            }
+        }
+
+        function toggleNewPostForm() {
+            const newPostForm = document.getElementById('newPostForm');
+            if (newPostForm.style.display === 'none' || newPostForm.style.display === '') {
+                newPostForm.style.display = 'block';
+            } else {
+                newPostForm.style.display = 'none';
+            }
+        }
+
+        postForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            const newPost = {
+                number: posts.length + 1,
+                title,
+                author: '작성자3',
+                date: new Date().toISOString().split('T')[0],
+                content
+            };
+            posts.push(newPost);
+            displayPosts();
+            postForm.reset();
+            toggleNewPostForm();
+        });
+
+        function deletePost(postNumber) {
+            const postIndex = posts.findIndex(p => p.number === postNumber);
+            if (postIndex > -1) {
+                posts.splice(postIndex, 1);
+                displayPosts();
+            }
+        }
+
+        displayPosts();
+    </script>
+</body>
+</html>
