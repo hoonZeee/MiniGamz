@@ -4,12 +4,15 @@ const path = require('path');
 const socketIo = require('socket.io');
 const mysql = require('mysql');
 const session = require('express-session');
+const bodyParser = require('body-parser');
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
 const PORT = 3000;
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 let targetNumber = generateRandomNumber();
 
@@ -28,12 +31,12 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: '127.0.0.1',
     user: 'root',
-    password: '1234',
+    password: '00000000',
     database: 'user',
     debug: false
 });
 
-// 데이터베이스 및 테이블 생성
+// 데이터베이스 및 테이블 생성 및 수정
 pool.getConnection((err, conn) => {
     if (err) {
         console.error('MySQL 연결 실패:', err);
@@ -47,7 +50,7 @@ pool.getConnection((err, conn) => {
     const useDatabaseQuery = `
     USE user;
     `;
-    
+
     const createTableQuery = `
     CREATE TABLE IF NOT EXISTS users (
         id varchar(100) NOT NULL COMMENT '사용자 로그인 아이디',
@@ -63,25 +66,66 @@ pool.getConnection((err, conn) => {
         UNIQUE KEY unique_nickname (nickname)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
     `;
-    conn.query(createTableQuery, (err, result) => {
-        conn.release();
+
+    const checkColumnQuery = `
+    SELECT COUNT(*) AS count FROM INFORMATION_SCHEMA.COLUMNS 
+    WHERE TABLE_NAME = 'users' AND COLUMN_NAME = 'profileImage';
+    `;
+
+    const alterTableQuery = `
+    ALTER TABLE users ADD COLUMN profileImage VARCHAR(300) DEFAULT '/images/bob.webp' COMMENT '프로필 이미지';
+    `;
+
+    conn.query(createDatabaseQuery, (err) => {
         if (err) {
-            console.error('테이블 생성 실패:', err);
-        } else {
-            console.log('테이블 생성 성공!');
+            console.error('데이터베이스 생성 실패:', err);
+            return;
         }
+        conn.query(useDatabaseQuery, (err) => {
+            if (err) {
+                console.error('데이터베이스 사용 실패:', err);
+                return;
+            }
+            conn.query(createTableQuery, (err) => {
+                if (err) {
+                    console.error('테이블 생성 실패:', err);
+                } else {
+                    console.log('테이블 생성 성공!');
+                }
+                conn.query(checkColumnQuery, (err, results) => {
+                    if (err) {
+                        console.error('컬럼 확인 실패:', err);
+                        conn.release();
+                    } else {
+                        const count = results[0].count;
+                        if (count === 0) {
+                            conn.query(alterTableQuery, (err) => {
+                                conn.release();
+                                if (err) {
+                                    console.error('테이블 수정 실패:', err);
+                                } else {
+                                    console.log('테이블 수정 성공!');
+                                }
+                            });
+                        } else {
+                            conn.release();
+                            console.log('프로필 이미지 컬럼이 이미 존재합니다.');
+                        }
+                    }
+                });
+            });
+        });
     });
 });
 
-//문의 게시판 DB
-const bodyParser = require('body-parser');
+// 문의 게시판 DB
 
 app.use(bodyParser.json());
 
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root', // MySQL 유저 이름
-    password: '1234', // MySQL 비밀번호
+    password: '00000000', // MySQL 비밀번호
     database: 'post' // MySQL 데이터베이스 이름
 });
 
@@ -128,6 +172,7 @@ db.connect((err) => {
         });
     });
 });
+
 app.get('/api/posts', (req, res) => {
     const sql = 'SELECT * FROM posts';
     db.query(sql, (err, results) => {
@@ -172,8 +217,6 @@ app.delete('/api/posts/:id', (req, res) => {
 
 // MySQL 데이터베이스 및 테이블 생성
 
-
-
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'mainpublic')));
@@ -205,7 +248,7 @@ app.get('/baseball.html', (req, res) => {
 });
 app.get('/shooting', (req, res) => {
     res.sendFile(path.join(__dirname, 'shootingpublic/html', 'shooting.html'));
-  });
+});
 app.get('/minionbird.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'minion-bird-public/public/html', 'minionbird.html'));
 });
@@ -277,24 +320,23 @@ app.post('/process/login', (req, res) => {
     const redirectUrl = req.body.redirectUrl || '/';
 
     console.log('로그인 요청' + paramId + '' + paramPassword);
-    
+
     if (!paramId || !paramPassword) {
         res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' });
         res.write('<h2>로그인 실패. 아이디와 비밀번호를 입력해 주세요.</h2>');
         res.end();
         return;
     }
-    
+
     pool.getConnection((err, conn) => {
         if (err) {
-            conn.release();
             console.log('Mysql getConnection error. aborted');
             res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' });
             res.write('<h1>DB서버 연결 실패</h1>');
             res.end();
             return;
         }
-        const exec = conn.query('select `id`, `name`, `nickname` from `users` where `id`=? and `password`=?',
+        const exec = conn.query('select `id`, `name`, `nickname`, `profileImage` from `users` where `id`=? and `password`=?',
             [paramId, paramPassword],
             (err, rows) => {
                 conn.release();
@@ -309,15 +351,13 @@ app.post('/process/login', (req, res) => {
                 }
                 if (rows.length > 0) {
                     console.log('아이디[%s], 패스워드가 일치하는 사용자 [%s] 찾음', paramId, rows[0].name);
-                    req.session.user = { id: rows[0].id, name: rows[0].name, nickname: rows[0].nickname }; // 세션에 사용자 정보 저장
+                    req.session.user = { id: rows[0].id, name: rows[0].name, nickname: rows[0].nickname, profileImage: rows[0].profileImage }; // 세션에 사용자 정보 저장
                     res.redirect(redirectUrl);    // 로그인 성공시 리디렉션 URL로 이동
-                    return;
                 } else {
                     console.log('아이디[%s], 패스워드가 일치없음', paramId);
                     res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' });
                     res.write('<h2>로그인 실패. 아이디와 패스워드를 확인하세요.</h2>');
                     res.end();
-                    return;
                 }
             }
         );
@@ -524,6 +564,33 @@ app.post('/api/change-password', (req, res) => {
     });
 });
 
+app.post('/api/change-profile-image', (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: '로그인 상태가 아닙니다.' });
+    }
+
+    const { profileImage } = req.body;
+    const userId = req.session.user.id;
+
+    pool.getConnection((err, conn) => {
+        if (err) {
+            console.error('MySQL 연결 실패:', err);
+            return res.status(500).json({ error: '서버 에러' });
+        }
+
+        const query = 'UPDATE users SET profileImage = ? WHERE id = ?';
+        conn.query(query, [profileImage, userId], (err, result) => {
+            conn.release();
+            if (err) {
+                console.error('프로필 이미지 변경 실패:', err);
+                return res.status(500).json({ error: '프로필 이미지 변경 실패' });
+            }
+            req.session.user.profileImage = profileImage; // 세션에 저장된 프로필 이미지 업데이트
+            res.json({ success: true });
+        });
+    });
+});
+
 app.post('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
@@ -536,4 +603,3 @@ app.post('/logout', (req, res) => {
 server.listen(PORT, () => {
     console.log(`http://localhost:${PORT} 에서 실행 중..`);
 });
-
