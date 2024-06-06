@@ -59,6 +59,31 @@ const emptyHeart = '🤍'; // 빈 하트 이모지
 
 startButton.addEventListener('click', startGame); // 시작 버튼 클릭 이벤트 리스너 추가
 
+function checkLoginStatus() {
+    fetch('/api/check-login')
+        .then(response => response.json())
+        .then(data => {
+            if (!data.loggedIn) {
+                // 로그인하지 않은 경우 게임 시작 버튼 비활성화
+                startButton.disabled = true;
+                startButton.textContent = '로그인 필요';
+                alert('게임을 시작하려면 로그인해야 합니다.');
+            } else {
+                // 로그인된 경우 게임 시작 버튼 활성화
+                startButton.disabled = false;
+                startButton.textContent = '게임 시작';
+            }
+        })
+        .catch(err => {
+            console.error('Error checking login status:', err);
+        });
+}
+
+// 페이지 로드 시 로그인 상태 확인
+window.onload = function() {
+    checkLoginStatus();
+};
+
 function startGame() {
   startButton.style.display = 'none'; // 시작 버튼 숨기기
   canvas.style.display = 'block'; // 캔버스 보이기
@@ -98,6 +123,7 @@ function drawPotions() { // 포션 그리기 함수
     potion.y += potion.dy * gameSpeed; // 포션 이동 (게임 속도 반영)
   });
 }
+
 // 적 생성 함수 추가
 function spawnEnemy() {
   const enemyWidth = 80;
@@ -280,8 +306,7 @@ function update() { // 게임 업데이트 함수
         drawGameOver(); // 게임 오버 메시지 그리기
         gameOver = true; // 게임 오버 상태 설정
         clearInterval(bulletInterval); // 총알 발사 인터벌 제거
-        clearInterval(itemInterval); // 아이템 생성 인터벌 제거
-        clearInterval(potionInterval); // 포션 생성 인터벌 제거
+        clearInterval(gameInterval); // 게임 인터벌 제거
       }
     }
   });
