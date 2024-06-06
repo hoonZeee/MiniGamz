@@ -119,3 +119,10 @@
 6/6 황정인<br/>
   - index.html,stykes.css 필요없는 부분정리
   - 라이브채팅 모양 변경
+
+6.6 권진호<br/>
+  - 문의 글 클릭시 내용확인기능
+  - 커뮤니티 페이지 생성 및 테이블생성
+  - 커뮤니티 카테고리창 생성
+  - 시험용 자유게시판(free.html) 생성
+  - quiry.html,community.html, free.html, server.js 업데이트

@@ -118,7 +118,7 @@ pool.getConnection((err, conn) => {
     });
 });
 
-// 문의 게시판 DB
+//문의 게시판 DB
 
 app.use(bodyParser.json());
 
@@ -199,6 +199,22 @@ app.post('/api/posts', (req, res) => {
     });
 });
 
+app.put('/api/posts/:id', (req, res) => {
+    const postId = req.params.id;
+    const { title, author, content, date } = req.body;
+    const sql = 'UPDATE posts SET title = ?, author = ?, content = ?, date = ? WHERE id = ?';
+    db.query(sql, [title, author, content, date, postId], (err, result) => {
+        if (err) {
+            console.error('Error updating post in database:', err);
+            res.status(500).send('Database error');
+        } else if (result.affectedRows === 0) {
+            res.status(404).send('Post not found');
+        } else {
+            res.status(200).send('Post updated successfully');
+        }
+    });
+});
+
 app.delete('/api/posts/:id', (req, res) => {
     const postId = req.params.id;
     const sql = 'DELETE FROM posts WHERE id = ?';
@@ -216,7 +232,114 @@ app.delete('/api/posts/:id', (req, res) => {
 
 //커뮤니티 게시판
 
-// MySQL 데이터베이스 및 테이블 생성
+app.use(bodyParser.json());
+
+const ddb = mysql.createConnection({
+    host: 'localhost',
+    user: 'root', // MySQL 유저 이름
+    password: '00000000', // MySQL 비밀번호
+    database: 'post' // MySQL 데이터베이스 이름
+});
+
+ddb.connect((err) => {
+    if (err) {
+        console.error('MySQL 연결 실패:', err);
+        return;
+    }
+    console.log('MySQL 연결 성공!');
+
+    const createDatabaseQuery = 'CREATE DATABASE IF NOT EXISTS post;';
+    const useDatabaseQuery = 'USE post;';
+    const createTableQuery = `
+        CREATE TABLE IF NOT EXISTS img (
+            id INT AUTO_INCREMENT PRIMARY KEY COMMENT '게시글 ID',
+            author VARCHAR(100) NOT NULL COMMENT '작성자',
+            title VARCHAR(100) NOT NULL COMMENT '제목',
+            content TEXT NOT NULL COMMENT '문의내용',
+            date DATETIME NOT NULL COMMENT '날짜'
+        ) COMMENT='게시글 테이블';
+    `;
+
+    ddb.query(createDatabaseQuery, (err, result) => {
+        if (err) {
+            console.error('데이터베이스 생성 실패:', err);
+            return;
+        }
+        console.log('데이터베이스 생성 성공!');
+
+        ddb.query(useDatabaseQuery, (err, result) => {
+            if (err) {
+                console.error('데이터베이스 사용 실패:', err);
+                return;
+            }
+            console.log('데이터베이스 사용 성공!');
+
+            ddb.query(createTableQuery, (err, result) => {
+                if (err) {
+                    console.error('테이블 생성 실패:', err);
+                } else {
+                    console.log('테이블 생성 성공!');
+                }
+            });
+        });
+    });
+});
+app.get('/api/img', (req, res) => {
+    const sql = 'SELECT * FROM img';
+    ddb.query(sql, (err, results) => {
+        if (err) {
+            console.error('Error retrieving img from database:', err);
+            res.status(500).send('Database error');
+        } else {
+            res.status(200).json(results);
+        }
+    });
+});
+
+app.post('/api/img', (req, res) => {
+    const { title, author, content, date } = req.body;
+    const sql = 'INSERT INTO img (title, author, content, date) VALUES (?, ?, ?, ?)';
+    ddb.query(sql, [title, author, content, date], (err, result) => {
+        if (err) {
+            console.error('Error adding post to database:', err);
+            res.status(500).send('Database error');
+        } else {
+            console.log('1 record inserted');
+            res.status(201).send('Post added');
+        }
+    });
+});
+
+app.put('/api/img/:id', (req, res) => {
+    const postId = req.params.id;
+    const { title, author, content, date } = req.body;
+    const sql = 'UPDATE img SET title = ?, author = ?, content = ?, date = ? WHERE id = ?';
+    ddb.query(sql, [title, author, content, date, postId], (err, result) => {
+        if (err) {
+            console.error('Error updating post in database:', err);
+            res.status(500).send('Database error');
+        } else if (result.affectedRows === 0) {
+            res.status(404).send('Post not found');
+        } else {
+            res.status(200).send('Post updated successfully');
+        }
+    });
+});
+
+app.delete('/api/img/:id', (req, res) => {
+    const postId = req.params.id;
+    const sql = 'DELETE FROM img WHERE id = ?';
+    ddb.query(sql, [postId], (err, result) => {
+        if (err) {
+            console.error('Error deleting post from database:', err);
+            res.status(500).send('Database error');
+        } else if (result.affectedRows === 0) {
+            res.status(404).send('Post not found');
+        } else {
+            res.status(200).send('Post deleted successfully');
+        }
+    });
+});
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -263,6 +386,9 @@ app.get('/inquiry.html', (req, res) => {
 });
 app.get('/community.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'community/html', 'community.html'));
+});
+app.get('/free.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'free/html', 'free.html'));
 });
 app.get('/find.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'dbpublic/html', 'find.html'));
