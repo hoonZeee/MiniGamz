@@ -15,12 +15,38 @@
       left: 50%;
       transform: translate(-50%, -50%);
     }
+    #userInfo {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 20px;
+      color: white;
+    }
   </style>
 </head>
 <body>
   <button id="startButton">Game Start</button>
+  <div id="userInfo">
+    <p id="nickname"></p>
+    <p id="highScore"></p>
+  </div>
   <canvas id="gameCanvas" style="display:none;"></canvas>
   <audio id="backgroundMusic" src="music/background.mp3" loop></audio>
   <script src="shootinggame.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('/api/profile')
+            .then(response => response.json())
+            .then(data => {
+                if (data.nickname) {
+                    document.getElementById('nickname').innerText = `닉네임: ${data.nickname}`;
+                    document.getElementById('highScore').innerText = `최고 점수: ${data.score}점`;
+                }
+            })
+            .catch(error => {
+                console.error('프로필 정보 가져오기 중 오류 발생:', error);
+            });
+    });
+  </script>
 </body>
 </html>
