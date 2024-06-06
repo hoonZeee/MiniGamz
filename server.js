@@ -349,6 +349,7 @@ app.use(express.static(path.join(__dirname, 'dbpublic')));
 app.use(express.static(path.join(__dirname, 'minion-bird-public/public')));
 app.use(express.static(path.join(__dirname, 'shootingpublic')));
 app.use(express.static(path.join(__dirname, 'minion-jump-public')));
+app.use(express.static(path.join(__dirname, '2048public')));
 
 // admin 라우터 불러오는 부분
 const adminRouter = require('./routes/admin');
@@ -380,6 +381,9 @@ app.get('/minionbird.html', (req, res) => {
 });
 app.get('/minionjump', (req, res) => {
     res.sendFile(path.join(__dirname, 'minion-jump-public', 'minionjump.html'));
+});
+app.get('/2048', (req, res) => {
+    res.sendFile(path.join(__dirname, '2048public', '2048.html'));
 });
 app.get('/inquiry.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'inquiry/html', 'inquiry.html'));
