@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="ko">
+    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>미니겜즈 문의 게시판</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Permanent+Marker&display=swap" rel="stylesheet">
     <style>
+        /* 기존 스타일 코드 */
         body {
-            font-family: "Gamja Flower", cursive, Arial, sans-serif;
+            font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             color: #333;
             text-align: center;
             background-size: cover;
+            font-family: "Gamja Flower", cursive;
             font-size: 20px;
-            margin: 0;
-            padding: 0;
         }
 
         h1 {
@@ -42,20 +43,15 @@
             width: 80%;
             border-collapse: collapse;
             background-color: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            overflow: hidden;
         }
 
         th, td {
-            padding: 15px;
+            padding: 10px;
             border: 1px solid #ddd;
-            text-align: center;
         }
 
         th {
             background-color: #ffcc00;
-            color: #333;
         }
 
         button {
@@ -65,7 +61,6 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
         }
 
         button:hover {
@@ -83,19 +78,16 @@
             padding: 20px;
             border-radius: 5px;
             display: none;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         label {
             display: block;
             margin: 10px 0;
         }
-
         header {
             position: relative;
             text-align: center;
         }
-
         header nav {
             display: flex;
             justify-content: space-between;
@@ -104,31 +96,33 @@
             color: #000;
             padding: 10px;
         }
-
+        
         .logo {
             margin-left: 20px;
         }
-
-        .menu ul, .auth ul {
+        
+        .menu ul,
+        .auth ul {
             list-style: none;
             display: flex;
             margin: 0;
             padding: 0;
         }
-
-        .menu li, .auth li {
+        
+        .menu li,
+        .auth li {
             margin: 0 10px;
         }
-
-        .menu a, .auth a {
+        
+        .menu a,
+        .auth a {
             color: #000;
             text-decoration: none;
         }
-
+        
         .auth {
             margin-right: 20px;
         }
-
         .header-text {
             background-color: rgba(255, 255, 255, 0.8);
             padding: 20px;
@@ -138,15 +132,16 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
-
+        
         .minion-header {
             margin-bottom: 20px;
         }
-
+        
         .minion-header img {
             max-width: 60%;
         }
 
+        /* 모달 스타일 추가 */
         .modal {
             display: none;
             position: fixed;
@@ -156,6 +151,7 @@
             width: 100%;
             height: 100%;
             overflow: auto;
+            background-color: rgb(0, 0, 0);
             background-color: rgba(0, 0, 0, 0.4);
             padding-top: 60px;
         }
@@ -168,7 +164,6 @@
             width: 80%;
             max-width: 600px;
             border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             text-align: left;
         }
 
@@ -186,255 +181,517 @@
             cursor: pointer;
         }
 
-        .fa-2x {
-            font-size: 2em;
-        }
-
-        .fa {
-            position: relative;
-            display: table-cell;
-            width: 60px;
-            height: 36px;
-            text-align: center;
-            vertical-align: middle;
-            font-size: 20px;
-        }
-
-        .main-menu:hover, nav.main-menu.expanded {
-            width: 250px;
-            overflow: visible;
-        }
-
-        .main-menu {
-            background: #ffcc00;
-            border-right: 1px solid #e5e5e5;
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            height: 100%;
-            left: 0;
-            width: 60px;
-            overflow: hidden;
-            -webkit-transition: width .05s linear;
-            transition: width .05s linear;
-            -webkit-transform: translateZ(0) scale(1, 1);
-            z-index: 1000;
-        }
-
-        .main-menu>ul {
-            margin: 7px 0;
-        }
-
-        .main-menu li {
-            position: relative;
-            display: block;
-            width: 250px;
-        }
-
-        .main-menu li>a {
-            position: relative;
-            display: table;
-            border-collapse: collapse;
-            border-spacing: 0;
-            color: #999;
-            font-family: Arial;
-            font-size: 14px;
-            text-decoration: none;
-            -webkit-transform: translateZ(0) scale(1, 1);
-            -webkit-transition: all .1s linear;
-            transition: all .1s linear;
-        }
-
-        .main-menu .nav-icon {
-            position: relative;
-            display: table-cell;
-            width: 60px;
-            height: 36px;
-            text-align: center;
-            vertical-align: middle;
-            font-size: 18px;
-        }
-
-        .main-menu .nav-text {
-            position: relative;
-            display: table-cell;
-            vertical-align: middle;
-            width: 190px;
-            font-family: 'Titillium Web', sans-serif;
-        }
-
-        .main-menu>ul.logout {
-            position: absolute;
-            left: 0;
-            bottom: 0;
-        }
-
-        .no-touch .scrollable.hover {
-            overflow-y: hidden;
-        }
-
-        .no-touch .scrollable.hover:hover {
-            overflow-y: auto;
-            overflow: visible;
-        }
-
-        a:hover, a:focus {
-            text-decoration: none;
-        }
-
-        nav {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            -o-user-select: none;
-            user-select: none;
-        }
-
-        nav ul, nav li {
-            outline: 0;
-            margin: 0;
-            padding: 0;
-        }
-
-        .main-menu li:hover>a, nav.main-menu li.active>a, .dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus, .dropdown-menu>.active>a, .dropdown-menu>.active>a:hover, .dropdown-menu>.active>a:focus, .no-touch .dashboard-page nav.dashboard-menu ul li:hover a, .dashboard-page nav.dashboard-menu ul li.active a {
-            color: #000000;
-            background-color: #fefbd5;
-        }
-
-        .area {
-            float: left;
-            background: #e2e2e2;
-            width: 100%;
-            height: 100%;
-        }
+.fa-2x {
+    font-size: 2em;
+    }
+    .fa {
+    position: relative;
+    display: table-cell;
+    width: 60px;
+    height: 36px;
+    text-align: center;
+    vertical-align: middle;
+    font-size:20px;
+    }
+    
+    
+    .main-menu:hover,nav.main-menu.expanded {
+    width:250px;
+    overflow:visible;
+    }
+    
+    .main-menu {
+    background:#ffcc00;
+    border-right:1px solid #e5e5e5;
+    position:absolute;
+    top:0;
+    bottom:0;
+    height:100%;
+    left:0;
+    width:60px;
+    overflow:hidden;
+    -webkit-transition:width .05s linear;
+    transition:width .05s linear;
+    -webkit-transform:translateZ(0) scale(1,1);
+    z-index:1000;
+    }
+    
+    .main-menu>ul {
+    margin:7px 0;
+    }
+    
+    .main-menu li {
+    position:relative;
+    display:block;
+    width:250px;
+    }
+    
+    .main-menu li>a {
+    position:relative;
+    display:table;
+    border-collapse:collapse;
+    border-spacing:0;
+    color:#999;
+     font-family: arial;
+    font-size: 14px;
+    text-decoration:none;
+    -webkit-transform:translateZ(0) scale(1,1);
+    -webkit-transition:all .1s linear;
+    transition:all .1s linear;
+      
+    }
+    
+    .main-menu .nav-icon {
+    position:relative;
+    display:table-cell;
+    width:60px;
+    height:36px;
+    text-align:center;
+    vertical-align:middle;
+    font-size:18px;
+    }
+    
+    .main-menu .nav-text {
+    position:relative;
+    display:table-cell;
+    vertical-align:middle;
+    width:190px;
+      font-family: 'Titillium Web', sans-serif;
+    }
+    
+    .main-menu>ul.logout {
+    position:absolute;
+    left:0;
+    bottom:0;
+    }
+    
+    .no-touch .scrollable.hover {
+    overflow-y:hidden;
+    }
+    
+    .no-touch .scrollable.hover:hover {
+    overflow-y:auto;
+    overflow:visible;
+    }
+    
+    a:hover,a:focus {
+    text-decoration:none;
+    }
+    
+    nav {
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    -o-user-select:none;
+    user-select:none;
+    }
+    
+    nav ul,nav li {
+    outline:0;
+    margin:0;
+    padding:0;
+    }
+    .main-menu li:hover>a,nav.main-menu li.active>a,.dropdown-menu>li>a:hover,.dropdown-menu>li>a:focus,.dropdown-menu>.active>a,.dropdown-menu>.active>a:hover,.dropdown-menu>.active>a:focus,.no-touch .dashboard-page nav.dashboard-menu ul li:hover a,.dashboard-page nav.dashboard-menu ul li.active a {
+    color:#000000;
+    background-color:#fefbd5;
+    }
+    .area {
+    float: left;
+    background: #e2e2e2;
+    width: 100%;
+    height: 100%;
+    }
     </style>
 </head>
 <body>
-    <nav>
-        <div class="logo"></div>
+        <nav>
+            <div class="logo">
+            </div>
+        </nav>
+        <div class="minion-header">
+            <img src="/images/minion_header.png" alt="Minion Header Image">
+        </div>
+
+    <div class="area"></div><nav class="main-menu">
+        <ul>
+            <li>
+                <a href="">
+                    <i class="fa fa-home fa-2x"></i>
+                    <span class="nav-text">
+                      <li>열기</li>
+                    </span>
+                </a>
+              
+            </li>
+            <li class="has-subnav">
+                <a href="/">
+                    <i class="fa fa-globe fa-2x"></i>
+                    <span class="nav-text">
+                        홈
+                    </span>
+                </a>
+            </li>
+            <li class="has-subnav">
+                <a href="community.html">
+                    <i class="fa fa-globe fa-2x"></i>
+                    <span class="nav-text">
+                        커뮤니티
+                    </span>
+                </a>
+            </li>
+                
+            </li>
+            <li class="has-subnav">
+                <a href="profile.html">
+                    <i class="fa fa-globe fa-2x"></i>
+                    <span class="nav-text">
+                        프로필
+                    </span>
+                </a>
+            </li>
+            <li class="has-subnav">
+                <a href="community.html">
+                    <i class="fa fa-globe fa-2x"></i>
+                    <span class="nav-text">
+                        자랑게시판
+                    </span>
+                </a>
+            </li>
+            <li class="has-subnav">
+                <a href="community.html">
+                    <i class="fa fa-globe fa-2x"></i>
+                    <span class="nav-text">
+                        잡담 및 정보공유
+                    </span>
+                </a>
+            </li>
+            <li class="has-subnav">
+                <a href="pic.html">
+                    <i class="fa fa-globe fa-2x"></i>
+                    <span class="nav-text">
+                        사진게시판
+                    </span>
+                </a>
+            </li>
+            <li class="has-subnav">
+                <a href="free.html">
+                    <i class="fa fa-globe fa-2x"></i>
+                    <span class="nav-text">
+                        자유게시판
+                    </span>
+                </a>
+            </li>
+            <li>
+                <a href="inquiry.html">
+                    <i class="fa fa-info fa-2x"></i>
+                    <span class="nav-text">
+                        문의 게시판
+                    </span>
+                </a>
+            </li>
+            
+        </ul>
+
+        <ul class="logout">
+            <li>
+               <a href="#">
+                     <i class="fa fa-power-off fa-2x"></i>
+                    <span class="nav-text">
+                        <div class="auth">
+                            <ul id="authMenu">
+                                <li><a href="login.html" id="loginLink">로그인</a></li>
+                                <li><a href="signup.html" id="signupLink">회원가입</a></li>
+                            </ul>
+                        </div>
+                    </span>
+                </a>
+            </li>  
+        </ul>
     </nav>
-    <div class="minion-header">
-        <img src="/images/minion_header.png" alt="Minion Header Image">
-    </div>
-    <h1>미니겜즈 문의 게시판</h1>
-
-    <button onclick="toggleNewPostForm()">새 글 쓰기</button>
-
-    <div id="newPostForm">
-        <form id="postForm">
-            <label for="title">제목</label>
-            <input type="text" id="title" name="title" required>
-            <label for="content">내용</label>
-            <textarea id="content" name="content" required></textarea>
-            <button type="submit">등록</button>
-        </form>
-    </div>
-
+</body>
+</html>
+    <h1>커뮤니티</h1>
     <table>
         <thead>
-            <tr>
-                <th>번호</th>
-                <th>제목</th>
-                <th>작성자</th>
-                <th>작성일</th>
-                <th>비고</th>
-            </tr>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>작성날짜</th>
+            <th>작업</th>
+        </tr>
         </thead>
-        <tbody id="postsList">
-            <!-- 게시글 목록이 여기에 추가됩니다 -->
+        <tbody id="img">
+        <!-- JavaScript를 사용하여 게시글을 추가할 예정 -->
         </tbody>
     </table>
+    <button onclick="showNewPostForm()">글쓰기</button>
 
-    <!-- The Modal -->
+    <div id="newPostForm">
+        <h2>새 글 작성</h2>
+        <label>작성자: <span id="newAuthor"></span></label><br>
+        <label>제목: <input type="text" id="newTitle" required></label><br>
+        <label>내용: <textarea id="newContent" required></textarea></label><br>
+        <button onclick="addPost()">작성</button>
+        <button onclick="hideNewPostForm()">취소</button>
+    </div>
+
+    <!-- 모달 창 추가 -->
     <div id="postModal" class="modal">
-        <!-- Modal content -->
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 id="modalTitle"></h2>
-            <p id="modalContent"></p>
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>제목:<span id="modalTitle"></span></h2>
+            <p><strong>작성자:</strong> <span id="modalAuthor"></span></p>
+            <p>작성날짜: <span id="modalDate"></span></p>
+            <p>내용:<span id="modalContent"></span></p>
         </div>
     </div>
 
     <script>
-        const postsList = document.getElementById('postsList');
-        const postForm = document.getElementById('postForm');
-        const postModal = document.getElementById('postModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalContent = document.getElementById('modalContent');
-        const span = document.getElementsByClassName('close')[0];
+        let img = [];
 
-        const posts = [
-            { number: 1, title: '게시글 제목1', author: '작성자1', date: '2022-01-01', content: '게시글 내용1' },
-            { number: 2, title: '게시글 제목2', author: '작성자2', date: '2022-01-02', content: '게시글 내용2' },
-        ];
+        function checkLoginStatus() {
+            fetch('/api/profile')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.nickname) {
+                        document.getElementById('authMenu').innerHTML = `
+                            <li><a href="#" id="logoutLink">로그아웃</a></li>
+                        `;
+                        document.getElementById('logoutLink').addEventListener('click', logout);
+                        document.getElementById('newAuthor').textContent = data.nickname;
+                    } else {
+                        document.getElementById('authMenu').innerHTML = `
+                            <li><a href="login.html" id="loginLink">로그인</a></li>
+                            <li><a href="signup.html" id="signupLink">회원가입</a></li>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking login status:', error);
+                });
+        }
 
-        function displayPosts() {
-            postsList.innerHTML = '';
-            posts.forEach(post => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${post.number}</td>
-                    <td><a href="#" onclick="openModal(${post.number})">${post.title}</a></td>
-                    <td>${post.author}</td>
-                    <td>${post.date}</td>
-                    <td><button onclick="deletePost(${post.number})">삭제</button></td>
+        function formatDate(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = ('0' + (d.getMonth() + 1)).slice(-2);
+            const day = ('0' + d.getDate()).slice(-2);
+            return `${year}-${month}-${day}`;
+        }
+
+        function showNewPostForm() {
+            const author = document.getElementById('newAuthor').textContent;
+            if (!author) {
+                alert('로그인이 필요합니다.');
+                window.location.href = 'login.html';
+                return;
+            }
+            document.getElementById('newPostForm').style.display = 'block';
+            document.getElementById('newPostForm').scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+
+        function hideNewPostForm() {
+            document.getElementById('newPostForm').style.display = 'none';
+            resetPostForm();
+        }
+        
+        function resetPostForm() {
+            document.getElementById('newTitle').value = '';
+            document.getElementById('newContent').value = '';
+        
+            const submitButton = document.querySelector('#newPostForm button:first-of-type');
+            submitButton.textContent = '작성';
+            submitButton.onclick = addPost;
+        }
+        
+        // 나머지 코드 생략...
+        
+
+        function addPost() {
+            const title = document.getElementById('newTitle').value;
+            const author = document.getElementById('newAuthor').textContent;
+            const content = document.getElementById('newContent').value;
+            const date = new Date().toISOString().split('T')[0];
+
+            const post = {
+                title,
+                author,
+                content,
+                date
+            };
+
+            fetch('/api/img', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(post)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to add post');
+                }
+            })
+            .then(data => {
+                img.push({ ...post, id: data.id });
+                renderimg();
+                hideNewPostForm();
+            })
+            .catch(error => {
+                console.error('Error adding post:', error);
+            });
+            window.location.reload()
+        }
+
+        function renderimg() {
+            const imgContainer = document.getElementById('img');
+            imgContainer.innerHTML = '';
+            img.forEach((post, index) => {
+                const editButton = `<button onclick="editPost(${post.id}, '${post.author}')">수정</button>`;
+                const deleteButton = `<button onclick="deletePost(${post.id}, '${post.author}')">삭제</button>`;
+                imgContainer.innerHTML += `
+                    <tr>
+                        <td><a href="#" onclick="showPost(${post.id})">${index + 1}</a></td>
+                        <td><a href="#" onclick="showPost(${post.id})">${post.title}</a></td>
+                        <td><a href="#" onclick="showPost(${post.id})">${post.author}</a></td>
+                        <td><a href="#" onclick="showPost(${post.id})">${formatDate(post.date)}</a></td>
+                        <td>
+                            ${post.author === document.getElementById('newAuthor').textContent ? editButton : ''}
+                            ${post.author === document.getElementById('newAuthor').textContent ? deleteButton : ''}
+                        </td>
+                    </tr>
                 `;
-                postsList.appendChild(row);
             });
         }
 
-        function openModal(postNumber) {
-            const post = posts.find(p => p.number === postNumber);
-            modalTitle.innerText = post.title;
-            modalContent.innerText = post.content;
-            postModal.style.display = 'block';
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            return new Date(dateString).toLocaleDateString('ko-KR', options);
         }
 
-        span.onclick = function() {
-            postModal.style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            if (event.target === postModal) {
-                postModal.style.display = 'none';
+        function showPost(id) {
+            const post = img.find(post => post.id === id);
+            if (post) {
+                document.getElementById('modalTitle').textContent = post.title;
+                document.getElementById('modalAuthor').textContent = post.author;
+                document.getElementById('modalDate').textContent = formatDate(post.date);
+                document.getElementById('modalContent').textContent = post.content;
+                document.getElementById('postModal').style.display = 'block';
             }
         }
 
-        function toggleNewPostForm() {
-            const newPostForm = document.getElementById('newPostForm');
-            if (newPostForm.style.display === 'none' || newPostForm.style.display === '') {
-                newPostForm.style.display = 'block';
-            } else {
-                newPostForm.style.display = 'none';
-            }
+        function closeModal() {
+            document.getElementById('postModal').style.display = 'none';
         }
 
-        postForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const title = document.getElementById('title').value;
-            const content = document.getElementById('content').value;
-            const newPost = {
-                number: posts.length + 1,
+        function deletePost(id, author) {
+            const currentUser = document.getElementById('newAuthor').textContent;
+            if (author !== currentUser) {
+                alert('자신이 작성한 글만 삭제할 수 있습니다.');
+                return;
+            }
+        
+            fetch(`/api/img/${id}`, { method: 'DELETE' })
+                .then(response => {
+                    if (response.ok) {
+                        img = img.filter(post => post.id !== id);
+                        renderimg();
+                    } else {
+                        throw new Error('Failed to delete post');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting post:', error);
+                });
+        }
+
+        function editPost(id, author) {
+            const currentUser = document.getElementById('newAuthor').textContent;
+            if (author !== currentUser) {
+                alert('자신이 작성한 글만 수정할 수 있습니다.');
+                return;
+            }
+    
+            const post = img.find(post => post.id === id);
+            if (post) {
+                document.getElementById('newTitle').value = post.title;
+                document.getElementById('newContent').value = post.content;
+    
+                // 수정 폼의 버튼 텍스트와 클릭 이벤트 변경
+                const submitButton = document.querySelector('#newPostForm button:first-of-type');
+                submitButton.textContent = '수정';
+                submitButton.onclick = () => updatePost(id);
+    
+                showNewPostForm();
+            }
+        }
+    
+        function updatePost(id) {
+            const title = document.getElementById('newTitle').value;
+            const author = document.getElementById('newAuthor').textContent;
+            const content = document.getElementById('newContent').value;
+            const date = new Date().toISOString().split('T')[0];
+    
+            const updatedPost = {
                 title,
-                author: '작성자3',
-                date: new Date().toISOString().split('T')[0],
-                content
+                author,
+                content,
+                date
             };
-            posts.push(newPost);
-            displayPosts();
-            postForm.reset();
-            toggleNewPostForm();
-        });
-
-        function deletePost(postNumber) {
-            const postIndex = posts.findIndex(p => p.number === postNumber);
-            if (postIndex > -1) {
-                posts.splice(postIndex, 1);
-                displayPosts();
-            }
+    
+            fetch(`/api/img/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedPost)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to update post');
+                }
+            })
+            .then(() => {
+                img = img.map(post => post.id === id ? { ...post, ...updatedPost } : post);
+                renderimg();
+                hideNewPostForm();
+            })
+            .catch(error => {
+                console.error('Error updating post:', error);
+            });
+        }
+        
+        function logout() {
+            fetch('/logout', { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        console.error('Logout failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during logout:', error);
+                });
         }
 
-        displayPosts();
+        document.addEventListener('DOMContentLoaded', () => {
+            checkLoginStatus();
+            fetch('/api/img')
+                .then(response => response.json())
+                .then(data => {
+                    img = data;
+                    renderimg();
+                })
+                .catch(error => {
+                    console.error('Error fetching img:', error);
+                });
+        });
     </script>
 </body>
 </html>
