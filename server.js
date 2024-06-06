@@ -172,6 +172,7 @@ db.connect((err) => {
         });
     });
 });
+
 app.get('/api/posts', (req, res) => {
     const sql = 'SELECT * FROM posts';
     db.query(sql, (err, results) => {
@@ -230,7 +231,6 @@ app.delete('/api/posts/:id', (req, res) => {
 });
 
 //커뮤니티 게시판
-
 
 app.use(bodyParser.json());
 
@@ -340,7 +340,6 @@ app.delete('/api/img/:id', (req, res) => {
         }
     });
 });
-
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
