@@ -93,6 +93,13 @@
   - 문의게시판은 완성, 커뮤니티 게시판 진행중...
   - quiry.html, script.js, server.js 업데이트
 
+6/6 고태현<br/>
+  - 프로필 페이지 수정(프로필 사진 추가) // 상단바 디자인 변경(의논 후 어떤걸로 할지 결정)  
+  - 메인페이지, 프로필페이지, 문의게시판 페이지(mini gamz 디자인 변경 + 로그인시 프로필 사진 닉네임 우상단 표시)  
+  - user db에 profileImage 추가 (프로필 사진 저장용)  
+  - server.js, index, profile.html, inquiry.html, styles.css  업데이트  
+  - public/images 폴더 추가 (프로필 사진)  
+
 6.6 옥주헌<br/>
   - [x] adminpublic 소스코드 리팩토링 ( 소스 분리 및 경로 정리 )
   - [ ] Admin 페이지에 사용자 데이터베이스 조회 기능 추가
