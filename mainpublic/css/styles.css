@@ -98,6 +98,8 @@ body, html {
 header {
     position: relative;
     text-align: center;
+    margin: 0; /* 여백 제거 */
+    padding: 0; /* 패딩 제거 */
 }
 header nav {
     display: flex;
@@ -214,10 +216,6 @@ form textarea {
     
     
 }
-
-
-
-
 
 
 
