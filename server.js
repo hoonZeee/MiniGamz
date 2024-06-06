@@ -28,7 +28,7 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: '127.0.0.1',
     user: 'root',
-    password: '00000000',
+    password: '1234',
     database: 'user',
     debug: false
 });
@@ -59,7 +59,6 @@ pool.getConnection((err, conn) => {
         alias varchar(300) DEFAULT NULL COMMENT '본인확인 별명',
         travel varchar(300) DEFAULT NULL COMMENT '본인확인 여행',
         movie varchar(300) DEFAULT NULL COMMENT '본인확인 영화',
-        score INT NOT NULL DEFAULT 0,
         PRIMARY KEY (id),
         UNIQUE KEY unique_nickname (nickname)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -74,56 +73,6 @@ pool.getConnection((err, conn) => {
     });
 });
 
-// 점수 업데이트 API 엔드포인트
-app.post('/api/updatescore', (req, res) => {
-    const { nickname, score } = req.body;
-
-    pool.getConnection((err, conn) => {
-        if (err) {
-            console.error('MySQL 연결 실패:', err);
-            res.status(500).send('서버 에러');
-            return;
-        }
-
-        const query = 'UPDATE users SET score = GREATEST(score, ?) WHERE nickname = ?';
-        conn.query(query, [score, nickname], (err, result) => {
-            conn.release();
-            if (err) {
-                console.error('쿼리 실행 실패:', err);
-                res.status(500).send('데이터베이스 에러');
-                return;
-            }
-            res.status(200).send('점수 업데이트 성공');
-        });
-    });
-});
-
-// 사용자 프로필 정보를 가져오는 API 엔드포인트
-app.get('/api/profile', (req, res) => {
-    if (req.session.user) {
-        pool.getConnection((err, conn) => {
-            if (err) {
-                console.error('MySQL 연결 실패:', err);
-                res.status(500).send('서버 에러');
-                return;
-            }
-
-            const query = 'SELECT nickname, score FROM users WHERE id = ?';
-            conn.query(query, [req.session.user.id], (err, results) => {
-                conn.release();
-                if (err) {
-                    console.error('쿼리 실행 실패:', err);
-                    res.status(500).send('데이터베이스 에러');
-                    return;
-                }
-                res.json(results[0]);
-            });
-        });
-    } else {
-        res.status(401).json({ error: '사용자가 로그인하지 않았습니다.' });
-    }
-});
-
 //문의 게시판 DB
 const bodyParser = require('body-parser');
 
@@ -132,7 +81,7 @@ app.use(bodyParser.json());
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root', // MySQL 유저 이름
-    password: '00000000', // MySQL 비밀번호
+    password: '1234', // MySQL 비밀번호
     database: 'post' // MySQL 데이터베이스 이름
 });
 
@@ -219,6 +168,11 @@ app.delete('/api/posts/:id', (req, res) => {
         }
     });
 });
+//커뮤니티 게시판
+
+// MySQL 데이터베이스 및 테이블 생성
+
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -260,6 +214,9 @@ app.get('/minionjump', (req, res) => {
 });
 app.get('/inquiry.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'inquiry/html', 'inquiry.html'));
+});
+app.get('/community.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'community/html', 'community.html'));
 });
 app.get('/find.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'dbpublic/html', 'find.html'));
@@ -394,7 +351,6 @@ app.post('/process/checknickname', (req, res) => {
         });
     });
 });
-
 app.post('/process/checkduplicate', (req, res) => {
     const userId = req.body.id;
 
@@ -580,3 +536,4 @@ app.post('/logout', (req, res) => {
 server.listen(PORT, () => {
     console.log(`http://localhost:${PORT} 에서 실행 중..`);
 });
+
