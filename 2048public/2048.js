@@ -1,4 +1,4 @@
-const cell = document.querySelectorAll(`.cell`);
+const cell = document.querySelectorAll('.cell');
 let cellLength = cell.length;
 let board = new Array(6);
 const scoreText = document.querySelector('#score');
@@ -22,6 +22,25 @@ for (let i = 0; i < 6; i++) {
 }
 
 console.log(board);
+
+function checkLoginStatus() {
+    fetch('/api/check-login')
+        .then(response => response.json())
+        .then(data => {
+            if (!data.loggedIn) {
+                // 로그인하지 않은 경우 게임 컨트롤 비활성화 및 경고 메시지 표시
+                document.body.removeEventListener("keydown", handleKeydown);
+                alert('게임을 시작하려면 로그인해야 합니다.');
+            } else {
+                // 로그인된 경우 게임 컨트롤 활성화
+                document.body.addEventListener("keydown", handleKeydown);
+                init(); // 게임 초기화
+            }
+        })
+        .catch(err => {
+            console.error('Error checking login status:', err);
+        });
+}
 
 function init() {
     for (let i = 1; i < 5; i++) {
@@ -302,6 +321,7 @@ function columnCheck() {
         }
     }
 }
+
 function gameOver() {
     let fullCheck = 1;
 
@@ -327,7 +347,7 @@ function retryGame() {
     init();
 }
 
-window.addEventListener("keydown", (e) => {
+function handleKeydown(e) {
     const keyCode = e.keyCode;
     if (keyCode == 37) {
         moveLeft();
@@ -338,6 +358,7 @@ window.addEventListener("keydown", (e) => {
     } else if (keyCode == 40) {
         moveDown();
     }
-});
+}
 
-document.addEventListener('DOMContentLoaded', init);
+// 페이지 로드 시 로그인 상태 확인
+document.addEventListener('DOMContentLoaded', checkLoginStatus);

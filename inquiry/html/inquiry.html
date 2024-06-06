@@ -219,16 +219,6 @@
             text-decoration: none;
             cursor: pointer;
         }
-        .menu a, .auth a { /* 눌렀을 때 스타일 추가*/
-            color: black;
-            text-decoration: none;
-            padding: 5px 10px;
-            transition: background-color 0.3s;
-        }
-        .menu a:hover, .auth a:hover {
-            background-color: #555;
-            color: white;
-        }
     </style>
 </head>
 <body>
@@ -305,7 +295,7 @@
                         document.getElementById('authMenu').innerHTML = `
                             <li class="auth-profile">
                                 <img src="${data.profileImage}" alt="Profile Image">
-                                <span>${data.nickname} (${data.points} 점)</span>
+                                <span>${data.nickname}</span>
                             </li>
                             <li><a href="#" id="logoutLink">로그아웃</a></li>
                         `;
