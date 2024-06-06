@@ -7,42 +7,159 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Permanent+Marker&display=swap" rel="stylesheet">
     <style>
-        .profile-container {
+        body {
+            font-family: 'Gamja Flower', cursive;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
+        header {
+            width: 100%;
+            background-color: #333;
+            padding: 10px 0;
+        }
+        header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .logo h2 {
+            margin: 0;
+            font-family: 'Permanent Marker', cursive;
+            cursor: pointer;
+            color: black;
+        }
+        .menu ul, .auth ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+        .menu li, .auth li {
+            margin: 0 10px;
+        }
+        .menu a, .auth a {
+            color: black;
+            text-decoration: none;
+            padding: 5px 10px;
+            transition: background-color 0.3s;
+        }
+        .menu a:hover, .auth a:hover {
+            background-color: #555;
+            color: white;
+        }
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .profile-container {
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 40px;
+            border-radius: 10px;
             margin-top: 50px;
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
         }
         .profile-container img {
-            width: 150px;
-            height: 150px;
+            width: 200px;
+            height: 200px;
             border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
         }
-        .profile-container .details {
-            text-align: center;
-            margin-top: 20px;
+        .profile-container .details p {
+            margin: 10px 0;
+            font-size: 1.5em;
         }
         .change-password-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
+            margin-top: 30px;
         }
         .change-password-container input {
-            padding: 10px;
-            margin-bottom: 10px;
-            width: 200px;
+            padding: 15px;
+            margin-bottom: 15px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
         }
         .change-password-container button {
-            padding: 10px 20px;
+            padding: 15px 30px;
+            border: none;
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
+        .change-password-container button:hover {
+            background-color: #555;
+        }
+        .profile-image-selector {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .profile-image-selector img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .profile-image-selector img:hover {
+            transform: scale(1.1);
+        }
+        .auth-profile {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+        .auth-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        .auth {
+        display: flex;
+        align-items: center; /* 모든 자식 요소를 수직 가운데 정렬 */
+        }
+
+         .auth ul {
+        display: flex;
+        align-items: center; /* 모든 리스트 아이템을 수직 가운데 정렬 */
+        margin: 0;
+        padding: 0;
+        }
+
+        .auth li {
+        list-style: none;
+        margin: 0 10px;
+        }
+
+        
     </style>
 </head>
 <body>
     <header>
         <nav>
             <div class="logo">
-                <h2>Mini Gemz</h2>
+                <h2 onclick="window.location.href='/'">Mini Gamz</h2>
             </div>
             <div class="menu">
                 <ul>
@@ -63,7 +180,7 @@
     <main>
         <div class="profile-container">
             <h2>사용자 프로필</h2>
-            <img src="/images/profile_placeholder.png" alt="Profile Image">
+            <img id="profileImage" src="/images/bob.webp" alt="Profile Image">
             <div class="details">
                 <p><strong>이름:</strong> <span id="userName"></span></p>
                 <p><strong>아이디:</strong> <span id="userId"></span></p>
@@ -73,6 +190,16 @@
                 <h3>비밀번호 변경</h3>
                 <input type="password" id="newPassword" placeholder="새 비밀번호">
                 <button onclick="changePassword()">변경</button>
+            </div>
+            <div class="profile-image-selector">
+                <h3>프로필 사진 선택</h3>
+                <div>
+                    <img src="/images/bob.webp" alt="Profile Image Bob" onclick="selectProfileImage('/images/bob.webp')">
+                    <img src="/images/dave.webp" alt="Profile Image Dave" onclick="selectProfileImage('/images/dave.webp')">
+                    <img src="/images/kevin.webp" alt="Profile Image Kevin" onclick="selectProfileImage('/images/kevin.webp')">
+                    <img src="/images/mel.webp" alt="Profile Image Mel" onclick="selectProfileImage('/images/mel.webp')">
+                    <img src="/images/stuart.webp" alt="Profile Image Stuart" onclick="selectProfileImage('/images/stuart.webp')">
+                </div>
             </div>
         </div>
     </main>
@@ -84,12 +211,17 @@
                     if (response.ok) {
                         response.json().then(data => {
                             document.getElementById('authMenu').innerHTML = `
+                                <li class="auth-profile">
+                                    <img src="${data.profileImage}" alt="Profile Image">
+                                    <span>${data.nickname}</span>
+                                </li>
                                 <li><a href="#" id="logoutLink">로그아웃</a></li>
                             `;
                             document.getElementById('logoutLink').addEventListener('click', logout);
                             document.getElementById('userName').innerText = data.name;
                             document.getElementById('userId').innerText = data.id;
                             document.getElementById('userNickname').innerText = data.nickname;
+                            document.getElementById('profileImage').src = data.profileImage;
                         });
                     } else {
                         document.getElementById('authMenu').innerHTML = `
@@ -136,6 +268,29 @@
                 .catch(error => {
                     console.error('Error changing password:', error);
                     alert('비밀번호 변경 중 오류가 발생했습니다.');
+                });
+        }
+
+        function selectProfileImage(imageUrl) {
+            document.getElementById('profileImage').src = imageUrl;
+            // 여기서 서버로 프로필 이미지 변경 요청을 보낼 수 있습니다.
+            fetch('/api/change-profile-image', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ profileImage: imageUrl })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('프로필 이미지가 성공적으로 변경되었습니다.');
+                    } else {
+                        alert('프로필 이미지 변경에 실패했습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error changing profile image:', error);
+                    alert('프로필 이미지 변경 중 오류가 발생했습니다.');
                 });
         }
 
