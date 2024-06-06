@@ -126,3 +126,7 @@
   - 커뮤니티 카테고리창 생성
   - 시험용 자유게시판(free.html) 생성
   - quiry.html,community.html, free.html, server.js 업데이트
+
+6/7 이지훈<br/>
+  - 2048게임 추가
+  - 키보드 방향키로 크기가 같은 셀을 합쳐 높은 숫자를 만드는 게임 구현
