@@ -8,18 +8,17 @@
     <link href="https://fonts.googleapis.com/css?family=Oswald&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Permanent+Marker&display=swap" rel="stylesheet">
     <style>
-
         .hidden {
             opacity: 0;
             transform: translateY(50px);
             transition: opacity 1s ease-out, transform 1s ease-out;
         }
-        
+
         .visible {
             opacity: 1;
             transform: translateY(0);
         }
-        
+
         .minion-header img {
             height: auto;
             display: block;
@@ -33,6 +32,44 @@
         }
         nav * {
             font-family: "Gamja Flower", cursive;
+            
+        }
+        .logo a {
+            text-decoration: none; /* 추가 */
+        }    
+        .logo h2 {
+            margin: 0;
+            font-family: 'Permanent Marker', cursive;
+            cursor: pointer;
+            color: black; /* 프로필 파일의 디자인을 반영 */
+        }
+        .auth-profile {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+        .auth-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        .auth {
+            display: flex;
+            align-items: center; /* 모든 자식 요소를 수직 가운데 정렬 */
+        }
+
+        .auth ul {
+            display: flex;
+            align-items: center; /* 모든 리스트 아이템을 수직 가운데 정렬 */
+            margin: 0;
+            padding: 0;
+        }
+
+        .auth li {
+            list-style: none;
+            margin: 0 10px;
         }
     </style>
 </head>
@@ -68,13 +105,9 @@
     </header>
     
     <main>
-
-
-        
         <div class="content-section hidden">
             <ul class="ch-grid">
                 <li>
-                
                         </div>
                     </div>
                 </li>
@@ -83,7 +116,6 @@
                         <li>
                             <div class="ch-item">
                                 <div class="ch-info" onclick="location.href='baseball.html'">
-
                                     <div class="ch-info-front">
                                         <img src="/images/baseball.png" alt="야구게임" style="width: 100%; height: auto;">
                                         <h4 style="margin-top: 0;">숫자 야구!</h4>
@@ -112,7 +144,6 @@
                         <li>
                             <div class="ch-item">
                                 <div class="ch-info" onclick="location.href='shooting.html'">
-
                                     <div class="ch-info-front">
                                         <img src="/images/shooting.png" alt="슈팅게임" style="width: 100%; height: auto;">
                                         <h4 style="margin-top: 0;">슈팅게임!</h4>
@@ -127,7 +158,6 @@
                         <li>
                             <div class="ch-item">
                                 <div class="ch-info" onclick="location.href='minionjump.html'">
-
                                     <div class="ch-info-front">
                                         <img src="/images/minionjumppage.png" alt="미니언점프게임" style="width: 100%; height: auto;">
                                         <h4 style="margin-top: 0;">미니언 점핑!</h4>
@@ -142,7 +172,6 @@
                         <li>
                             <div class="ch-item">
                                 <div class="ch-info" onclick="location.href='baseball.html'">
-
                                     <div class="ch-info-front">
                                         <img src="/images/baseball.png" alt="야구게임" style="width: 100%; height: auto;">
                                         <h4 style="margin-top: 0;">야구게임</h4>
@@ -156,7 +185,6 @@
                         </li>
                     </ul>
                 </div>
-                
         
         <div class="spacer"></div>
         <div class="spacer"></div>
@@ -232,6 +260,10 @@
                     if (data.nickname) {
                         isLoggedIn = true;
                         document.getElementById('authMenu').innerHTML = `
+                            <li class="auth-profile">
+                                <img src="${data.profileImage}" alt="Profile Image">
+                                <span>${data.nickname}</span>
+                            </li>
                             <li><a href="#" id="logoutLink">로그아웃</a></li>
                         `;
                         document.getElementById('logoutLink').addEventListener('click', logout);
