@@ -99,3 +99,7 @@
   - user db에 profileImage 추가 (프로필 사진 저장용)  
   - server.js, index, profile.html, inquiry.html, styles.css  업데이트  
   - public/images 폴더 추가 (프로필 사진)  
+
+6/6 황정인<br/>
+  - index.html,stykes.css 필요없는 부분정리
+  - 라이브채팅 모양 변경
