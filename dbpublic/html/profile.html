@@ -18,20 +18,24 @@
         }
         header {
             width: 100%;
-            background-color: #333;
-            padding: 10px 0;
+            background-color: #FFD700; /* 노란색 배경 */
+            margin: 0; /* 여백 제거 */
+            padding: 0; /* 패딩 제거 */
         }
         header nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+            width: 100%; /* 전체 너비 사용 */
+            margin: 0;
+            padding: 0; /* 패딩 제거 */
         }
+        .logo a {
+            text-decoration: none;
+        }    
         .logo h2 {
             margin: 0;
-            font-family: 'Gamja Flower', cursive;
+            font-family: "Gamja Flower", sans-serif;
             cursor: pointer;
             color: black;
         }
@@ -53,6 +57,32 @@
         .menu a:hover, .auth a:hover {
             background-color: #555;
             color: white;
+        }
+        .auth-profile {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+        .auth-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        .auth {
+            display: flex;
+            align-items: center;
+        }
+        .auth ul {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        .auth li {
+            list-style: none;
+            margin: 0 10px;
         }
         main {
             flex: 1;
@@ -85,13 +115,31 @@
         .change-password-container {
             margin-top: 30px;
         }
-        .change-password-container input {
-            padding: 15px;
+        .password-container {
+            display: flex;
+            align-items: center;
             margin-bottom: 15px;
+            position: relative;
+        }
+        .password-container .input-group {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        .password-container .input-group i {
+            margin-right: 10px;
+        }
+        .password-container .input-group input {
+            padding: 15px;
             width: 100%;
             border: 1px solid #ccc;
             border-radius: 5px;
             box-sizing: border-box;
+        }
+        .password-container .input-group .toggle-password {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
         }
         .change-password-container button {
             padding: 15px 30px;
@@ -123,55 +171,27 @@
         .profile-image-selector img:hover {
             transform: scale(1.1);
         }
-        .auth-profile {
-            display: flex;
-            align-items: center;
-            margin-right: 20px;
-        }
-        .auth-profile img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-        }
-        .auth {
-        display: flex;
-        align-items: center; /* 모든 자식 요소를 수직 가운데 정렬 */
-        }
-
-         .auth ul {
-        display: flex;
-        align-items: center; /* 모든 리스트 아이템을 수직 가운데 정렬 */
-        margin: 0;
-        padding: 0;
-        }
-
-        .auth li {
-        list-style: none;
-        margin: 0 10px;
-        }
-
-        
     </style>
 </head>
 <body>
     <header>
         <nav>
             <div class="logo">
-                <h2 onclick="window.location.href='/'">Mini Gamz</h2>
+                <a href="/">
+                    <h2>Mini Gamz</h2>
+                </a>
             </div>
             <div class="menu">
                 <ul>
-                    <li><a href="/">홈</a></li>
-                    <li><a href="/#community">커뮤니티</a></li>
-                    <li><a href="/#inquiry">문의 게시판</a></li>
-                    <li><a href="profile.html">프로필</a></li>
+                    <li><a href="community.html">커뮤니티</a></li>
+                    <li><a href="inquiry.html">문의 게시판</a></li>
+                    <li><a href="#" id="profileLink">프로필</a></li>
                 </ul>
             </div>
             <div class="auth">
                 <ul id="authMenu">
-                    <!-- 로그인 상태에 따라 변경될 내용 -->
+                    <li><a href="login.html" id="loginLink">로그인</a></li>
+                    <li><a href="signup.html" id="signupLink">회원가입</a></li>
                 </ul>
             </div>
         </nav>
@@ -184,12 +204,21 @@
             <div class="details">
                 <p><strong>이름:</strong> <span id="userName"></span></p>
                 <p><strong>아이디:</strong> <span id="userId"></span></p>
-                <p><strong>닉네임:</strong> <span id="userNickname"></span></p>
+                <p><strong>닉네임:</strong> <span id="userNickname"></span></p> 
+                <p><strong>포인트:</strong> <span id="userPoints"></span></p>
             </div>
             <div class="change-password-container">
                 <h3>비밀번호 변경</h3>
-                <input type="password" id="newPassword" placeholder="새 비밀번호">
-                <button onclick="changePassword()">변경</button>
+                <form id="changePasswordForm" onsubmit="return validatePassword()">
+                    <div class="password-container">
+                        <div class="input-group">
+                            <i class='bx bxs-lock-alt'></i>
+                            <input type="password" id="newPassword" name="password" placeholder="새 비밀번호" pattern="[A-Za-z0-9]{4,15}" title="패스워드는 4~15자리의 영어와 숫자만 가능합니다." minlength="4" maxlength="15" required>
+                            <span class="toggle-password" onclick="togglePasswordVisibility()">👁️</span>
+                        </div>
+                    </div>
+                    <button type="submit">변경</button>
+                </form>
             </div>
             <div class="profile-image-selector">
                 <h3>프로필 사진 선택</h3>
@@ -213,7 +242,7 @@
                             document.getElementById('authMenu').innerHTML = `
                                 <li class="auth-profile">
                                     <img src="${data.profileImage}" alt="Profile Image">
-                                    <span>${data.nickname}</span>
+                                    <span>${data.nickname} (${data.points} 점)</span>
                                 </li>
                                 <li><a href="#" id="logoutLink">로그아웃</a></li>
                             `;
@@ -221,6 +250,7 @@
                             document.getElementById('userName').innerText = data.name;
                             document.getElementById('userId').innerText = data.id;
                             document.getElementById('userNickname').innerText = data.nickname;
+                            document.getElementById('userPoints').innerText = data.points;
                             document.getElementById('profileImage').src = data.profileImage;
                         });
                     } else {
@@ -273,7 +303,6 @@
 
         function selectProfileImage(imageUrl) {
             document.getElementById('profileImage').src = imageUrl;
-            // 여기서 서버로 프로필 이미지 변경 요청을 보낼 수 있습니다.
             fetch('/api/change-profile-image', {
                 method: 'POST',
                 headers: {
@@ -292,6 +321,30 @@
                     console.error('Error changing profile image:', error);
                     alert('프로필 이미지 변경 중 오류가 발생했습니다.');
                 });
+        }
+
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('newPassword');
+            const toggleIcon = document.querySelector('.toggle-password');
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.textContent = '🙈';
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.textContent = '👁️';
+            }
+        }
+
+        function validatePassword() {
+            const newPassword = document.getElementById('newPassword').value;
+
+            if (!/^[A-Za-z0-9]{4,15}$/.test(newPassword)) {
+                alert('패스워드는 4~15자리의 영어와 숫자만 가능합니다.');
+                return false;
+            }
+
+            changePassword();
+            return true;
         }
 
         document.addEventListener('DOMContentLoaded', function() {
