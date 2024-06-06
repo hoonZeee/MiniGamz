@@ -18,7 +18,7 @@ body, html {
     padding: 0;
     overflow-x: hidden;
     font-family: "Gamja Flower", cursive;
-    
+    background-color: #ffd200;
 }
   
 
@@ -37,6 +37,41 @@ body, html {
     padding: 1em;
 }
 
+#community, #inquiry {
+    border-radius: 1.5rem;
+    padding: 1em;
+    background-color: var(--white);
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    font-size: 20px;
+    width: 30%;
+}
+
+#community .post{
+    border-radius: 1rem;
+    padding: 1em;
+    background-color: var(--gray);
+}
+#inquiry form {
+    border-radius: 1rem;
+    padding: 1em;
+    background-color:  var(--white);
+}
+
+.input-group input,.input-group textarea {
+    width: 100%;
+    padding: 1rem 3rem;
+    font-size: 1rem;
+    border-radius: .5rem;
+    background-color: var(--gray);
+    outline: none;
+}
+/*커뮤니티 박스*/
+.post {
+    background-color: #fff;
+    padding: 1em;
+    margin-bottom: 1em;
+}
+
 
 .form button {
     cursor: pointer;
@@ -45,11 +80,12 @@ body, html {
     border-radius: .5rem;
     border: none;
     background-color: var(--secondary-color);
-    color: var(--white);
+    color: var( --black);
     font-size: 1.2rem;
     outline: none;
 }
 
+/*헤더 및 문의게시판 폰트*/
 * {
     font-family: 'Gamja Flower', cursive;
     margin: 0;
@@ -58,34 +94,6 @@ body, html {
 }
 
 
-
-.input-group input {
-    width: 100%;
-    padding: 1rem 3rem;
-    font-size: 1rem;
-    background-color: var(--gray);
-    border-radius: .5rem;
-    border: 0.125rem solid var(--white);
-    outline: none;
-}
-.input-group textarea {
-    width: 100%;
-    padding: 1rem 3rem;
-    font-size: 1rem;
-    background-color: #efefef;
-    border-radius: .5rem;
-    border: 0.125rem solid #ffffff;
-    outline: none;
-}
-
-
-
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #ffd200;
-}
 
 header {
     position: relative;
@@ -99,7 +107,14 @@ header nav {
     color: #000;
     padding: 10px;
 }
-
+.minion-header img {
+    height: auto;
+    display: block;
+    margin: 0;
+    min-width: 100%;
+    opacity: 0.9;
+    max-width: 60%;
+}
 .logo {
     margin-left: 20px;
 }
@@ -141,65 +156,15 @@ header nav {
     margin-bottom: 20px;
 }
 
-.minion-header img {
-    max-width: 60%;
-}
-
-nav {
-    background-color: #ffd200;
-    color: #000;
-    padding: 10px 0;
-    text-align: center;
-}
-
-nav ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-nav ul li {
-    display: inline-block;
-    margin: 0 15px;
-}
-
-nav ul li a {
-    color: #000;
-    text-decoration: none;
-}
-
-nav ul li a[href="#login"],
-nav ul li a[href="#signup"] {
-    background-color: #ffd200;
-    color: #000;
-    padding: 10px 15px;
-    border-radius: 5px;
-}
-
-nav ul li a[href="#login"]:hover,
-nav ul li a[href="#signup"]:hover {
-    background-color: #005cff;
-    color: #fff;
-}
-
-main {
-    padding: 20px;
-}
-
-
 section {
     margin-bottom: 2em;
 }
 
-.post {
-    background-color: #fff;
-    padding: 1em;
-    margin-bottom: 1em;
-}
-
+/*라이브채팅 미니박스*/
 form {
     background-color: #fff;
     padding: 0.5em;
+    border-radius: .5rem;
 }
 
 form label {
@@ -216,77 +181,38 @@ form textarea {
 }
 
 
-footer {
-    background-color: #ffd200;
-    color: #000;
-    text-align: center;
-    padding: 1em 0;
-}
+/* 라이브 채팅 닫기 버튼 스타일 */
 #toggle-chat-btn {
     position: fixed;
-    bottom: 18px;
-    right: 20px;
-    padding: 10px 15px;
+    bottom: 10px;
+    right: 30px;
     background-color: #ffd200;
-    color: #000;
-    border: none;
-    border-radius: 10px;
+    color: #000000;
     cursor: pointer;
-    z-index: 999; /* 다른 요소 위에 위치하도록 */
-}
-#toggle-chat-btn.small {
-    padding: 5px 10px;
-    font-size: 14px;
-}
-
-#community, #inquiry {
-    border-radius: 1.5rem;
-    padding: 1em;
-    background-color: var(--white);
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    font-size: 20px;
-    width: 30%;
-}
-
-#community .post, #inquiry form {
-    border-radius: 1rem;
-    padding: 1em;
-    background-color: var(--gray);
-}
-
-
-/* 라이브 채팅 버튼 스타일 */
-#toggle-chat-btn {
-    position: fixed;
-    bottom: 18px;
-    right: 20px;
-    padding: 10px 15px;
-    background-color: #ffd200;
-    color: #000;
     border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    z-index: 1001; /* 버튼이 컨테이너보다 위에 표시되도록 설정 */
+    font-size:20px;
 }
-
-#toggle-chat-btn.small {
+/* 라이브 채팅 전송 버튼 스타일(이미지 추가 예정)*/
+ #toggle-chat-btn.small {
     padding: 5px 10px;
     font-size: 18px;
-}
+ }
 
 /* 라이브 채팅 컨테이너 스타일 */
 .chat-container {
     position: fixed;
     bottom: 0;
     right: 20px;
-    background-color: #f5d867;
+    background-color: #ffd200;
     padding: 10px;
-    border: 1px solid #efefef;
+    border: 3px dotted #efefef;
     border-radius: .5rem;
-    max-width: 200px;
+    max-width: 210px;
     max-height: 500px;
     overflow-y: auto;
     display: block; /* 초기에 숨김 */
+    
+    
 }
 
 
@@ -315,9 +241,21 @@ footer {
 
 
 
-/* 이 밑으로는 복붙하면 될거임 애니메이션 효과들 */
+/* 애니메이션 효과들 */
+.spacer {
+    height: 200px;
+}
 
+.hidden {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 1s ease-out, transform 1s ease-out;
+}
 
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
 p {
 font-weight: 400;
 }
@@ -488,12 +426,6 @@ height: 20px;
 
 
 
-
-
-
-
-
-
 @import url("https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900");
 
 .text-overlay {  
@@ -550,5 +482,3 @@ height: 20px;
         );
 	}
 }
-
-

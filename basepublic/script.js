@@ -28,13 +28,21 @@ function hasDuplicateDigits(number) {
 // 사용자의 추측을 처리하는 함수
 function makeGuess() {
     const guess = document.getElementById('guessInput').value; // 입력된 추측 값을 가져옴
+    const errorMessage = document.getElementById('errorMessage'); // 오류 메시지 요소를 가져옴
+
+    // 오류 메시지를 초기화
+    errorMessage.style.display = 'none';
+    errorMessage.textContent = '';
+
     if (guess.length !== 4 || !/^\d+$/.test(guess)) { // 입력 값이 4자리 숫자인지 확인
-        alert('4자리 숫자를 입력하세요'); // 4자리 숫자가 아니면 경고 메시지 표시
+        errorMessage.textContent = '4자리 숫자를 입력하세요'; // 4자리 숫자가 아니면 오류 메시지 설정
+        errorMessage.style.display = 'block';
         return;
     }
     
     if (hasDuplicateDigits(guess)) { // 중복된 숫자가 있는지 확인
-        alert('중복된 숫자가 있습니다. 다시 입력하세요'); // 중복된 숫자가 있으면 경고 메시지 표시
+        errorMessage.textContent = '중복된 숫자가 있습니다. 다시 입력하세요'; // 중복된 숫자가 있으면 오류 메시지 설정
+        errorMessage.style.display = 'block';
         return;
     }
 
