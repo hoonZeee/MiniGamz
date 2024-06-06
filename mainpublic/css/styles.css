@@ -11,16 +11,14 @@
     font-family: "Gamja Flower", sans-serif;
     font-weight: 400;
     font-style: normal;
-    }
+}
 
 body, html {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
     font-family: "Gamja Flower", cursive;
-    
 }
-  
 
 .container {
     display: flex;
@@ -36,7 +34,6 @@ body, html {
     border-radius: 1rem;
     padding: 1em;
 }
-
 
 .form button {
     cursor: pointer;
@@ -57,8 +54,6 @@ body, html {
     box-sizing: border-box;
 }
 
-
-
 .input-group input {
     width: 100%;
     padding: 1rem 3rem;
@@ -68,6 +63,7 @@ body, html {
     border: 0.125rem solid var(--white);
     outline: none;
 }
+
 .input-group textarea {
     width: 100%;
     padding: 1rem 3rem;
@@ -77,8 +73,6 @@ body, html {
     border: 0.125rem solid #ffffff;
     outline: none;
 }
-
-
 
 body {
     font-family: Arial, sans-serif;
@@ -91,6 +85,7 @@ header {
     position: relative;
     text-align: center;
 }
+
 header nav {
     display: flex;
     justify-content: space-between;
@@ -110,13 +105,13 @@ header nav {
     display: flex;
     margin: 0;
     padding: 0;
-} 
+}
 
 .menu li,
 .auth li {
     margin: 0 10px;
     font-size: 20px;
-}/* 폰트 크기 변경 부분 */
+}
 
 .menu a,
 .auth a {
@@ -127,6 +122,7 @@ header nav {
 .auth {
     margin-right: 20px;
 }
+
 .header-text {
     background-color: rgba(255, 255, 255, 0.8);
     padding: 20px;
@@ -186,7 +182,6 @@ main {
     padding: 20px;
 }
 
-
 section {
     margin-bottom: 2em;
 }
@@ -215,13 +210,13 @@ form textarea {
     border: 1px solid #efefef;
 }
 
-
 footer {
     background-color: #ffd200;
     color: #000;
     text-align: center;
     padding: 1em 0;
 }
+
 #toggle-chat-btn {
     position: fixed;
     bottom: 18px;
@@ -234,6 +229,7 @@ footer {
     cursor: pointer;
     z-index: 999; /* 다른 요소 위에 위치하도록 */
 }
+
 #toggle-chat-btn.small {
     padding: 5px 10px;
     font-size: 14px;
@@ -253,7 +249,6 @@ footer {
     padding: 1em;
     background-color: var(--gray);
 }
-
 
 /* 라이브 채팅 버튼 스타일 */
 #toggle-chat-btn {
@@ -289,19 +284,28 @@ footer {
     display: block; /* 초기에 숨김 */
 }
 
+/* 프로필 이미지 스타일 */
+.profile-container img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover; /* 이미지가 원을 가득 채우도록 설정 */
+    margin-bottom: 20px;
+}
 
+.profile-image-selector img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover; /* 이미지가 원을 가득 채우도록 설정 */
+    margin: 10px;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
 
-
-
-
-
-
-
-
-
-
-
-
+.profile-image-selector img:hover {
+    transform: scale(1.1);
+}
 
 
 
@@ -317,61 +321,59 @@ footer {
 
 /* 이 밑으로는 복붙하면 될거임 애니메이션 효과들 */
 
-
 p {
-font-weight: 400;
+    font-weight: 400;
 }
 
 .ch-grid {
-margin: 32px 0 0 0;
-padding: 0;
-list-style: none;
-display: block;
-text-align: center;
-width: 100%;
-	li {
-	width: 180px;
-	height: 180px;
-	display: inline-block;
-	margin: 60px;
-	}
-	&:before, &:after{
-		content: '';
-		display: table;
-		clear: both;
-	}
+    margin: 32px 0 0 0;
+    padding: 0;
+    list-style: none;
+    display: block;
+    text-align: center;
+    width: 100%;
+    li {
+        width: 180px;
+        height: 180px;
+        display: inline-block;
+        margin: 60px;
+    }
+    &:before, &:after{
+        content: '';
+        display: table;
+        clear: both;
+    }
 }
 
-
 .ch-item {
-width: 100%;
-height: 100%;
-border-radius: 50%;
-position: relative;
-cursor: default;
--webkit-perspective: 900px;
--moz-perspective: 900px;
--o-perspective: 900px;
--ms-perspective: 900px;
-perspective: 900px;
-	&:hover{
-		.ch-info-back {
-		-webkit-transform: rotate3d(1, 0, 0, 0deg);
-		-moz-transform: rotate3d(1, 0, 0, 0deg);
-		-o-transform: rotate3d(1, 0, 0, 0deg);
-		-ms-transform: rotate3d(1, 0, 0, 0deg);
-		transform: rotate3d(1, 0, 0, 0deg);
-		opacity: 1;
-		}
-		.ch-info-front {
-		-webkit-transform: translate3d(0, 240px, 0) rotate3d(1, 0, 0, -90deg);
-		-moz-transform: translate3d(0, 240px, 0) rotate3d(1, 0, 0, -90deg);
-		-o-transform: translate3d(0, 240px, 0) rotate3d(1, 0, 0, -90deg);
-		-ms-transform: translate3d(0, 240px, 0) rotate3d(1, 0, 0, -90deg);
-		transform: translate3d(0, 240px, 0) rotate3d(1, 0, 0, -90deg);
-		opacity: 0;
-		}
-	}
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: relative;
+    cursor: default;
+    -webkit-perspective: 900px;
+    -moz-perspective: 900px;
+    -o-perspective: 900px;
+    -ms-perspective: 900px;
+    perspective: 900px;
+    &:hover{
+        .ch-info-back {
+            -webkit-transform: rotate3d(1, 0, 0, 0deg);
+            -moz-transform: rotate3d(1, 0, 0, 0deg);
+            -o-transform: rotate3d(1, 0, 0, 0deg);
+            -ms-transform: rotate3d(1, 0, 0, 0deg);
+            transform: rotate3d(1, 0, 0, 0deg);
+            opacity: 1;
+        }
+        .ch-info-front {
+            -webkit-transform: translate3d(0, 240px, 0) rotate3d(1, 0, 0, -90deg);
+            -moz-transform: translate3d(0, 240px, 0) rotate3d(1, 0, 0, -90deg);
+            -o-transform: translate3d(0, 240px, 0) rotate3d(1, 0, 0, -90deg);
+            -ms-transform: translate3d(0, 240px, 0) rotate3d(1, 0, 0, -90deg);
+            transform: translate3d(0, 240px, 0) rotate3d(1, 0, 0, -90deg);
+            opacity: 0;
+        }
+    }
 }
 
 .ch-info-front {
@@ -382,40 +384,39 @@ perspective: 900px;
 }
 
 .ch-info {
-position: absolute;
-width: 100%;
-height: 100%;
--webkit-transform-style: preserve-3d;
--moz-transform-style: preserve-3d;
--o-transform-style: preserve-3d;
--ms-transform-style: preserve-3d;
-transform-style: preserve-3d;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    -o-transform-style: preserve-3d;
+    -ms-transform-style: preserve-3d;
+    transform-style: preserve-3d;
 }
 
 .ch-info > div {
-display: block;
-position: absolute;
-width: 100%;
-height: 100%;
-border-radius: 50%;
-background-position: center center;
--webkit-transition: all 0.4s linear;
--moz-transition: all 0.4s linear;
--o-transition: all 0.4s linear;
--ms-transition: all 0.4s linear;
-transition: all 0.4s linear;
--webkit-transform-origin: 50% 0%;
--moz-transform-origin: 50% 0%;
--o-transform-origin: 50% 0%;
--ms-transform-origin: 50% 0%;
-transform-origin: 50% 0%;
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-position: center center;
+    -webkit-transition: all 0.4s linear;
+    -moz-transition: all 0.4s linear;
+    -o-transition: all 0.4s linear;
+    -ms-transition: all 0.4s linear;
+    transition: all 0.4s linear;
+    -webkit-transform-origin: 50% 0%;
+    -moz-transform-origin: 50% 0%;
+    -o-transform-origin: 50% 0%;
+    -ms-transform-origin: 50% 0%;
+    transform-origin: 50% 0%;
 }
 
 .ch-info .ch-info-front {
-background-color: rgba(232, 232, 221, 0.5);
-box-shadow: 0 0 0 10px rgba(232, 232, 221, 0.2), 0 0 0 3px #e8e8dd;
+    background-color: rgba(232, 232, 221, 0.5);
+    box-shadow: 0 0 0 10px rgba(232, 232, 221, 0.2), 0 0 0 3px #e8e8dd;
 }
-
 
 .ch-info-front img {
     width: 100%;
@@ -428,45 +429,44 @@ box-shadow: 0 0 0 10px rgba(232, 232, 221, 0.2), 0 0 0 3px #e8e8dd;
 }
 
 .ch-info-front>h4 {
-position: absolute;
-bottom: -50px; /* 하단에 여백 추가 */
-left: 50%;
-transform: translateX(-50%);
-color: #ffffff;
-margin-top: 0; /* 기존 마진 제거 */
-font-family:'Gamja Flower', cursive;
-font-weight: 400;
-font-size: 30px;
-text-shadow: 0 1px 0 #17d5af;
-text-align: center;
-text-transform: uppercase;
-padding-top: 30px;
-white-space:nowrap;
+    position: absolute;
+    bottom: -50px; /* 하단에 여백 추가 */
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ffffff;
+    margin-top: 0; /* 기존 마진 제거 */
+    font-family:'Gamja Flower', cursive;
+    font-weight: 400;
+    font-size: 30px;
+    text-shadow: 0 1px 0 #17d5af;
+    text-align: center;
+    text-transform: uppercase;
+    padding-top: 30px;
+    white-space:nowrap;
 }
 
 .ch-info>.ch-info-back {
--webkit-transform: translate3d(0, 0, -180px) rotate3d(1, 0, 0, 90deg);
--moz-transform: translate3d(0, 0, -180px) rotate3d(1, 0, 0, 90deg);
--o-transform: translate3d(0, 0, -180px) rotate3d(1, 0, 0, 90deg);
--ms-transform: translate3d(0, 0, -180px) rotate3d(1, 0, 0, 90deg);
-transform: translate3d(0, 0, -180px) rotate3d(1, 0, 0, 90deg);
-background-color: #17d5af;
-box-shadow: 0 0 0 10px rgba(232, 232, 221, 0.2), 0 0 0 3px #fff;
-opacity: 0;
+    -webkit-transform: translate3d(0, 0, -180px) rotate3d(1, 0, 0, 90deg);
+    -moz-transform: translate3d(0, 0, -180px) rotate3d(1, 0, 0, 90deg);
+    -o-transform: translate3d(0, 0, -180px) rotate3d(1, 0, 0, 90deg);
+    -ms-transform: translate3d(0, 0, -180px) rotate3d(1, 0, 0, 90deg);
+    transform: translate3d(0, 0, -180px) rotate3d(1, 0, 0, 90deg);
+    background-color: #17d5af;
+    box-shadow: 0 0 0 10px rgba(232, 232, 221, 0.2), 0 0 0 3px #fff;
+    opacity: 0;
 }
 
-
 .ch-info-back>h4 {
-font-family:'Gamja Flower', cursive;
-font-weight: 400;
-font-size: 30px;
-color: #fff;
-text-shadow: 0 1px 0 #069D80;
-text-align: center;
-text-transform: uppercase;
-padding: 0;
-margin: 60px 0px 0px 0px;
-white-space: nowrap; 
+    font-family:'Gamja Flower', cursive;
+    font-weight: 400;
+    font-size: 30px;
+    color: #fff;
+    text-shadow: 0 1px 0 #069D80;
+    text-align: center;
+    text-transform: uppercase;
+    padding: 0;
+    margin: 60px 0px 0px 0px;
+    white-space: nowrap; 
 }
 
 .ch-info-back>p {
@@ -477,20 +477,14 @@ white-space: nowrap;
 }
 
 .ch-info-back>a {
-display: inline-block;
-background: url(http://i57.tinypic.com/li6bs.png) 0 0 no-repeat;
-width: 20px;
-height: 20px;
-	&:hover {
-	background: url(http://i57.tinypic.com/li6bs.png) 0 -25px no-repeat;
-	}
+    display: inline-block;
+    background: url(http://i57.tinypic.com/li6bs.png) 0 0 no-repeat;
+    width: 20px;
+    height: 20px;
+    &:hover {
+        background: url(http://i57.tinypic.com/li6bs.png) 0 -25px no-repeat;
+    }
 }
-
-
-
-
-
-
 
 
 
@@ -548,7 +542,5 @@ height: 20px;
             100% 100%,
             0% 100%
         );
-	}
+    }
 }
-
-
