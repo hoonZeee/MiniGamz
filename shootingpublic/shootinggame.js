@@ -108,40 +108,80 @@ function drawLives() { // 목숨 그리기 함수
   }
   ctx.fillText(`Lives: ${livesText}`, 10, 30); // 목숨 텍스트 그리기
 }
+let userNickname = null;
 
-function drawGameOver() { // 게임 오버 메시지 그리기 함수
-  ctx.fillStyle = 'white'; // 텍스트 색상 설정
-  ctx.font = '50px Arial'; // 텍스트 글꼴 설정
-  ctx.fillText('Game Over', canvas.width / 2 - 150, canvas.height / 2 - 25); // 게임 오버 텍스트 그리기
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/profile')
+        .then(response => response.json())
+        .then(data => {
+            if (data.nickname) {
+                userNickname = data.nickname; // 닉네임을 전역 변수에 저장
+                document.getElementById('nickname').innerText = `닉네임: ${data.nickname}`;
+                document.getElementById('highScore').innerText = `최고 점수: ${data.score}점`;
+            }
+        })
+        .catch(error => {
+            console.error('프로필 정보 가져오기 중 오류 발생:', error);
+        });
+});
 
-  const retryButton = document.createElement('button'); // 버튼 요소 생성
-  retryButton.innerText = 'Retry'; // 버튼 텍스트 설정
+function sendScoreToServer(score) {
+  if (!userNickname) {
+      console.error('사용자 닉네임을 가져오지 못했습니다.');
+      return;
+  }
 
-  // canvas의 위치를 기준으로 버튼 위치 설정
+  fetch('/api/updatescore', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ nickname: userNickname, score: score }),
+  })
+  .then(response => response.json())
+  .then(data => {
+      console.log('Score updated successfully:', data);
+  })
+  .catch((error) => {
+      console.error('Error updating score:', error);
+  });
+}
+
+
+function drawGameOver() {
+  ctx.fillStyle = 'white';
+  ctx.font = '50px Arial';
+  ctx.fillText('Game Over', canvas.width / 2 - 150, canvas.height / 2 - 25);
+
+  sendScoreToServer(score); // 게임 오버 시점에 점수를 서버로 전송
+
+  const retryButton = document.createElement('button');
+  retryButton.innerText = 'Retry';
+
   const rect = canvas.getBoundingClientRect();
-  retryButton.style.position = 'absolute'; // 버튼 위치 설정
-  retryButton.style.left = `${rect.left + canvas.width / 2 + 50}px`; // 버튼 x 위치 설정 (canvas 기준 오른쪽으로 이동)
-  retryButton.style.top = `${rect.top + canvas.height / 2 + 100}px`; // 버튼 y 위치 설정 (canvas 기준 아래로 이동)
+  retryButton.style.position = 'absolute';
+  retryButton.style.left = `${rect.left + canvas.width / 2 + 50}px`;
+  retryButton.style.top = `${rect.top + canvas.height / 2 + 100}px`;
 
-  retryButton.style.padding = '10px 20px'; // 버튼 패딩 설정
-  retryButton.style.fontSize = '20px'; // 버튼 글꼴 크기 설정
-  document.body.appendChild(retryButton); // 버튼을 문서에 추가
+  retryButton.style.padding = '10px 20px';
+  retryButton.style.fontSize = '20px';
+  document.body.appendChild(retryButton);
 
   const handleRetry = () => {
-    document.body.removeChild(retryButton); // 버튼 제거
-    resetGame(); // 게임 리셋
-    document.removeEventListener('keydown', handleEnterKey); // 키 다운 이벤트 리스너 제거
+      document.body.removeChild(retryButton);
+      resetGame();
+      document.removeEventListener('keydown', handleEnterKey);
   };
 
-  retryButton.addEventListener('click', handleRetry); // 버튼 클릭 이벤트 추가
+  retryButton.addEventListener('click', handleRetry);
 
   const handleEnterKey = (event) => {
-    if (event.key === 'Enter') {
-      retryButton.click(); // Enter 키 누르면 버튼 클릭 이벤트 트리거
-    }
+      if (event.key === 'Enter') {
+          retryButton.click();
+      }
   };
 
-  document.addEventListener('keydown', handleEnterKey); // 키 다운 이벤트 리스너 추가
+  document.addEventListener('keydown', handleEnterKey);
 }
 
 function shootBullet() {
@@ -166,6 +206,24 @@ function update() { // 게임 업데이트 함수
   drawPotions(); // 포션 그리기
   drawScore(); // 점수 그리기
   drawLives(); // 목숨 그리기
+
+  function sendScoreToServer(score) {
+    const nickname = '사용자_닉네임'; // 여기에 실제 사용자 닉네임을 넣어야 함
+    fetch('/api/updatescore', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ nickname: nickname, score: score }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Score updated successfully:', data);
+    })
+    .catch((error) => {
+        console.error('Error updating score:', error);
+    });
+}
 
   bullets.forEach((bullet, bulletIndex) => { // 모든 총알에 대해
     if (bullet.y + bullet.height < 0) { // 총알이 화면을 벗어나면
