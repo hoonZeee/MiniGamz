@@ -65,16 +65,17 @@
                 <h1>MiniGamz</h1>
             </div>
         </div>
+        <div id="userInfo">
+            <p id="nickname"></p>
+            <p id="highScore"></p>
+        </div>
+        
     </header>
     
     <main>
-
-
-        
         <div class="content-section hidden">
             <ul class="ch-grid">
                 <li>
-                
                         </div>
                     </div>
                 </li>
@@ -83,7 +84,6 @@
                         <li>
                             <div class="ch-item">
                                 <div class="ch-info" onclick="location.href='baseball.html'">
-
                                     <div class="ch-info-front">
                                         <img src="/images/baseball.png" alt="야구게임" style="width: 100%; height: auto;">
                                         <h4 style="margin-top: 0;">숫자 야구!</h4>
@@ -112,10 +112,10 @@
                         <li>
                             <div class="ch-item">
                                 <div class="ch-info" onclick="location.href='shooting.html'">
-
-                                    <div class="ch-info-front">
+                                    <div class="ch-info-front" style="position: relative;">
                                         <img src="/images/shooting.png" alt="슈팅게임" style="width: 100%; height: auto;">
                                         <h4 style="margin-top: 0;">슈팅게임!</h4>
+                                        <p id="top-score" style="position: absolute; top: 0; left: 0; width: 100%; font-size: 14px; color: white; background-color: rgba(0, 0, 0, 0.7); text-align: center; margin: 0; padding: 5px 0;"></p>
                                     </div>
                                     <div class="ch-info-back">
                                         <img src="/images/banana.png" style="width: 90%; height: 190px;">
@@ -124,6 +124,27 @@
                                 </div>
                             </div>
                         </li>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                fetch('/api/topscore')
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        const topScoreElement = document.getElementById('top-score');
+                                        if (data.nickname && data.score) {
+                                            topScoreElement.innerHTML = `최고 점수: ${data.nickname} - ${data.score}점`;
+                                        } else {
+                                            topScoreElement.innerHTML = '점수 데이터 없음';
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('최고 점수 가져오기 중 오류 발생:', error);
+                                    });
+                            });
+                        </script>
+                         
+                    
+                        
+                                     
                         <li>
                             <div class="ch-item">
                                 <div class="ch-info" onclick="location.href='minionjump.html'">
@@ -157,7 +178,6 @@
                     </ul>
                 </div>
                 
-        
         <div class="spacer"></div>
         <div class="spacer"></div>
          <div class="container">
@@ -284,11 +304,30 @@
                 });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        // top score 정보를 가져와서 표시하는 함수
+        function fetchTopScore() {
+            fetch('/api/topscore')
+                .then(response => response.json())
+                .then(data => {
+                    const topScoreElement = document.getElementById('top-score');
+                    if (data.nickname && data.score) {
+                        topScoreElement.innerHTML = `최고 점수: ${data.nickname} - ${data.score}점`;
+                    } else {
+                        topScoreElement.innerHTML = '점수 데이터 없음';
+                    }
+                })
+                .catch(error => {
+                    console.error('최고 점수 가져오기 중 오류 발생:', error);
+                });
+        }
 
+        document.addEventListener('DOMContentLoaded', function() {
             // 기존 기능
             checkLoginStatus();
             document.getElementById('profileLink').addEventListener('click', redirectToProfile);
+
+            // 최고 점수 가져와서 표시
+            fetchTopScore();
         
             // 애니메이션 효과 적용
             const sections = document.querySelectorAll('.content-section');
@@ -309,9 +348,9 @@
             });
             // 라이브 채팅창 토글 기능 추가
         });
-        
-
     </script>
+   
+    
     <script src="/js/scripts.js"></script>
 </body>
 </html>
