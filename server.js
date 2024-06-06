@@ -59,6 +59,7 @@ pool.getConnection((err, conn) => {
         alias varchar(300) DEFAULT NULL COMMENT '본인확인 별명',
         travel varchar(300) DEFAULT NULL COMMENT '본인확인 여행',
         movie varchar(300) DEFAULT NULL COMMENT '본인확인 영화',
+        score INT NOT NULL DEFAULT 0,
         PRIMARY KEY (id),
         UNIQUE KEY unique_nickname (nickname)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -71,6 +72,56 @@ pool.getConnection((err, conn) => {
             console.log('테이블 생성 성공!');
         }
     });
+});
+
+// 점수 업데이트 API 엔드포인트
+app.post('/api/updatescore', (req, res) => {
+    const { nickname, score } = req.body;
+
+    pool.getConnection((err, conn) => {
+        if (err) {
+            console.error('MySQL 연결 실패:', err);
+            res.status(500).send('서버 에러');
+            return;
+        }
+
+        const query = 'UPDATE users SET score = GREATEST(score, ?) WHERE nickname = ?';
+        conn.query(query, [score, nickname], (err, result) => {
+            conn.release();
+            if (err) {
+                console.error('쿼리 실행 실패:', err);
+                res.status(500).send('데이터베이스 에러');
+                return;
+            }
+            res.status(200).send('점수 업데이트 성공');
+        });
+    });
+});
+
+// 사용자 프로필 정보를 가져오는 API 엔드포인트
+app.get('/api/profile', (req, res) => {
+    if (req.session.user) {
+        pool.getConnection((err, conn) => {
+            if (err) {
+                console.error('MySQL 연결 실패:', err);
+                res.status(500).send('서버 에러');
+                return;
+            }
+
+            const query = 'SELECT nickname, score FROM users WHERE id = ?';
+            conn.query(query, [req.session.user.id], (err, results) => {
+                conn.release();
+                if (err) {
+                    console.error('쿼리 실행 실패:', err);
+                    res.status(500).send('데이터베이스 에러');
+                    return;
+                }
+                res.json(results[0]);
+            });
+        });
+    } else {
+        res.status(401).json({ error: '사용자가 로그인하지 않았습니다.' });
+    }
 });
 
 //문의 게시판 DB
