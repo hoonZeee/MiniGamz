@@ -95,11 +95,11 @@
             color: #000;
             padding: 10px;
         }
-        
+
         .logo {
             margin-left: 20px;
         }
-        
+
         .menu ul,
         .auth ul {
             list-style: none;
@@ -107,21 +107,24 @@
             margin: 0;
             padding: 0;
         }
-        
+
         .menu li,
         .auth li {
             margin: 0 10px;
         }
-        
+
         .menu a,
         .auth a {
             color: #000;
             text-decoration: none;
         }
-        
+
         .auth {
             margin-right: 20px;
+            display: flex;
+            align-items: center;
         }
+
         .header-text {
             background-color: rgba(255, 255, 255, 0.8);
             padding: 20px;
@@ -131,14 +134,53 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
-        
+
         .minion-header {
             margin-bottom: 20px;
         }
-        
+
         .minion-header img {
             max-width: 60%;
         }
+
+        .auth-profile {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+        .auth-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        .logo a {
+            text-decoration: none; /* 추가 */
+        }
+        .logo h2 {
+            margin: 0;
+            font-family: 'Permanent Marker', cursive;
+            cursor: pointer;
+            color: black; /* 프로필 파일의 디자인을 반영 */
+        }
+        .auth {
+        display: flex;
+        align-items: center; /* 모든 자식 요소를 수직 가운데 정렬 */
+        }
+
+         .auth ul {
+        display: flex;
+        align-items: center; /* 모든 리스트 아이템을 수직 가운데 정렬 */
+        margin: 0;
+        padding: 0;
+        }
+
+        .auth li {
+        list-style: none;
+        margin: 0 10px;
+        }
+        
     </style>
 </head>
 <body>
@@ -146,7 +188,7 @@
         <nav>
             <div class="logo">
                 <a href="/">
-                    <h2>Mini Gemz</h2>
+                    <h2>Mini Gamz</h2>
                 </a>
             </div>
             <div class="menu">
@@ -202,10 +244,17 @@
                 .then(data => {
                     if (data.nickname) {
                         document.getElementById('authMenu').innerHTML = `
+                            <li class="auth-profile">
+                                <img src="${data.profileImage}" alt="Profile Image">
+                                <span>${data.nickname}</span>
+                            </li>
                             <li><a href="#" id="logoutLink">로그아웃</a></li>
                         `;
                         document.getElementById('logoutLink').addEventListener('click', logout);
                         document.getElementById('newAuthor').textContent = data.nickname;
+                        document.getElementById('profileLink').addEventListener('click', () => {
+                            window.location.href = 'profile.html';
+                        });
                     } else {
                         document.getElementById('authMenu').innerHTML = `
                             <li><a href="login.html" id="loginLink">로그인</a></li>
