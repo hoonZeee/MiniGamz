@@ -98,7 +98,23 @@
   - 메인페이지, 프로필페이지, 문의게시판 페이지(mini gamz 디자인 변경 + 로그인시 프로필 사진 닉네임 우상단 표시)  
   - user db에 profileImage 추가 (프로필 사진 저장용)  
   - server.js, index, profile.html, inquiry.html, styles.css  업데이트  
-  - public/images 폴더 추가 (프로필 사진)  
+  - public/images 폴더 추가 (프로필 사진)
+
+ 6.6 옥주헌<br/>
+  - [x] adminpublic 소스코드 리팩토링 ( 소스 분리 및 경로 정리 )
+  - [ ] Admin 페이지에 사용자 데이터베이스 조회 기능 추가
+  - [ ] /admin 접속시 권한 확인
+  - [ ] 사용자 관리 부분
+  - [ ] 콘텐츠 관리 부분
+  - [ ] error 페이지 라우팅
+  - [ ] 고객 문의 부분
+
+6/7 이지훈<br/>
+  - shooting game 패치
+  - 난이도 상향 조정, 아이템 크기 최적화, main 버튼 추가
+  - 적이 겹쳐서 피격시 live 두개씩 감소되는 오류 수정
+  - baseball game 패치
+  - 중복숫자, 문자입력시 팝업창 대신 경고메세지로 뜨도록 ux/ui개선
 
 6/6 황정인<br/>
   - index.html,stykes.css 필요없는 부분정리
