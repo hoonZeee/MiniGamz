@@ -102,6 +102,7 @@
 
  6.6 옥주헌<br/>
   - adminpublic 소스코드 리팩토링 ( 소스 분리 및 경로 정리 )
+  - Dashboard - dataTable Frontend Changed
 
 6/6 이지훈<br/>
   - shooting game 패치
@@ -149,4 +150,11 @@
 
 6/8 옥주헌<br/>
  - package.json multer define
- - admin 대시보드에 접속시 가입된 DB 조회 기능 추가(ID,PW,Name,Nickname)
+   - [x] "multer": "^1.4.5-lts.1"
+ - admin 대시보드에 접속시 가입된 DB 조회 기능 추가( ID,PW,Name,Nickname )
+   - [x] added fetchTableData.js
+   - [x] fixed admin.html
+ - admin Dashboard에 접속된 userName 표시
+   - [x] added displayUserNickname.js
+ - fixed admin.html
+   - error page 경로 변경
