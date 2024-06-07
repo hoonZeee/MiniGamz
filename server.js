@@ -26,7 +26,7 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: '127.0.0.1',
     user: 'root',
-    password: '1234',
+    password: '00000000',
     database: 'user',
     debug: false
 });
@@ -188,7 +188,7 @@ app.get('/api/users', (req, res) => {
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '1234',
+    password: '00000000',
     database: 'post'
 });
 
@@ -297,7 +297,7 @@ app.delete('/api/posts/:id', (req, res) => {
 const ddb = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '1234',
+    password: '00000000',
     database: 'post'
 });
 
