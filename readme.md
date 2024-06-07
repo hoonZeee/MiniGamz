@@ -162,3 +162,19 @@
  - fixed admin.html
    - error page 경로 변경
 
+6/8 옥주헌<br/>
+ - package.json multer define
+   - [x] "multer": "^1.4.5-lts.1"
+ - admin 대시보드에 접속시 가입된 DB 조회 기능 추가( ID,PW,Name,Nickname )
+   - [x] added fetchTableData.js
+   - [x] fixed admin.html
+ - admin Dashboard에 접속된 userName 표시
+   - [x] added displayUserNickname.js
+ - fixed admin.html
+   - error page 경로 변경
+
+6/8 황정인<br/>
+  - 아이디 자릿수 제한
+  - 아이템샵에서 프로필 추가 구매 가능(이미지는 전부 임시)
+  - 구매하지않은 프로필은 선택불가
+  - 칭호 브론즈,실버,골드 잠궈놓음(추후결정)
