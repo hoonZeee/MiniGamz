@@ -371,6 +371,64 @@ app.delete('/api/img/:id', (req, res) => {
         }
     });
 });
+//사진게시판
+const multer = require('multer');
+const cors = require('cors');
+const fs = require('fs');
+
+const port = 3000;
+
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    const title = req.body.title.replace(/\s+/g, '-'); // 제목의 공백을 대시(-)로 변경
+    const ext = path.extname(file.originalname); // 파일 확장자 추출
+    cb(null, `${title}${ext}`);
+  }
+});
+
+const upload = multer({ storage: storage });
+
+let images = [];
+
+app.post('/upload', upload.single('image'), (req, res) => {
+  const { title, category } = req.body;
+  const image = {
+    id: Date.now().toString(),
+    image_url: `/uploads/${req.file.filename}`,
+    category: category,
+    title: title,
+    rating: 0
+  };
+  images.push(image);
+  res.send('Image uploaded successfully!');
+});
+
+app.get('/images', (req, res) => {
+  res.json(images);
+});
+
+app.post('/rate', (req, res) => {
+  const { imageId, rating } = req.body;
+  const image = images.find(img => img.id === imageId);
+  if (image) {
+    image.rating = rating;
+    res.send('Rating updated successfully!');
+  } else {
+    res.status(404).send('Image not found!');
+  }
+});
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -428,6 +486,9 @@ app.get('/community.html', (req, res) => {
 });
 app.get('/free.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'free/html', 'free.html'));
+});
+app.get('/pic.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'pic', 'pic.html'));
 });
 app.get('/find.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'dbpublic/html', 'find.html'));
