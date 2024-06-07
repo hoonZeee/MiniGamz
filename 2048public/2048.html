@@ -42,6 +42,22 @@
     <audio id="backgroundMusic" autoplay loop>
         <source src="./2048music/background.mp3" type="audio/mpeg">
     </audio>
+    <div class="instructions-box" id="instructionsBox">
+        <div class="instructions-header">
+            <h2>규칙</h2>
+            <span id="toggleButton" onclick="toggleInstructions()">&#9660;</span> 
+        </div>
+        <div class="instructions-content" id="instructionsContent">
+            <p>
+                -방향키로 조작<br>
+                - 같은 숫자를 합치세요!<br>
+                - 합쳐진 숫자는 두배커짐!<br>
+                - 최대한 큰수를 만들어 공간을 확보하세요!<br>
+                - 더이상 못움직이면 탈락!<br>
+            </p>
+            <img src="images/baseball.gif" alt="미니언 야구" class="instructions-image">
+        </div>
+    </div>
     <script src="./2048.js"></script>
 </body>
 </html>
