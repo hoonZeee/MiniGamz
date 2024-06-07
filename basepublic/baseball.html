@@ -18,6 +18,23 @@
         <div id="result"></div>
         <ul id="history"></ul>
     </div>
+
+    <div class="instructions-box" id="instructionsBox">
+        <div class="instructions-header">
+            <h2>규칙</h2>
+            <span id="toggleButton" onclick="toggleInstructions()">&#9660;</span> <!-- 아래삼각형 -->
+        </div>
+        <div class="instructions-content" id="instructionsContent">
+            <p>
+                4자리 숫자를 추측하세요!.<br><br>
+                볼: 숫자는 맞지만 자리가 다름!<br><br>
+                스트라이크:자리와 숫자가 정확함!.<br><br>
+                아웃:입력한 숫자가 어느 것도 포함되지 않음!.<br><br>
+                5. 10번의 시도 내에 정답을 맞춰보세요!
+            </p>
+            <img src="images/baseball.gif" alt="미니언 야구" class="instructions-image">
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

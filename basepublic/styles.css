@@ -16,7 +16,7 @@ body {
     background-color: rgba(255, 255, 255, 0.8); /* 약간의 투명도를 가진 흰색 배경 */
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.615);
     position: relative;
 }
 
@@ -46,4 +46,37 @@ input, button {
 
 #history li {
     margin: 5px 0;
+}
+.instructions-box {
+    position: fixed;
+    top: 100px;  /* 상단에서 100px 아래에 위치 */
+    right: 20px;
+    width: 300px;
+    background-color: rgba(0, 0, 0, 0.599);
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    box-sizing: border-box;  /* 패딩 포함 크기 조정 */
+}
+
+.instructions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.instructions-header span {
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.instructions-content {
+    display: block;
+}
+
+.instructions-image {
+    width: 100%;
+    height: auto;
 }
