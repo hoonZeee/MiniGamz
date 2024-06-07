@@ -20,6 +20,23 @@
         <button id="restartButton" style="display: none;">
             <img src="jumpimg/restart.png" alt="Restart" style="width: 30px; height: 30px;">
         </button>
+        <div class="instructions-box" id="instructionsBox">
+            <div class="instructions-header">
+                <h2>규칙</h2>
+                <span id="toggleButton" onclick="toggleInstructions()">&#9660;</span> 
+            </div>
+            <div class="instructions-content" id="instructionsContent">
+                <p>
+                    - 떨어지는 발판을 밟고 올라가세요!<br>
+                    - 스페이스바로 점프<br>
+                    - 이단 점프도 가능!<br>
+                    - 바닥에 떨어지면 탈락!<br>
+                    - 발판이 점점 빨라집니다!<br>
+                    
+                </p>
+                <img src="images/baseball.gif" alt="미니언 야구" class="instructions-image">
+            </div>
+        </div>
     </div>
     <script src="jumpgame.js"></script>
 </body>
