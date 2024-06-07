@@ -59,6 +59,18 @@ const emptyHeart = '🤍'; // 빈 하트 이모지
 
 startButton.addEventListener('click', startGame); // 시작 버튼 클릭 이벤트 리스너 추가
 
+function toggleInstructions() {
+  const content = document.getElementById('instructionsContent');
+  const button = document.getElementById('toggleButton');
+  if (content.style.display === 'none') {
+      content.style.display = 'block';
+      button.innerHTML = '&#9660;'; // 아래삼각형
+  } else {
+      content.style.display = 'none';
+      button.innerHTML = '&#9650;'; // 윗삼각형
+  }
+}
+
 function checkLoginStatus() {
     fetch('/api/check-login')
         .then(response => response.json())
