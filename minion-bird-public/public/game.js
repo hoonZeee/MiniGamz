@@ -48,6 +48,18 @@ const pipes = [];
 const pipeWidth = 52;
 const pipeHorizontalGap = 300; // 파이프 수평 간격
 
+function toggleInstructions() {
+    const content = document.getElementById('instructionsContent');
+    const button = document.getElementById('toggleButton');
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        button.innerHTML = '&#9660;'; // 아래삼각형
+    } else {
+        content.style.display = 'none';
+        button.innerHTML = '&#9650;'; // 윗삼각형
+    }
+}
+
 function allImagesLoaded(callback) {
     let loadedImagesCount = 0;
     const totalImages = 4;
