@@ -7,32 +7,36 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <button id="mainButton">뒤로 가기</button>
-    <canvas id="gameCanvas" width="600" height="500"></canvas>
-    <div id="buttons">
-        <button id="startButton">게임 시작</button>
-        <button id="pauseButton" style="display: none;">
-            <img src="img/pause.png" alt="Pause" style="width: 30px; height: 30px;">
-        </button>
-        <button id="resumeButton" style="display: none;">
-            <img src="img/resume.png" alt="Resume" style="width: 30px; height: 30px;">
-        </button>
-        <button id="restartButton" style="display: none;">
-            <img src="img/restart.png" alt="Restart" style="width: 30px; height: 30px;">
-        </button>
+    <div id="mainContent">
+        <button id="mainButton">뒤로 가기</button>
+        <canvas id="gameCanvas" width="600" height="500"></canvas>
+        <div id="buttons">
+            <button id="startButton">게임 시작</button>
+            <button id="pauseButton" style="display: none;">
+                <img src="img/pause.png" alt="Pause" style="width: 30px; height: 30px;">
+            </button>
+            <button id="resumeButton" style="display: none;">
+                <img src="img/resume.png" alt="Resume" style="width: 30px; height: 30px;">
+            </button>
+            <button id="restartButton" style="display: none;">
+                <img src="img/restart.png" alt="Restart" style="width: 30px; height: 30px;">
+            </button>
+        </div>
+    </div>
+    <div class="instructions-box" id="instructionsBox">
+        <div class="instructions-header">
+            <h2>조작법</h2>
+            <span id="toggleButton" onclick="toggleInstructions()">&#9660;</span> 
+        </div>
+        <div class="instructions-content" id="instructionsContent">
+            <p>
+                - 스페이스 바 또는 ↑ 키를 눌러 점프<br>
+                - 장애물에 부딪히면 탈락!<br>
+                - 점점빨라지는 속도를 극복하고 최고 점수에 도달하세요~!
+            </p>
+            <img src="images/baseball.gif" alt="미니언 야구" class="instructions-image">
+        </div>
     </div>
     <script src="game.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-

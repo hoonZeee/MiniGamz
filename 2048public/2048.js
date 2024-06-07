@@ -360,5 +360,29 @@ function handleKeydown(e) {
     }
 }
 
+
+function toggleInstructions() {
+    const content = document.getElementById('instructionsContent');
+    const button = document.getElementById('toggleButton');
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        button.innerHTML = '&#9660;'; // 아래삼각형
+    } else {
+        content.style.display = 'none';
+        button.innerHTML = '&#9650;'; // 윗삼각형
+    }
+}
+
+function toggleInstructions() {
+    const content = document.getElementById('instructionsContent');
+    const button = document.getElementById('toggleButton');
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        button.innerHTML = '&#9660;'; // 아래삼각형
+    } else {
+        content.style.display = 'none';
+        button.innerHTML = '&#9650;'; // 윗삼각형
+    }
+}
 // 페이지 로드 시 로그인 상태 확인
 document.addEventListener('DOMContentLoaded', checkLoginStatus);

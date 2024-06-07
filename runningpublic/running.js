@@ -70,6 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.fillText(`Score: ${score}`, 10, 30);
     }
 
+    
+
     // 러너의 위치를 업데이트하는 함수
     function updateRunner() {
         if (runner.isJumping) {
@@ -210,6 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    
     // 로그인 상태 확인
     fetch('/api/check-login')
         .then(response => response.json())
@@ -231,3 +234,15 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error('Error checking login status:', err);
         });
 });
+
+function toggleInstructions() {
+    const content = document.getElementById('instructionsContent');
+    const button = document.getElementById('toggleButton');
+    if (content.style.display === 'none') {
+      content.style.display = 'block';
+      button.innerHTML = '&#9660;'; // 아래삼각형
+    } else {
+     content.style.display = 'none';
+     button.innerHTML = '&#9650;'; // 윗삼각형
+    }
+}
