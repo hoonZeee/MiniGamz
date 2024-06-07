@@ -31,7 +31,7 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: '127.0.0.1',
     user: 'root',
-    password: '00000000',
+    password: '0000',
     database: 'user',
     debug: false
 });
@@ -155,7 +155,7 @@ app.use(bodyParser.json());
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root', // MySQL 유저 이름
-    password: '00000000', // MySQL 비밀번호
+    password: '0000', // MySQL 비밀번호
     database: 'post' // MySQL 데이터베이스 이름
 });
 
@@ -267,7 +267,7 @@ app.use(bodyParser.json());
 const ddb = mysql.createConnection({
     host: 'localhost',
     user: 'root', // MySQL 유저 이름
-    password: '00000000', // MySQL 비밀번호
+    password: '0000', // MySQL 비밀번호
     database: 'post' // MySQL 데이터베이스 이름
 });
 
