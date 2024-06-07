@@ -26,7 +26,7 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: '127.0.0.1',
     user: 'root',
-    password: '00000000',
+    password: '1234',
     database: 'user',
     debug: false
 });
@@ -82,6 +82,17 @@ pool.getConnection((err, conn) => {
     ALTER TABLE users ADD COLUMN points INT DEFAULT 0 COMMENT '사용자 포인트';
     `;
 
+    // 구매한 프로필 저장하는 테이블 생성
+    const createPurchasedImagesTableQuery = `
+    CREATE TABLE IF NOT EXISTS purchase (
+        user_id VARCHAR(100),
+        image_url VARCHAR(255),
+        color_url VARCHAR(255),
+        PRIMARY KEY (user_id, image_url),
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+    `;
+
     conn.query(createDatabaseQuery, (err) => {
         if (err) {
             console.error('데이터베이스 생성 실패:', err);
@@ -125,7 +136,6 @@ pool.getConnection((err, conn) => {
                         const count = results[0].count;
                         if (count === 0) {
                             conn.query(alterPointsColumnQuery, (err) => {
-                                conn.release();
                                 if (err) {
                                     console.error('포인트 컬럼 추가 실패:', err);
                                 } else {
@@ -133,15 +143,25 @@ pool.getConnection((err, conn) => {
                                 }
                             });
                         } else {
-                            conn.release();
                             console.log('포인트 컬럼이 이미 존재합니다.');
                         }
+                    }
+                });
+
+                // 구매한 프로필 테이블 생성 쿼리 실행
+                conn.query(createPurchasedImagesTableQuery, (err) => {
+                    conn.release();
+                    if (err) {
+                        console.error('구매한 프로필 테이블 생성 실패:', err);
+                    } else {
+                        console.log('구매한 프로필 테이블 생성 성공!');
                     }
                 });
             });
         });
     });
 });
+
 
 // API 엔드포인트 (DB)
 app.get('/api/users', (req, res) => {
@@ -168,7 +188,7 @@ app.get('/api/users', (req, res) => {
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '00000000',
+    password: '1234',
     database: 'post'
 });
 
@@ -277,7 +297,7 @@ app.delete('/api/posts/:id', (req, res) => {
 const ddb = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '00000000',
+    password: '1234',
     database: 'post'
 });
 
@@ -502,7 +522,13 @@ app.get('/profile.html', (req, res) => {
         res.redirect('/login.html?redirectUrl=/profile.html');
     }
 });
-
+app.get('/shop.html', (req, res) => {
+    if (req.session.user) {
+        res.sendFile(path.join(__dirname, 'dbpublic/html', 'shop.html'));
+    } else {
+        res.redirect('/login.html?redirectUrl=/shop.html');
+    }
+});
 // 로그인 상태 확인 API
 app.get('/api/check-login', (req, res) => {
     if (req.session.user) {
@@ -586,8 +612,12 @@ app.post('/process/login', (req, res) => {
                     return;
                 }
                 if (rows.length > 0) {
-                    console.log('아이디[%s], 패스워드가 일치하는 사용자 [%s] 찾음', paramId, rows[0].name);
-                    req.session.user = { id: rows[0].id, name: rows[0].name, nickname: rows[0].nickname, profileImage: rows[0].profileImage, points: rows[0].points }; // 세션에 사용자 정보 저장
+                    const user = rows[0];
+                    if (user.points === null) {
+                        user.points = 0;
+                    }
+                    console.log('아이디[%s], 패스워드가 일치하는 사용자 [%s] 찾음', paramId, user.name);
+                    req.session.user = { id: user.id, name: user.name, nickname: user.nickname, profileImage: user.profileImage, points: user.points }; // 세션에 사용자 정보 저장
                     res.redirect(redirectUrl);    // 로그인 성공시 리디렉션 URL로 이동
                 } else {
                     console.log('아이디[%s], 패스워드가 일치없음', paramId);
@@ -659,8 +689,8 @@ app.post('/process/adduser', (req, res) => {
     console.log('/process/adduser 호출됨');
     const { nickname, name, id, password, highschool, person, alias, travel, movie } = req.body;
     // 아이디 자릿수 제한 제거, 영어와 숫자만 체크
-    if (!/^[A-Za-z0-9]+$/.test(id)) {
-        return res.json({ success: false, message: '아이디는 영어와 숫자만 가능합니다.' });
+    if (!/^[A-Za-z0-9]{4,15}/.test(id)) {
+        return res.json({ success: false, message: '아이디는 패스워드는 4~15자리의 영어와 숫자만 가능합니다.' });
     }
 
     // 비밀번호 자릿수 제한 유지
@@ -780,8 +810,12 @@ app.get('/api/profile', (req, res) => { // 프로필 정보 API
                     return res.status(500).json({ error: '쿼리 실행 실패' });
                 }
                 if (rows.length > 0) {
-                    req.session.user = rows[0]; // 세션 업데이트
-                    res.json(rows[0]);
+                    const user = rows[0];
+                    if (user.points === null) {
+                        user.points = 0;
+                    }
+                    req.session.user = user; // 세션 업데이트
+                    res.json(user);
                 } else {
                     res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
                 }
@@ -859,6 +893,116 @@ app.post('/logout', (req, res) => {
         res.redirect('/');
     });
 });
+
+
+
+
+
+
+
+app.post('/api/purchase-item', (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: '로그인 상태가 아닙니다.' });
+    }
+
+    const { type, value, cost } = req.body;
+    const userId = req.session.user.id;
+
+    if (!cost || isNaN(cost) || cost <= 0) {
+        return res.status(400).json({ error: '유효하지 않은 비용입니다.' });
+    }
+
+    pool.getConnection((err, conn) => {
+        if (err) {
+            console.error('MySQL 연결 실패:', err);
+            return res.status(500).json({ error: '서버 에러' });
+        }
+
+        // 이미 구매한 아이템인지 확인
+        const queryCheck = 'SELECT COUNT(*) AS count FROM purchase WHERE user_id = ? AND image_url = ?';
+        conn.query(queryCheck, [userId, value], (err, results) => {
+            if (err) {
+                conn.release();
+                console.error('아이템 확인 실패:', err);
+                return res.status(500).json({ error: '아이템 확인 실패' });
+            }
+
+            if (results[0].count > 0) {
+                conn.release();
+                return res.status(400).json({ error: '이미 구매한 아이템입니다.' });
+            }
+
+            // 사용자 포인트 조회 및 차감
+            const querySelect = 'SELECT points FROM users WHERE id = ?';
+            conn.query(querySelect, [userId], (err, rows) => {
+                if (err) {
+                    conn.release();
+                    console.error('포인트 조회 실패:', err);
+                    return res.status(500).json({ error: '포인트 조회 실패' });
+                }
+
+                const userPoints = rows[0].points;
+                if (userPoints < cost) {
+                    conn.release();
+                    return res.status(400).json({ error: '포인트가 부족합니다.' });
+                }
+
+                const queryUpdate = 'UPDATE users SET points = points - ? WHERE id = ?';
+                conn.query(queryUpdate, [cost, userId], (err) => {
+                    if (err) {
+                        conn.release();
+                        console.error('포인트 차감 실패:', err);
+                        return res.status(500).json({ error: '포인트 차감 실패' });
+                    }
+
+                    // 구매한 아이템을 데이터베이스에 저장
+                    const queryInsert = 'INSERT INTO purchase (user_id, image_url) VALUES (?, ?)';
+                    conn.query(queryInsert, [userId, value], (err) => {
+                        conn.release();
+                        if (err) {
+                            console.error('아이템 저장 실패:', err);
+                            return res.status(500).json({ error: '아이템 저장 실패' });
+                        }
+
+                        res.json({ success: true });
+                    });
+                });
+            });
+        });
+    });
+});
+
+
+// 아이템샵에서 이미지 구매
+app.get('/api/purchased-images', (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: '로그인 상태가 아닙니다.' });
+    }
+
+    const userId = req.session.user.id;
+
+    pool.getConnection((err, conn) => {
+        if (err) {
+            console.error('MySQL 연결 실패:', err);
+            return res.status(500).json({ error: '서버 에러' });
+        }
+
+        const querySelect = 'SELECT image_url FROM purchase WHERE user_id = ?';
+        conn.query(querySelect, [userId], (err, rows) => {
+            conn.release();
+            if (err) {
+                console.error('구매한 이미지 조회 실패:', err);
+                return res.status(500).json({ error: '구매한 이미지 조회 실패' });
+            }
+
+            const purchasedImages = rows.map(row => row.image_url);
+            res.json({ purchasedImages });
+        });
+    });
+});
+
+
+
 
 server.listen(PORT, () => {
     console.log(`http://localhost:${PORT} 에서 실행 중..`);
