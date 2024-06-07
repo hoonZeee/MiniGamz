@@ -1,5 +1,3 @@
-// js/fetchTableData.js
-
 document.addEventListener('DOMContentLoaded', () => {
     const tableBody = document.querySelector('#datatablesSimple tbody');
 
