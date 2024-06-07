@@ -383,7 +383,6 @@ app.delete('/api/img/:id', (req, res) => {
 });
 
 // 사진게시판 파일 업로드 설정
-const multer = require('multer');
 const cors = require('cors');
 
 const port = 3000;
