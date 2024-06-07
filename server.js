@@ -5,6 +5,9 @@ const socketIo = require('socket.io');
 const mysql = require('mysql');
 const session = require('express-session');
 const bodyParser = require('body-parser');
+const multer = require('multer');
+const cors = require('cors');
+const fs = require('fs');
 
 const app = express();
 const server = http.createServer(app);
@@ -12,21 +15,13 @@ const io = socketIo(server);
 
 const PORT = 3000;
 
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-let targetNumber = generateRandomNumber();
-
-function generateRandomNumber() {
-    let digits = [];
-    while (digits.length < 4) {
-        let num = Math.floor(Math.random() * 10);
-        if (!digits.includes(num)) {
-            digits.push(num);
-        }
-    }
-    return digits.join('');
-}
-
+// MySQL 연결 설정
 const pool = mysql.createPool({
     connectionLimit: 10,
     host: '127.0.0.1',
@@ -148,15 +143,33 @@ pool.getConnection((err, conn) => {
     });
 });
 
-//문의 게시판 DB
+// API 엔드포인트 (DB)
+app.get('/api/users', (req, res) => {
+    pool.getConnection((err, conn) => {
+        if (err) {
+            console.error('MySQL 연결 실패:', err);
+            return res.status(500).json({ error: 'MySQL 연결 실패' });
+        }
 
-app.use(bodyParser.json());
+        const query = 'SELECT id, password, nickname, name FROM users';
+        conn.query(query, (err, results) => {
+            conn.release();
+            if (err) {
+                console.error('사용자 데이터 가져오기 실패:', err);
+                return res.status(500).json({ error: '사용자 데이터 가져오기 실패' });
+            }
 
+            res.json(results);
+        });
+    });
+});
+
+// 문의 게시판 DB 설정
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'root', // MySQL 유저 이름
-    password: '00000000', // MySQL 비밀번호
-    database: 'post' // MySQL 데이터베이스 이름
+    user: 'root',
+    password: '00000000',
+    database: 'post'
 });
 
 db.connect((err) => {
@@ -260,15 +273,12 @@ app.delete('/api/posts/:id', (req, res) => {
     });
 });
 
-//커뮤니티 게시판
-
-app.use(bodyParser.json());
-
+// 커뮤니티 게시판 설정
 const ddb = mysql.createConnection({
     host: 'localhost',
-    user: 'root', // MySQL 유저 이름
-    password: '00000000', // MySQL 비밀번호
-    database: 'post' // MySQL 데이터베이스 이름
+    user: 'root',
+    password: '00000000',
+    database: 'post'
 });
 
 ddb.connect((err) => {
@@ -371,26 +381,15 @@ app.delete('/api/img/:id', (req, res) => {
         }
     });
 });
-//사진게시판
-const multer = require('multer');
-const cors = require('cors');
-const fs = require('fs');
 
-const port = 3000;
-
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
+// 파일 업로드 설정
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-    const title = req.body.title.replace(/\s+/g, '-'); // 제목의 공백을 대시(-)로 변경
-    const ext = path.extname(file.originalname); // 파일 확장자 추출
+    const title = req.body.title.replace(/\s+/g, '-');
+    const ext = path.extname(file.originalname);
     cb(null, `${title}${ext}`);
   }
 });
@@ -428,8 +427,6 @@ app.post('/rate', (req, res) => {
 });
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-
-
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'mainpublic')));
@@ -443,7 +440,7 @@ app.use(express.static(path.join(__dirname, 'runningpublic')));
 
 // admin 라우터 불러오는 부분
 const adminRouter = require('./routes/admin');
-app.use('/admin', adminRouter); //admin 라우터 사용
+app.use('/admin', adminRouter); // admin 라우터 사용
 
 app.use(session({
     secret: 'your_secret_key',
@@ -497,11 +494,11 @@ app.get('/profile.html', (req, res) => {
     if (req.session.user) {
         res.sendFile(path.join(__dirname, 'dbpublic/html', 'profile.html'));
     } else {
-        res.redirect('/login.html?redirectUrl=/profile.html'); // 로그인하지 않은 경우 로그인 페이지로 리디렉션
+        res.redirect('/login.html?redirectUrl=/profile.html');
     }
 });
 
-// 로그인 상태 확인 API 추가 //게임페이지 들어가서 게임 할때 로그인했는지 확인
+// 로그인 상태 확인 API
 app.get('/api/check-login', (req, res) => {
     if (req.session.user) {
         res.status(200).json({ loggedIn: true, user: req.session.user });
@@ -821,7 +818,6 @@ app.post('/api/change-password', (req, res) => {
         });
     });
 });
-
 
 app.post('/api/change-profile-image', (req, res) => {
     if (!req.session.user) {

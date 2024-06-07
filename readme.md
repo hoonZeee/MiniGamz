@@ -101,13 +101,7 @@
   - public/images 폴더 추가 (프로필 사진)
 
  6.6 옥주헌<br/>
-  - [x] adminpublic 소스코드 리팩토링 ( 소스 분리 및 경로 정리 )
-  - [ ] Admin 페이지에 사용자 데이터베이스 조회 기능 추가
-  - [ ] /admin 접속시 권한 확인
-  - [ ] 사용자 관리 부분
-  - [ ] 콘텐츠 관리 부분
-  - [ ] error 페이지 라우팅
-  - [ ] 고객 문의 부분
+  - adminpublic 소스코드 리팩토링 ( 소스 분리 및 경로 정리 )
 
 6/6 이지훈<br/>
   - shooting game 패치
@@ -151,3 +145,7 @@
  - 커뮤니티 좌측 카테고리바수정
  - server.js 업데이트
  - pic 업로드
+
+6/8 옥주헌<br/>
+ - package.json multer define
+ - admin 대시보드에 접속시 가입된 DB 조회 기능 추가(ID,PW,Name,Nickname)
