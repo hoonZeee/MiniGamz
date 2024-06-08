@@ -3,13 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User List</title>
+    <title>MiniGamez - Admin(사용자 DB)</title>
     <link rel="stylesheet" href="/admin/css/user-list.css">
     <script src="/admin/js/fetchTableData.js" defer></script>
 </head>
 <body>
     <div class="container">
-        <h1>User List</h1>
+        <h1>users Table</h1>
+        <!-- 드롭다운 메뉴 추가 -->
+        <div class="search-container">
+            <select id="searchCategory">
+                <option value="id">ID</option>
+                <option value="name">Name</option>
+                <option value="nickname">Nickname</option>
+                <option value="password">PW</option>
+                <option value="highschool">Highschool</option>
+                <option value="person">Person</option>
+                <option value="alias">Alias</option>
+                <option value="travel">Travel</option>
+                <option value="movie">Movie</option>
+                <option value="profileImage">Profile Image</option>
+                <option value="points">Points</option>
+            </select>
+            <input type="text" id="searchInput" placeholder="검색어를 입력해 주세요." />
+        </div>
         <table id="userTable">
             <thead>
                 <tr>
