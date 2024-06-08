@@ -30,6 +30,17 @@ function checkLoginStatus() {
 window.onload = function() {
     checkLoginStatus();
 };
+function toggleInstructions() {
+    const content = document.getElementById('instructionsContent');
+    const button = document.getElementById('toggleButton');
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        button.innerHTML = '&#9660;'; // 아래삼각형
+    } else {
+        content.style.display = 'none';
+        button.innerHTML = '&#9650;'; // 윗삼각형
+    }
+}
 
 // "추측하기" 버튼 클릭 시 makeGuess 함수를 호출하도록 이벤트 리스너 추가
 document.getElementById('guessButton').addEventListener('click', () => {
