@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shooting Game</title>
   <link rel="stylesheet" href="shootingstyle.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&family=Comic+Neue:wght@300;400;700&display=swap">
   <style>
     #startButton {
       padding: 20px 40px;
@@ -31,9 +32,32 @@
   </style>
 </head>
 <body>
+  <header>
+    <nav>
+        <div class="logo">
+            <a href="/">
+                <h2>Mini Gamz</h2>
+            </a>
+        </div>
+        <div class="menu">
+            <ul>
+                <li><a href="community.html">커뮤니티</a></li>
+                <li><a href="inquiry.html">문의 게시판</a></li>
+                <li><a href="#" id="profileLink">프로필</a></li>
+                <li><a href="shop.html">아이템샵</a></li>
+            </ul>
+        </div>
+        <div class="auth">
+            <ul id="authMenu">
+                <li><a href="login.html" id="loginLink">로그인</a></li>
+                <li><a href="signup.html" id="signupLink">회원가입</a></li>
+            </ul>
+        </div>
+    </nav>
+    </div>
+</header>
   <!-- Main button HTML -->
   <button id="mainButton">Main</button>
-
   <button id="startButton">Game Start</button>
   <canvas id="gameCanvas" style="display:none;"></canvas>
   <audio id="backgroundMusic" src="music/background.mp3" loop></audio>
@@ -54,6 +78,36 @@
         <img src="images/baseball.gif" alt="미니언 야구" class="instructions-image">
     </div>
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      function checkLoginStatus() {
+          fetch('/api/profile')
+              .then(response => response.json())
+              .then(data => {
+                  if (data.nickname) {
+                      isLoggedIn = true;
+                      document.getElementById('authMenu').innerHTML = `
+                          <li class="auth-profile">
+                              <img src="${data.profileImage}" alt="Profile Image" class="profile-image">
+                              <span>${data.nickname} (${data.points} 점)</span>
+                          </li>
+                      `;
+                      document.getElementById('logoutLink').addEventListener('click', logout);
+                  } else {
+                      isLoggedIn = false;
+                      document.getElementById('authMenu').innerHTML = `
+                          <li><a href="login.html" id="loginLink">로그인</a></li>
+                          <li><a href="signup.html" id="signupLink">회원가입</a></li>
+                      `;
+                  }
+              })
+              .catch(error => {
+                  console.error('로그인 상태 확인 중 오류 발생:', error);
+              });
+      }
+      checkLoginStatus();
+  });
+</script>
 </body>
 </html>
 
