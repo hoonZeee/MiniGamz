@@ -174,15 +174,38 @@ admin site : localhost:3000/admin<br/>
    - [x] usersTable DB 검색 기능
      - [x] 드롭다운 + 입력 필드 토대로 검색 기능
 
+ - adminpublic\js\manageUser.js
+   - [x] 사용자 데이터 가져오기
+     - users Table info
+   - [x] 검색 및 필터링
+     - 검색어, 카테고리로 데이터 필터링 후 테이블에 출력.
+   - [x] 사용자 추가 / 수정
+   - [x] 사용자 삭제
+   - [x] 모달 제어
+     - 열기, 닫기, 삭제 확인 기능 제어
+
  - adminpublic\admin.html
    - [x] 현재 로그인 된 user.name 출력
    - [x] Dashboard DataTable에 DB 조회 기능 추가( ID,PW,Name,Nickname )
    - [x] datatablesSimple Table에 Data 동적 할당
    - [x] 데이터 테이블에 드롭다운 및 입력 필드 추가
 
+ - adminpublic\html\manageUser.html
+   - 기존 user-list.html 기반
+   - [x] 사용자 추가 버튼
+   - [x] 사용자 추가/수정 모달
+   - [x] 삭제 확인 모달
+
  - adminpublic\html\user-list.html
    - [x] userTable Table에 Data 동적 할당
    - [x] 데이터 테이블에 드롭다운 및 입력 필드 추가
+
+ - adminpublic\css\manageUser.css
+   - 기존 user-list.css 기반
+   - [x] 버튼 스타일
+     - 사용자 추가, 삭제, 수정 버튼 스타일
+   - [ ] 모달 스타일
+     - 사용자 추가,수정 모달과 삭제 확인 스타일 설정 작업 중.
 
  - adminpublic\css\user-list.css
    - 전체적인 컨테이너 스타일링

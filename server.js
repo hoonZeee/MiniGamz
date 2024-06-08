@@ -163,7 +163,7 @@ pool.getConnection((err, conn) => {
     });
 });
 
-// API 엔드포인트 (DB에서 사용자 데이터 가져오기)
+// 기존 API 엔드포인트 (DB에서 사용자 데이터 가져오기)
 app.get('/api/users', (req, res) => {
     pool.getConnection((err, conn) => {
         if (err) {
@@ -180,6 +180,67 @@ app.get('/api/users', (req, res) => {
             }
 
             res.json(results);
+        });
+    });
+});
+
+// 신규 API 엔드포인트 (사용자 추가)
+app.post('/api/users', (req, res) => {
+    const { id, password, name, nickname, highschool, person, alias, travel, movie, points, profileImage } = req.body;
+    pool.getConnection((err, conn) => {
+        if (err) {
+            console.error('MySQL 연결 실패:', err);
+            return res.status(500).json({ error: 'MySQL 연결 실패' });
+        }
+        const query = 'INSERT INTO users (id, password, name, nickname, highschool, person, alias, travel, movie, points, profileImage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        conn.query(query, [id, password, name, nickname, highschool, person, alias, travel, movie, points, profileImage], (err) => {
+            conn.release();
+            if (err) {
+                console.error('사용자 추가 실패:', err);
+                return res.status(500).json({ error: '사용자 추가 실패' });
+            }
+            res.status(201).json({ success: true });
+        });
+    });
+});
+
+// 신규 API 엔드포인트 (사용자 수정)
+app.put('/api/users/:id', (req, res) => {
+    const { id, password, name, nickname, highschool, person, alias, travel, movie, points, profileImage } = req.body;
+    const userId = req.params.id;
+    pool.getConnection((err, conn) => {
+        if (err) {
+            console.error('MySQL 연결 실패:', err);
+            return res.status(500).json({ error: 'MySQL 연결 실패' });
+        }
+        const query = 'UPDATE users SET password = ?, name = ?, nickname = ?, highschool = ?, person = ?, alias = ?, travel = ?, movie = ?, points = ?, profileImage = ? WHERE id = ?';
+        conn.query(query, [password, name, nickname, highschool, person, alias, travel, movie, points, profileImage, userId], (err) => {
+            conn.release();
+            if (err) {
+                console.error('사용자 수정 실패:', err);
+                return res.status(500).json({ error: '사용자 수정 실패' });
+            }
+            res.status(200).json({ success: true });
+        });
+    });
+});
+
+// 신규 API 엔드포인트 (사용자 삭제)
+app.delete('/api/users/:id', (req, res) => {
+    const userId = req.params.id;
+    pool.getConnection((err, conn) => {
+        if (err) {
+            console.error('MySQL 연결 실패:', err);
+            return res.status(500).json({ error: 'MySQL 연결 실패' });
+        }
+        const query = 'DELETE FROM users WHERE id = ?';
+        conn.query(query, [userId], (err) => {
+            conn.release();
+            if (err) {
+                console.error('사용자 삭제 실패:', err);
+                return res.status(500).json({ error: '사용자 삭제 실패' });
+            }
+            res.status(200).json({ success: true });
         });
     });
 });
@@ -657,6 +718,7 @@ app.post('/process/checknickname', (req, res) => {
         });
     });
 });
+
 app.post('/process/checkduplicate', (req, res) => {
     const userId = req.body.id;
 
