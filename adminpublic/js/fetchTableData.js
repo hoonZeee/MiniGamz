@@ -61,16 +61,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${user.id}</td>
+                    <td>${user.password}</td>
                     <td>${user.name}</td>
                     <td>${user.nickname}</td>
-                    <td>${user.password}</td>
                     <td>${user.highschool}</td>
                     <td>${user.person}</td>
                     <td>${user.alias}</td>
                     <td>${user.travel}</td>
                     <td>${user.movie}</td>
-                    <td><img src="${user.profileImage}" alt="Profile Image" width="50"></td>
                     <td>${user.points}</td>
+                    <td><img src="${user.profileImage}" alt="Profile Image" width="50"></td>
                 `;
                 userTableBody.appendChild(row);
             }
@@ -106,16 +106,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${user.id}</td>
+                    <td>${user.password}</td>
                     <td>${user.name}</td>
                     <td>${user.nickname}</td>
-                    <td>${user.password}</td>
                     <td>${user.highschool}</td>
                     <td>${user.person}</td>
                     <td>${user.alias}</td>
                     <td>${user.travel}</td>
                     <td>${user.movie}</td>
-                    <td><img src="${user.profileImage}" alt="Profile Image" width="50"></td>
                     <td>${user.points}</td>
+                    <td><img src="${user.profileImage}" alt="Profile Image" width="50"></td>
                 `;
                 tableBody.appendChild(row);
             }
