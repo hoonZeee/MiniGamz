@@ -151,7 +151,7 @@
  - 커뮤니티 좌측 카테고리바수정
  - server.js 업데이트
  - pic 업로드
-
+ - 
 6/8 옥주헌<br/>
  - package.json multer define
    - [x] "multer": "^1.4.5-lts.1"
@@ -162,17 +162,9 @@
    - [x] added displayUserNickname.js
  - fixed admin.html
    - error page 경로 변경
-
-6/8 옥주헌<br/>
- - package.json multer define
-   - [x] "multer": "^1.4.5-lts.1"
- - admin 대시보드에 접속시 가입된 DB 조회 기능 추가( ID,PW,Name,Nickname )
-   - [x] added fetchTableData.js
-   - [x] fixed admin.html
- - admin Dashboard에 접속된 userName 표시
-   - [x] added displayUserNickname.js
- - fixed admin.html
-   - error page 경로 변경
+ - added admin login check
+   - [x] fixed displayUserName.js 
+     - 로그인 상태를 확인하는 로직 추가, 로그인이 되어있지 않다면 리다이렉트
 
 6/8 황정인<br/>
   - 아이디 자릿수 제한
