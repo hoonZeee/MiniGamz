@@ -20,6 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/admin', express.static(path.join(__dirname, 'adminpublic'))); // 정적 파일 서빙 설정
 
 // MySQL 연결 설정
 const pool = mysql.createPool({
@@ -162,8 +163,7 @@ pool.getConnection((err, conn) => {
     });
 });
 
-
-// API 엔드포인트 (DB)
+// API 엔드포인트 (DB에서 사용자 데이터 가져오기)
 app.get('/api/users', (req, res) => {
     pool.getConnection((err, conn) => {
         if (err) {
@@ -171,7 +171,7 @@ app.get('/api/users', (req, res) => {
             return res.status(500).json({ error: 'MySQL 연결 실패' });
         }
 
-        const query = 'SELECT id, password, nickname, name FROM users';
+        const query = 'SELECT id, name, nickname, password, highschool, person, alias, travel, movie, profileImage, points FROM users';
         conn.query(query, (err, results) => {
             conn.release();
             if (err) {
@@ -894,12 +894,6 @@ app.post('/logout', (req, res) => {
     });
 });
 
-
-
-
-
-
-
 app.post('/api/purchase-item', (req, res) => {
     if (!req.session.user) {
         return res.status(401).json({ error: '로그인 상태가 아닙니다.' });
@@ -972,7 +966,6 @@ app.post('/api/purchase-item', (req, res) => {
     });
 });
 
-
 // 아이템샵에서 이미지 구매
 app.get('/api/purchased-images', (req, res) => {
     if (!req.session.user) {
@@ -1001,9 +994,7 @@ app.get('/api/purchased-images', (req, res) => {
     });
 });
 
-
-
-
+// 서버 설정
 server.listen(PORT, () => {
     console.log(`http://localhost:${PORT} 에서 실행 중..`);
 });
