@@ -1,7 +1,8 @@
 # 필독<br/>
 작업간에 소통 부재로 파일 충돌 시 문제가 커질 수 있으므로 프로젝트에서 꼭! in progress 해주시고 카톡방에 작업중이라는 카톡 남겨주세요~~~ 안했을 시 일어나는 오류는 본인책임!!<br/>
-본인 작업한 후에 작업 결과는 readme.md에 계속 수정사항 추가작성 해야합니다!! 추후 보고서 작성 및 과제 평가 매우중요!~~!<br/><br/><br/>
+본인 작업한 후에 작업 결과는 readme.md에 계속 수정사항 추가작성 해야합니다!! 추후 보고서 작성 및 과제 평가 매우중요!~~!<br/>
 
+admin site : localhost:3000/admin<br/>
 
 ## 수정사항<br/>
 5/20<br/>
@@ -170,7 +171,10 @@
    - [x] user-list.html ( 임시 )
    - [x] server.js /api/users ( API 엔드포인트 재정의, json 변환 데이터 리스트 변경 )
    - [x] fixed adminpublic/js/fetchTableData.js ( admin.html, user-list.html 테이블 각각 동적 데이터 할당 )
-  - dbpublic - fixed Title Detail
+ - dbpublic - fixed Title Detail
+ - added 카테고리별로 usersTable DB 검색 기능
+   - [x] admin.html, html\user-list.html 드롭다운 메뉴, 검색 필드 추가
+   - [x] js\fetchTableData.js 드롭다운, 입력 필드 검색 기능 구현
 
 6/8 황정인<br/>
   - 아이디 자릿수 제한

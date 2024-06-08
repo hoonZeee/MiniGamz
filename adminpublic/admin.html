@@ -44,7 +44,7 @@
                         </a>
                         <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="html/user-list.html">사용자 목록 보기</a>
+                                <a class="nav-link" href="html/user-list.html">사용자 DB 보기</a>
                                 <a class="nav-link" href="#">사용자 추가/수정/삭제</a>
                                 <a class="nav-link" href="#">권한 관리</a>
                             </nav>
@@ -104,6 +104,16 @@
                             DataTable
                         </div>
                         <div class="card-body">
+                            <!-- 드롭다운 메뉴 추가 -->
+                            <div class="search-container mb-3">
+                                <select id="searchCategoryAdmin">
+                                    <option value="id">ID</option>
+                                    <option value="password">PW</option>
+                                    <option value="name">Name</option>
+                                    <option value="nickname">Nickname</option>
+                                </select>
+                                <input type="text" id="searchInputAdmin" placeholder="검색어를 입력해 주세요." />
+                            </div>
                             <table id="datatablesSimple">
                                 <thead>
                                     <tr>
