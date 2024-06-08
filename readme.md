@@ -165,6 +165,11 @@
  - added admin login check
    - [x] fixed displayUserName.js 
      - 로그인 상태를 확인하는 로직 추가, 로그인이 되어있지 않다면 리다이렉트
+ - added Admin/ user-list
+   - [x] user-list.css
+   - [x] user-list.html ( 임시 )
+   - [x] server.js /api/users ( API 엔드포인트 재정의, json 변환 데이터 리스트 변경 )
+   - [x] fixed adminpublic/js/fetchTableData.js ( admin.html, user-list.html 테이블 각각 동적 데이터 할당 )
 
 6/8 황정인<br/>
   - 아이디 자릿수 제한
