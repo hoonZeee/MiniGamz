@@ -1,7 +1,8 @@
 # 필독<br/>
 작업간에 소통 부재로 파일 충돌 시 문제가 커질 수 있으므로 프로젝트에서 꼭! in progress 해주시고 카톡방에 작업중이라는 카톡 남겨주세요~~~ 안했을 시 일어나는 오류는 본인책임!!<br/>
-본인 작업한 후에 작업 결과는 readme.md에 계속 수정사항 추가작성 해야합니다!! 추후 보고서 작성 및 과제 평가 매우중요!~~!<br/><br/><br/>
+본인 작업한 후에 작업 결과는 readme.md에 계속 수정사항 추가작성 해야합니다!! 추후 보고서 작성 및 과제 평가 매우중요!~~!<br/>
 
+admin site : localhost:3000/admin<br/>
 
 ## 수정사항<br/>
 5/20<br/>
@@ -101,13 +102,8 @@
   - public/images 폴더 추가 (프로필 사진)
 
  6.6 옥주헌<br/>
-  - [x] adminpublic 소스코드 리팩토링 ( 소스 분리 및 경로 정리 )
-  - [ ] Admin 페이지에 사용자 데이터베이스 조회 기능 추가
-  - [ ] /admin 접속시 권한 확인
-  - [ ] 사용자 관리 부분
-  - [ ] 콘텐츠 관리 부분
-  - [ ] error 페이지 라우팅
-  - [ ] 고객 문의 부분
+  - adminpublic 소스코드 리팩토링 ( 소스 분리 및 경로 정리 )
+  - Dashboard - dataTable Frontend Changed
 
 6/6 이지훈<br/>
   - shooting game 패치
@@ -130,6 +126,10 @@
 6/7 이지훈<br/>
   - 2048게임 추가
   - 키보드 방향키로 크기가 같은 셀을 합쳐 높은 숫자를 만드는 게임 구현
+  - 모든 게임 화면에 게임 규칙및 게임 조작법 추가
+  - 접고 펴기 함수로 조작법 박스 구현
+  - 모든 게임 상단 헤더부분 베너 구현 및 기능 추가
+
 
 6/7 고태현<br/>
   - 프로필 페이지에 비밀번호 변경 문제점 수정 + 포인트란 추가 + 상단 레이아웃에 포인트점수 추가.  
@@ -148,6 +148,50 @@
 6/7 권진호<br/>
  - 사진게시판 추가
    사진업로드 및 제목입력 카테고리별보기
+   업로드한 사진게시물에 평가기능(1~5점)
  - 커뮤니티 좌측 카테고리바수정
  - server.js 업데이트
  - pic 업로드
+ - 
+6/8 옥주헌<br/>
+ - [x] added package.json multer define
+   - "multer": "^1.4.5-lts.1"
+ - [x] error page (401,404,500) 경로 변경 및 admin.html 링크 수정
+ - [x] dbpublic - fixed Title Detail
+
+ - server.js
+   - [x] api/users endpoint fixed ( Changed list of data convert to json )
+  
+ - adminpublic\js\displayUserNickname.js
+   - [x] 현재 Admin에 로그인 되어 있는 사용자 정보 가져오기
+     - user.nickname 정보
+   - [x] added Login Status Check logic
+     - 로그인 되어 있지 않다면 (/login.html로 리다이렉트)
+
+ - adminpublic\js\fetchTableData.js
+   - [x] 각 테이블 정의 및 데이터 가져오기
+     - user.id, user.name, user.nickname, user.password, user.highscool, user.person, user.alias, user.travel, user.movie, user.profileImage, user.points
+   - [x] usersTable DB 검색 기능
+     - [x] 드롭다운 + 입력 필드 토대로 검색 기능
+
+ - adminpublic\admin.html
+   - [x] 현재 로그인 된 user.name 출력
+   - [x] Dashboard DataTable에 DB 조회 기능 추가( ID,PW,Name,Nickname )
+   - [x] datatablesSimple Table에 Data 동적 할당
+   - [x] 데이터 테이블에 드롭다운 및 입력 필드 추가
+
+ - adminpublic\html\user-list.html
+   - [x] userTable Table에 Data 동적 할당
+   - [x] 데이터 테이블에 드롭다운 및 입력 필드 추가
+
+ - adminpublic\css\user-list.css
+   - 전체적인 컨테이너 스타일링
+   - back-to-admin 링크 스타일링
+   - 드랍다운 메뉴 스타일링
+   - 검색 컨테이너, 입력 스타일링
+
+6/8 황정인<br/>
+  - 아이디 자릿수 제한
+  - 아이템샵에서 프로필 추가 구매 가능(이미지는 전부 임시) + 구매하지않은 프로필은 선택불가
+  - 아이템샵, 프로필 js+css 따로 빼놓음
+  - 칭호 브론즈,실버,골드 잠궈놓음(추후결정)
