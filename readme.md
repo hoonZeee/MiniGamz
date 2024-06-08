@@ -154,27 +154,41 @@ admin site : localhost:3000/admin<br/>
  - pic 업로드
  - 
 6/8 옥주헌<br/>
- - package.json multer define
-   - [x] "multer": "^1.4.5-lts.1"
- - admin 대시보드에 접속시 가입된 DB 조회 기능 추가( ID,PW,Name,Nickname )
-   - [x] added fetchTableData.js
-   - [x] fixed admin.html
- - admin Dashboard에 접속된 userName 표시
-   - [x] added displayUserNickname.js
- - fixed admin.html
-   - error page 경로 변경
- - added admin login check
-   - [x] fixed displayUserName.js 
-     - 로그인 상태를 확인하는 로직 추가, 로그인이 되어있지 않다면 리다이렉트
- - added Admin/ user-list
-   - [x] user-list.css
-   - [x] user-list.html ( 임시 )
-   - [x] server.js /api/users ( API 엔드포인트 재정의, json 변환 데이터 리스트 변경 )
-   - [x] fixed adminpublic/js/fetchTableData.js ( admin.html, user-list.html 테이블 각각 동적 데이터 할당 )
- - dbpublic - fixed Title Detail
- - added 카테고리별로 usersTable DB 검색 기능
-   - [x] admin.html, html\user-list.html 드롭다운 메뉴, 검색 필드 추가
-   - [x] js\fetchTableData.js 드롭다운, 입력 필드 검색 기능 구현
+ - [x] added package.json multer define
+   - "multer": "^1.4.5-lts.1"
+ - [x] error page (401,404,500) 경로 변경 및 admin.html 링크 수정
+ - [x] dbpublic - fixed Title Detail
+
+ - server.js
+   - [x] api/users endpoint fixed ( Changed list of data convert to json )
+  
+ - adminpublic\js\displayUserNickname.js
+   - [x] 현재 Admin에 로그인 되어 있는 사용자 정보 가져오기
+     - user.nickname 정보
+   - [x] added Login Status Check logic
+     - 로그인 되어 있지 않다면 (/login.html로 리다이렉트)
+
+ - adminpublic\js\fetchTableData.js
+   - [x] 각 테이블 정의 및 데이터 가져오기
+     - user.id, user.name, user.nickname, user.password, user.highscool, user.person, user.alias, user.travel, user.movie, user.profileImage, user.points
+   - [x] usersTable DB 검색 기능
+     - [x] 드롭다운 + 입력 필드 토대로 검색 기능
+
+ - adminpublic\admin.html
+   - [x] 현재 로그인 된 user.name 출력
+   - [x] Dashboard DataTable에 DB 조회 기능 추가( ID,PW,Name,Nickname )
+   - [x] datatablesSimple Table에 Data 동적 할당
+   - [x] 데이터 테이블에 드롭다운 및 입력 필드 추가
+
+ - adminpublic\html\user-list.html
+   - [x] userTable Table에 Data 동적 할당
+   - [x] 데이터 테이블에 드롭다운 및 입력 필드 추가
+
+ - adminpublic\css\user-list.css
+   - 전체적인 컨테이너 스타일링
+   - back-to-admin 링크 스타일링
+   - 드랍다운 메뉴 스타일링
+   - 검색 컨테이너, 입력 스타일링
 
 6/8 황정인<br/>
   - 아이디 자릿수 제한
