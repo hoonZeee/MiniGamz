@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // 로그인 상태가 아니면, 리다이렉트
         if (!loginCheckData.loggedIn) {
-            window.location.href = 'http://localhost:3000/login.html';
+            window.location.href = '/login.html';
             return;
         }
 
