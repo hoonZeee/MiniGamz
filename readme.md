@@ -170,6 +170,7 @@
    - [x] user-list.html ( 임시 )
    - [x] server.js /api/users ( API 엔드포인트 재정의, json 변환 데이터 리스트 변경 )
    - [x] fixed adminpublic/js/fetchTableData.js ( admin.html, user-list.html 테이블 각각 동적 데이터 할당 )
+  - dbpublic - fixed Title Detail
 
 6/8 황정인<br/>
   - 아이디 자릿수 제한
