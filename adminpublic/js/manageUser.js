@@ -110,8 +110,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    document.querySelector('.modal .close').addEventListener('click', () => {
-        userFormModal.style.display = 'none';
+    document.querySelectorAll('.modal .close').forEach(closeButton => {
+        closeButton.addEventListener('click', () => {
+            userFormModal.style.display = 'none';
+            deleteConfirmModal.style.display = 'none';
+        });
     });
 
     document.querySelector('#confirmDeleteButton').addEventListener('click', async () => {
@@ -139,8 +142,17 @@ document.addEventListener('DOMContentLoaded', () => {
         userFormModal.style.display = 'block';
     });
 
-    searchButton.addEventListener('click', () => {
-        fetchUserData().then(() => filterTable(data));
+    searchButton.addEventListener('click', async () => {
+        try {
+            const response = await fetch('/api/users');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            filterTable(data);
+        } catch (error) {
+            console.error('Error searching user data:', error);
+        }
     });
 
     fetchUserData();
