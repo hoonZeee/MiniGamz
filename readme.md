@@ -151,8 +151,9 @@ admin site : localhost:3000/admin<br/>
    업로드한 사진게시물에 평가기능(1~5점)
  - 커뮤니티 좌측 카테고리바수정
  - server.js 업데이트
- - pic 업로드
- - 
+ - pic.html 업로드
+ - 유저들이 평가한 점수 데이터베이스에 연동
+   
 6/8 옥주헌<br/>
  - [x] added package.json multer define
    - "multer": "^1.4.5-lts.1"
