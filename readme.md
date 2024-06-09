@@ -263,3 +263,8 @@ admin site : localhost:3000/admin<br/>
   - 커뮤니티 게시판 디자인 변경
   - community.html 업데이트
   - styles.css 업데이트
+
+6/10 권진호<br/>
+ -랭킹페이지 ranking.html 업로드
+ -데이터베이스저장된 유저들의 포인트순으로 랭킹정렬
+ -server.js업데이트
