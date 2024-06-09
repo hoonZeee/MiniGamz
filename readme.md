@@ -230,6 +230,10 @@ admin site : localhost:3000/admin<br/>
      - [x] 사용자 삭제
        - 'DELETE /api/users/:id' 엔드포인트
 
+ - adminpublic\js\logout.js
+   - [x] added logout function
+     - 로그아웃 시 알람, login 페이지로 리다이렉트
+
  - adminpublic\js\displayUserNickname.js
 
  - adminpublic\js\fetchTableData.js
@@ -240,6 +244,8 @@ admin site : localhost:3000/admin<br/>
      - 프로필 이미지 URL이 빈 값이면 기본 값 반환
 
  - adminpublic\admin.html
+   - [x] 로그아웃 구현
+   - [x] 메인화면, 프로필 이동 링크
 
  - adminpublic\html\manageUser.html
 
