@@ -152,8 +152,7 @@ admin site : localhost:3000/admin<br/>
  - 커뮤니티 좌측 카테고리바수정
  - server.js 업데이트
  - pic 업로드
- - 사진게시판 유저평가 점수평가시 points 컬럼에 점수추가
-
+ - 
 6/8 옥주헌<br/>
  - [x] added package.json multer define
    - "multer": "^1.4.5-lts.1"
@@ -258,10 +257,8 @@ admin site : localhost:3000/admin<br/>
    - [x] 사용자 추가/수정 폼 CSS 추가
 
  - adminpublic\css\user-list.css
-   
-6/9 권진호<br/>
-- 사진게시판 사진게시글 점수 평가시 데이터 베이스 반영되도록 수정
-- 서버에서 실행하고 아이템 구매및 사용까지 확인완료
-- 포인트 많은순서로 랭킹나열하는 랭킹페이지 추가
-- 프로필이미지와 닉네임 가져오도록
-- server.js , pic.html, ranking.html 업데이트
+
+ 6/10 정현성<br/>
+  - 커뮤니티 게시판 디자인 변경
+  - community.html 업데이트
+  - styles.css 업데이트
