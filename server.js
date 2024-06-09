@@ -984,6 +984,7 @@ app.post('/logout', (req, res) => {
         if (err) {
             return res.status(500).json({ error: '로그아웃 실패' });
         }
+        alert("로그아웃 되었습니다.");
         res.redirect('/');
     });
 });
