@@ -58,7 +58,7 @@ pool.getConnection((err, conn) => {
         alias varchar(300) DEFAULT NULL COMMENT '본인확인 별명',
         travel varchar(300) DEFAULT NULL COMMENT '본인확인 여행',
         movie varchar(300) DEFAULT NULL COMMENT '본인확인 영화',
-        profileImage varchar(300) DEFAULT '/images/bob.webp' COMMENT '프로필 이미지',
+        profileImage varchar(300) DEFAULT 'NULL' COMMENT '프로필 이미지',
         points INT DEFAULT 0 COMMENT '사용자 포인트',
         PRIMARY KEY (id),
         UNIQUE KEY unique_nickname (nickname)
@@ -71,7 +71,7 @@ pool.getConnection((err, conn) => {
     `;
 
     const alterProfileImageColumnQuery = `
-    ALTER TABLE users ADD COLUMN profileImage VARCHAR(300) DEFAULT '/images/bob.webp' COMMENT '프로필 이미지';
+    ALTER TABLE users ADD COLUMN profileImage VARCHAR(300) DEFAULT 'NULL' COMMENT '프로필 이미지';
     `;
     
     const checkPointsColumnQuery = `
@@ -163,7 +163,6 @@ pool.getConnection((err, conn) => {
     });
 });
 
-
 // 기존 API 엔드포인트 (DB에서 사용자 데이터 가져오기)
 app.get('/api/users', (req, res) => {
     pool.getConnection((err, conn) => {
@@ -188,13 +187,29 @@ app.get('/api/users', (req, res) => {
 // 신규 API 엔드포인트 (사용자 추가)
 app.post('/api/users', (req, res) => {
     const { id, password, name, nickname, highschool, person, alias, travel, movie, points, profileImage } = req.body;
+
+    // 필수 항목 유효성 검사
+    if (!id || !password || !name || !nickname) {
+        return res.status(400).json({ error: 'ID, PW, Name, Nickname은 필수 항목입니다.' });
+    }
+
+    // 선택 항목 중 하나는 반드시 입력해야 함
+    if (!highschool && !person && !alias && !travel && !movie) {
+        return res.status(400).json({ error: 'Highschool, Person, Alias, Travel, Movie 중 하나는 반드시 입력해야 합니다.' });
+    }
+
+    // Profile Image URL이 비어 있으면 기본 이미지로 설정
+    const profileImageURL = profileImage || `http://${req.headers.host}/images/bob.webp`;
+
+    const defaultPoints = points ? points : 0;
+
     pool.getConnection((err, conn) => {
         if (err) {
             console.error('MySQL 연결 실패:', err);
             return res.status(500).json({ error: 'MySQL 연결 실패' });
         }
         const query = 'INSERT INTO users (id, password, name, nickname, highschool, person, alias, travel, movie, points, profileImage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        conn.query(query, [id, password, name, nickname, highschool, person, alias, travel, movie, points, profileImage], (err) => {
+        conn.query(query, [id, password, name, nickname, highschool, person, alias, travel, movie, defaultPoints, profileImageURL], (err) => {
             conn.release();
             if (err) {
                 console.error('사용자 추가 실패:', err);
@@ -209,13 +224,29 @@ app.post('/api/users', (req, res) => {
 app.put('/api/users/:id', (req, res) => {
     const { id, password, name, nickname, highschool, person, alias, travel, movie, points, profileImage } = req.body;
     const userId = req.params.id;
+
+    // 필수 항목 유효성 검사
+    if (!id || !password || !name || !nickname) {
+        return res.status(400).json({ error: 'PW, Name, Nickname은 필수 항목입니다.' });
+    }
+
+    // 선택 항목 중 하나는 반드시 입력해야 함
+    if (!highschool && !person && !alias && !travel && !movie) {
+        return res.status(400).json({ error: 'Highschool, Person, Alias, Travel, Movie 중 하나는 반드시 입력해야 합니다.' });
+    }
+
+    // Profile Image URL이 비어 있으면 기본 이미지로 설정
+    const profileImageURL = profileImage || `http://${req.headers.host}/images/bob.webp`;
+
+    const defaultPoints = points ? points : 0;
+
     pool.getConnection((err, conn) => {
         if (err) {
             console.error('MySQL 연결 실패:', err);
             return res.status(500).json({ error: 'MySQL 연결 실패' });
         }
         const query = 'UPDATE users SET password = ?, name = ?, nickname = ?, highschool = ?, person = ?, alias = ?, travel = ?, movie = ?, points = ?, profileImage = ? WHERE id = ?';
-        conn.query(query, [password, name, nickname, highschool, person, alias, travel, movie, points, profileImage, userId], (err) => {
+        conn.query(query, [password, name, nickname, highschool, person, alias, travel, movie, defaultPoints, profileImageURL, userId], (err) => {
             conn.release();
             if (err) {
                 console.error('사용자 수정 실패:', err);
@@ -465,29 +496,39 @@ app.delete('/api/img/:id', (req, res) => {
 });
 
 // 사진게시판 파일 업로드 설정
-const port = 3000;
 
-// 사진게시판 파일 업로드 설정
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Ensure the uploads directory exists
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
+const dbb = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: '00000000',
+  database: 'user'
+});
+
+dbb.connect(err => {
+  if (err) throw err;
+  console.log('MySQL Connected...');
+});
+app.use(session({  //세션 가져오기
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // HTTPS 환경에서는 true로 설정
+  }));
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    cb(null, path.join(__dirname, 'uploads')); // 절대 경로로 변경
   },
   filename: (req, file, cb) => {
     const title = req.body.title.replace(/\s+/g, '-'); // 제목의 공백을 대시(-)로 변경
     const ext = path.extname(file.originalname); // 파일 확장자 추출
-    cb(null, `${title}${ext}`);
+    cb(null, `${title}-${Date.now()}${ext}`); // 파일 이름에 타임스탬프 추가
   }
 });
 
@@ -495,33 +536,94 @@ const upload = multer({ storage: storage });
 
 let images = [];
 
-app.post('/upload', upload.single('image'), (req, res) => {
-  const { title, category } = req.body;
-  const image = {
-    id: Date.now().toString(),
-    image_url: `/uploads/${req.file.filename}`,
-    category: category,
-    title: title,
-    rating: 0
-  };
-  images.push(image);
-  res.send('Image uploaded successfully!');
-});
+app.post('/upload', (req, res) => {
+    if (!req.session.user) {
+      return res.status(401).send('Unauthorized: Please log in to upload images.');
+    }
+    upload.single('image')(req, res, (err) => {
+      if (err) {
+        return res.status(500).send('Error uploading image.');
+      }
+      const { title, category } = req.body;
+      const image = {
+        id: Date.now().toString(),
+        image_url: `/uploads/${req.file.filename}`,
+        category: category,
+        title: title,
+        rating: 0
+      };
+      images.push(image);
+      res.send('Image uploaded successfully!');
+    });
+  });
+  
 
 app.get('/images', (req, res) => {
   res.json(images);
 });
 
-app.post('/rate', (req, res) => {
-  const { imageId, rating } = req.body;
-  const image = images.find(img => img.id === imageId);
-  if (image) {
-    image.rating = rating;
-    res.send('Rating updated successfully!');
-  } else {
-    res.status(404).send('Image not found!');
-  }
-});
+app.post('/rate', (req, res) => { // (3)
+    const { imageId, rating } = req.body;
+    if (!req.session.user) { // (4)
+      return res.status(401).send('Unauthorized');
+    }
+    const image = images.find(img => img.id === imageId);
+    if (image) {
+      image.rating = rating;
+  
+      const updateUserPointsQuery = `
+        UPDATE users
+        SET points = points + ?
+        WHERE id = ?
+      `;
+        
+      dbb.query(updateUserPointsQuery, [rating, req.session.user.id], (err, result) => {
+        if (err) {
+          res.status(500).send('Error updating user points!');
+          return;
+        }
+        res.send('Rating updated and user points updated successfully!');
+      });
+    } else {
+      res.status(404).send('Image not found!');
+    }
+  });
+  app.post('/login', (req, res) => { // (5)
+    const { id, password } = req.body;
+    const loginQuery = `
+      SELECT * FROM users
+      WHERE id = ? AND password = ?
+    `;
+    dbb.query(loginQuery, [id, password], (err, results) => {
+      if (err) {
+        res.status(500).send('Error logging in!');
+        return;
+      }
+      if (results.length > 0) {
+        req.session.user = results[0];
+        res.send('Login successful!');
+      } else {
+        res.status(401).send('Invalid credentials');
+      }
+    });
+  });
+  
+  app.get('/logout', (req, res) => { // (6)
+    req.session.destroy(err => {
+      if (err) {
+        return res.status(500).send('Error logging out!');
+      }
+      res.send('Logout successful!');
+    });
+  });
+  
+  app.get('/session', (req, res) => { // (7)
+    if (req.session.user) {
+      res.json(req.session.user);
+    } else {
+      res.status(401).send('No session');
+    }
+  });
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -623,130 +725,7 @@ app.post('/newgame', (req, res) => {
 function getHint(guess, target) {
     let strikes = 0;
     let balls = 0;
-    for (let i = 0; i < guess.length; i++) {
-        if (guess[i] === target[i]) {
-            strikes++;
-        } else if (target.includes(guess[i])) {
-            balls++;
-        }
-    }
-    return { strikes, balls };
-}
-
-io.on('connection', (socket) => {
-    console.log('새 사용자 접속!');
-
-    socket.on('disconnect', () => {
-        console.log('사용자 접속 종료!');
-    });
-
-    socket.on('chat message', (msg) => {
-        console.log(`받은 메시지: ${msg}`);
-        io.emit('chat message', msg);
-    });
-});
-
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'mainpublic')));
-app.use(express.static(path.join(__dirname, 'basepublic')));
-app.use(express.static(path.join(__dirname, 'dbpublic')));
-app.use(express.static(path.join(__dirname, 'minion-bird-public/public')));
-app.use(express.static(path.join(__dirname, 'shootingpublic')));
-app.use(express.static(path.join(__dirname, 'minion-jump-public')));
-app.use(express.static(path.join(__dirname, '2048public')));
-app.use(express.static(path.join(__dirname, 'runningpublic')));
-
-// admin 라우터 불러오는 부분
-app.use('/admin', adminRouter); // admin 라우터 사용
-
-app.use(session({
-    secret: 'your_secret_key',
-    resave: false,
-    saveUninitialized: true
-}));
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'mainpublic/html', 'index.html'));
-});
-app.get('/login.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dbpublic/html', 'login.html'));
-});
-app.get('/signup.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dbpublic/html', 'adduser.html'));
-});
-app.get('/baseball.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'basepublic/html', 'baseball.html'));
-});
-app.get('/shooting', (req, res) => {
-    res.sendFile(path.join(__dirname, 'shootingpublic/html', 'shooting.html'));
-});
-app.get('/minionbird.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'minion-bird-public/public/html', 'minionbird.html'));
-});
-app.get('/minionjump', (req, res) => {
-    res.sendFile(path.join(__dirname, 'minion-jump-public', 'minionjump.html'));
-});
-app.get('/2048', (req, res) => {
-    res.sendFile(path.join(__dirname, '2048public', '2048.html'));
-});
-app.get('/minionrun.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'runningpublic', 'minionrun.html'));
-});
-app.get('/inquiry.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'inquiry/html', 'inquiry.html'));
-});
-app.get('/community.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'community/html', 'community.html'));
-});
-app.get('/free.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'free/html', 'free.html'));
-});
-app.get('/pic.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'pic', 'pic.html'));
-});
-app.get('/find.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dbpublic/html', 'find.html'));
-});
-app.get('/profile.html', (req, res) => {
-    if (req.session.user) {
-        res.sendFile(path.join(__dirname, 'dbpublic/html', 'profile.html'));
-    } else {
-        res.redirect('/login.html?redirectUrl=/profile.html');
-    }
-});
-
-app.get('/shop.html', (req, res) => {
-    if (req.session.user) {
-        res.sendFile(path.join(__dirname, 'dbpublic/html', 'shop.html'));
-    } else {
-        res.redirect('/login.html?redirectUrl=/shop.html');
-    }
-});
-// 로그인 상태 확인 API
-app.get('/api/check-login', (req, res) => {
-    if (req.session.user) {
-        res.status(200).json({ loggedIn: true, user: req.session.user });
-    } else {
-        res.status(200).json({ loggedIn: false });
-    }
-});
-
-app.post('/guess', (req, res) => {
-    const { guess } = req.body;
-    const result = getHint(guess, targetNumber);
-    res.json({ ...result, targetNumber });
-});
-
-app.post('/newgame', (req, res) => {
-    targetNumber = generateRandomNumber();
-    res.sendStatus(200);
-});
-
-function getHint(guess, target) {
-    let strikes = 0;
-    let balls = 0;
-    for (let i = 0; i < guess.length; i++) {
+    for (let i = 0; guess && i < guess.length; i++) {
         if (guess[i] === target[i]) {
             strikes++;
         } else if (target.includes(guess[i])) {

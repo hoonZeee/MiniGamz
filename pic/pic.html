@@ -7,8 +7,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/styles.css">
     <style>
-        /* Main layout and styles */
-        :root {
+        /* Styles here */
+         /* Main layout and styles */
+         :root {
             --tran: all 0.5s ease 0s;
             --dark: #1c2429;
             --back: #1d659f;
@@ -188,6 +189,64 @@
         .stars label {
             cursor: pointer;
         }
+
+        .auth {
+            display: inline-block;
+        }
+
+        .auth ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .auth ul li {
+            display: inline;
+        }
+
+        .auth ul li a {
+            text-decoration: none;
+            color: #000;
+        }
+
+        #loginModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #loginModal form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #loginModal input[type="text"],
+        #loginModal input[type="password"] {
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        #loginModal button {
+            padding: 10px;
+            background: #1d659f;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        #loginModal button:hover {
+            background: #14548a;
+        }
     </style>
 </head>
 <body>
@@ -268,13 +327,12 @@
         </ul>
         <ul class="logout">
             <li>
-                <a href="#">
-                    <i class="fa fa-2x"></i>
+               <a href="#">
+                     <i class="fa fa-2x"></i>
                     <span class="nav-text">
                         <div class="auth">
                             <ul id="authMenu">
                                 <li><a href="login.html" id="loginLink">로그인</a></li>
-                                <li><a href="signup.html" id="signupLink">회원가입</a></li>
                             </ul>
                         </div>
                     </span>
@@ -282,23 +340,20 @@
             </li>  
         </ul>
     </nav>
-
-    <!-- Main content area -->
     <div class="area">
         <section>
             <form id="filter-form">
                 <p>카테고리별 보기:</p>
                 <label>
-                    <input type="checkbox" name="컴공" checked /><br>컴공
+                    <input type="checkbox" name="컴공" checked />컴공
                 </label>
                 <label>
-                    <input type="checkbox" name="타학과" checked /><br>타학과
+                    <input type="checkbox" name="타학과" checked />타학과
                 </label>
                 <label>
-                    <input type="checkbox" name="직장인" checked /><br>직장인
+                    <input type="checkbox" name="직장인" checked />직장인
                 </label>
             </form>
-
             <div id="upload-section">
                 <h3>사진 업로드</h3>
                 <form id="upload-form" enctype="multipart/form-data">
@@ -312,13 +367,42 @@
                     <button type="submit">Upload</button>
                 </form>
             </div>
-
             <div id="images-section">
                 <!-- Images will be displayed here -->
             </div>
         </section>
     </div>
+    <!-- Login Modal -->
+    <div id="loginModal">
+        <form id="login-form">
+            <h2>로그인</h2>
+            <input type="text" name="username" placeholder="Username" required />
+            <input type="password" name="password" placeholder="Password" required />
+            <button type="submit">Login</button>
+        </form>
+    </div>
     <script>
+        function checkLoginStatus() {
+            fetch('/api/profile')
+                .then(response => response.json())
+                .then(data => {
+                    const authMenu = document.getElementById('authMenu');
+                    if (data.nickname) {
+                        authMenu.innerHTML = `
+                            <li><a href="#" id="logoutLink">로그아웃</a></li>
+                        `;
+                        document.getElementById('logoutLink').addEventListener('click', logout);
+                    } else {
+                        authMenu.innerHTML = `
+                            <li><a href="login.html" id="loginLink">로그인</a></li>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking login status:', error);
+                });
+        }
+
         document.getElementById('upload-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
@@ -351,12 +435,12 @@
                         <p class="categories" data-category="${image.category}">${image.category}</p>
                         <div class="star-rating" data-image-id="${image.id}">
                             <div class="stars">
-                                <label class="number"><input type="radio" name="rating" value="0"></label>
-                                <label class="star"><input type="radio" name="rating" value="1"></label>
-                                <label class="star"><input type="radio" name="rating" value="2"></label>
-                                <label class="star"><input type="radio" name="rating" value="3"></label>
-                                <label class="star"><input type="radio" name="rating" value="4"></label>
-                                <label class="star"><input type="radio" name="rating" value="5"></label>
+                                <label class="number"><input type="radio" name="rating-${image.id}" value="0"></label>
+                                <label class="star"><input type="radio" name="rating-${image.id}" value="1"></label>
+                                <label class="star"><input type="radio" name="rating-${image.id}" value="2"></label>
+                                <label class="star"><input type="radio" name="rating-${image.id}" value="3"></label>
+                                <label class="star"><input type="radio" name="rating-${image.id}" value="4"></label>
+                                <label class="star"><input type="radio" name="rating-${image.id}" value="5"></label>
                                 <div class="number-rating">${image.rating}</div>
                             </div>
                         </div>
@@ -367,15 +451,16 @@
         }
 
         document.addEventListener('change', function(e) {
-            if (e.target.name === 'rating') {
+            if (e.target.name.startsWith('rating-')) {
                 const rating = e.target.value;
                 const imageId = e.target.closest('.star-rating').dataset.imageId;
+                const userId = 'user-id-here'; // 실제 사용자 ID로 변경
                 fetch('/rate', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ imageId, rating })
+                    body: JSON.stringify({ imageId, rating, userId })
                 }).then(response => response.text())
                 .then(data => {
                     alert(data);
@@ -384,6 +469,35 @@
             }
         });
 
+        document.getElementById('loginLink')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('loginModal').style.display = 'block';
+        });
+
+        document.getElementById('login-form')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch('/login', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.text())
+            .then(data => {
+                alert(data);
+                document.getElementById('loginModal').style.display = 'none';
+                checkLoginStatus();
+            });
+        });
+
+        document.getElementById('logoutLink')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            fetch('/logout').then(response => response.text())
+            .then(data => {
+                alert(data);
+                checkLoginStatus();
+            });
+        });
+
+        checkLoginStatus();
         loadImages();
     </script>
 </body>
