@@ -152,7 +152,8 @@ admin site : localhost:3000/admin<br/>
  - 커뮤니티 좌측 카테고리바수정
  - server.js 업데이트
  - pic 업로드
- - 
+ - 사진게시판 유저평가 점수평가시 points 컬럼에 점수추가
+
 6/8 옥주헌<br/>
  - [x] added package.json multer define
    - "multer": "^1.4.5-lts.1"
@@ -257,3 +258,5 @@ admin site : localhost:3000/admin<br/>
    - [x] 사용자 추가/수정 폼 CSS 추가
 
  - adminpublic\css\user-list.css
+
+

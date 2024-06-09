@@ -496,20 +496,32 @@ app.delete('/api/img/:id', (req, res) => {
 });
 
 // 사진게시판 파일 업로드 설정
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+const dbb = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: '00000000',
+  database: 'user'
+});
+
+dbb.connect(err => {
+  if (err) throw err;
+  console.log('MySQL Connected...');
+});
+app.use(session({  //세션 가져오기
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // HTTPS 환경에서는 true로 설정
+  }));
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    cb(null, path.join(__dirname, 'uploads')); // 절대 경로로 변경
   },
   filename: (req, file, cb) => {
     const title = req.body.title.replace(/\s+/g, '-'); // 제목의 공백을 대시(-)로 변경
     const ext = path.extname(file.originalname); // 파일 확장자 추출
-    cb(null, `${title}${ext}`);
+    cb(null, `${title}-${Date.now()}${ext}`); // 파일 이름에 타임스탬프 추가
   }
 });
 
@@ -517,33 +529,94 @@ const upload = multer({ storage: storage });
 
 let images = [];
 
-app.post('/upload', upload.single('image'), (req, res) => {
-  const { title, category } = req.body;
-  const image = {
-    id: Date.now().toString(),
-    image_url: `/uploads/${req.file.filename}`,
-    category: category,
-    title: title,
-    rating: 0
-  };
-  images.push(image);
-  res.send('Image uploaded successfully!');
-});
+app.post('/upload', (req, res) => {
+    if (!req.session.user) {
+      return res.status(401).send('Unauthorized: Please log in to upload images.');
+    }
+    upload.single('image')(req, res, (err) => {
+      if (err) {
+        return res.status(500).send('Error uploading image.');
+      }
+      const { title, category } = req.body;
+      const image = {
+        id: Date.now().toString(),
+        image_url: `/uploads/${req.file.filename}`,
+        category: category,
+        title: title,
+        rating: 0
+      };
+      images.push(image);
+      res.send('Image uploaded successfully!');
+    });
+  });
+  
 
 app.get('/images', (req, res) => {
   res.json(images);
 });
 
-app.post('/rate', (req, res) => {
-  const { imageId, rating } = req.body;
-  const image = images.find(img => img.id === imageId);
-  if (image) {
-    image.rating = rating;
-    res.send('Rating updated successfully!');
-  } else {
-    res.status(404).send('Image not found!');
-  }
-});
+app.post('/rate', (req, res) => { // (3)
+    const { imageId, rating } = req.body;
+    if (!req.session.user) { // (4)
+      return res.status(401).send('Unauthorized');
+    }
+    const image = images.find(img => img.id === imageId);
+    if (image) {
+      image.rating = rating;
+  
+      const updateUserPointsQuery = `
+        UPDATE users
+        SET points = points + ?
+        WHERE id = ?
+      `;
+        
+      dbb.query(updateUserPointsQuery, [rating, req.session.user.id], (err, result) => {
+        if (err) {
+          res.status(500).send('Error updating user points!');
+          return;
+        }
+        res.send('Rating updated and user points updated successfully!');
+      });
+    } else {
+      res.status(404).send('Image not found!');
+    }
+  });
+  app.post('/login', (req, res) => { // (5)
+    const { id, password } = req.body;
+    const loginQuery = `
+      SELECT * FROM users
+      WHERE id = ? AND password = ?
+    `;
+    dbb.query(loginQuery, [id, password], (err, results) => {
+      if (err) {
+        res.status(500).send('Error logging in!');
+        return;
+      }
+      if (results.length > 0) {
+        req.session.user = results[0];
+        res.send('Login successful!');
+      } else {
+        res.status(401).send('Invalid credentials');
+      }
+    });
+  });
+  
+  app.get('/logout', (req, res) => { // (6)
+    req.session.destroy(err => {
+      if (err) {
+        return res.status(500).send('Error logging out!');
+      }
+      res.send('Logout successful!');
+    });
+  });
+  
+  app.get('/session', (req, res) => { // (7)
+    if (req.session.user) {
+      res.json(req.session.user);
+    } else {
+      res.status(401).send('No session');
+    }
+  });
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
