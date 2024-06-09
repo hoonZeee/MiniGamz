@@ -58,7 +58,7 @@ pool.getConnection((err, conn) => {
         alias varchar(300) DEFAULT NULL COMMENT '본인확인 별명',
         travel varchar(300) DEFAULT NULL COMMENT '본인확인 여행',
         movie varchar(300) DEFAULT NULL COMMENT '본인확인 영화',
-        profileImage varchar(300) DEFAULT '/images/bob.webp' COMMENT '프로필 이미지',
+        profileImage varchar(300) DEFAULT 'NULL' COMMENT '프로필 이미지',
         points INT DEFAULT 0 COMMENT '사용자 포인트',
         PRIMARY KEY (id),
         UNIQUE KEY unique_nickname (nickname)
@@ -71,7 +71,7 @@ pool.getConnection((err, conn) => {
     `;
 
     const alterProfileImageColumnQuery = `
-    ALTER TABLE users ADD COLUMN profileImage VARCHAR(300) DEFAULT '/images/bob.webp' COMMENT '프로필 이미지';
+    ALTER TABLE users ADD COLUMN profileImage VARCHAR(300) DEFAULT 'NULL' COMMENT '프로필 이미지';
     `;
     
     const checkPointsColumnQuery = `
@@ -187,13 +187,29 @@ app.get('/api/users', (req, res) => {
 // 신규 API 엔드포인트 (사용자 추가)
 app.post('/api/users', (req, res) => {
     const { id, password, name, nickname, highschool, person, alias, travel, movie, points, profileImage } = req.body;
+
+    // 필수 항목 유효성 검사
+    if (!id || !password || !name || !nickname) {
+        return res.status(400).json({ error: 'ID, PW, Name, Nickname은 필수 항목입니다.' });
+    }
+
+    // 선택 항목 중 하나는 반드시 입력해야 함
+    if (!highschool && !person && !alias && !travel && !movie) {
+        return res.status(400).json({ error: 'Highschool, Person, Alias, Travel, Movie 중 하나는 반드시 입력해야 합니다.' });
+    }
+
+    // Profile Image URL이 비어 있으면 기본 이미지로 설정
+    const profileImageURL = profileImage || `http://${req.headers.host}/images/bob.webp`;
+
+    const defaultPoints = points ? points : 0;
+
     pool.getConnection((err, conn) => {
         if (err) {
             console.error('MySQL 연결 실패:', err);
             return res.status(500).json({ error: 'MySQL 연결 실패' });
         }
         const query = 'INSERT INTO users (id, password, name, nickname, highschool, person, alias, travel, movie, points, profileImage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        conn.query(query, [id, password, name, nickname, highschool, person, alias, travel, movie, points, profileImage], (err) => {
+        conn.query(query, [id, password, name, nickname, highschool, person, alias, travel, movie, defaultPoints, profileImageURL], (err) => {
             conn.release();
             if (err) {
                 console.error('사용자 추가 실패:', err);
@@ -206,15 +222,31 @@ app.post('/api/users', (req, res) => {
 
 // 신규 API 엔드포인트 (사용자 수정)
 app.put('/api/users/:id', (req, res) => {
-    const { id, password, name, nickname, highschool, person, alias, travel, movie, points, profileImage } = req.body;
+    const { password, name, nickname, highschool, person, alias, travel, movie, points, profileImage } = req.body;
     const userId = req.params.id;
+
+    // 필수 항목 유효성 검사
+    if (!password || !name || !nickname) {
+        return res.status(400).json({ error: 'PW, Name, Nickname은 필수 항목입니다.' });
+    }
+
+    // 선택 항목 중 하나는 반드시 입력해야 함
+    if (!highschool && !person && !alias && !travel && !movie) {
+        return res.status(400).json({ error: 'Highschool, Person, Alias, Travel, Movie 중 하나는 반드시 입력해야 합니다.' });
+    }
+
+    // Profile Image URL이 비어 있으면 기본 이미지로 설정
+    const profileImageURL = profileImage || `http://${req.headers.host}/images/bob.webp`;
+
+    const defaultPoints = points ? points : 0;
+
     pool.getConnection((err, conn) => {
         if (err) {
             console.error('MySQL 연결 실패:', err);
             return res.status(500).json({ error: 'MySQL 연결 실패' });
         }
         const query = 'UPDATE users SET password = ?, name = ?, nickname = ?, highschool = ?, person = ?, alias = ?, travel = ?, movie = ?, points = ?, profileImage = ? WHERE id = ?';
-        conn.query(query, [password, name, nickname, highschool, person, alias, travel, movie, points, profileImage, userId], (err) => {
+        conn.query(query, [password, name, nickname, highschool, person, alias, travel, movie, defaultPoints, profileImageURL, userId], (err) => {
             conn.release();
             if (err) {
                 console.error('사용자 수정 실패:', err);
@@ -613,7 +645,7 @@ app.post('/newgame', (req, res) => {
 function getHint(guess, target) {
     let strikes = 0;
     let balls = 0;
-    for (let i = 0; i < guess.length; i++) {
+    for (let i = 0; guess && i < guess.length; i++) {
         if (guess[i] === target[i]) {
             strikes++;
         } else if (target.includes(guess[i])) {

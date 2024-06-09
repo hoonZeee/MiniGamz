@@ -198,14 +198,13 @@ admin site : localhost:3000/admin<br/>
 
  - adminpublic\html\user-list.html
    - [x] userTable Table에 Data 동적 할당
+     - user.id, user.name, user.nickname, user.password, user.highscool, user.person, user.alias, user.travel, user.movie, user.profileImage, user.points
    - [x] 데이터 테이블에 드롭다운 및 입력 필드 추가
 
  - adminpublic\css\manageUser.css
    - 기존 user-list.css 기반
    - [x] 버튼 스타일
      - 사용자 추가, 삭제, 수정 버튼 스타일
-   - [ ] 모달 스타일
-     - 사용자 추가,수정 모달과 삭제 확인 스타일 설정 작업 중.
 
  - adminpublic\css\user-list.css
    - 전체적인 컨테이너 스타일링
@@ -221,12 +220,24 @@ admin site : localhost:3000/admin<br/>
 
 6/9 옥주헌 <br/>
  - server.js
-  
+   - [x] 프로필 이미지 URL 기본값 설정
+     - profileImage 값이 없으면, 동적으로 기본 이미지 URL( ${req.headers.host}/images/bob.webp )으로 설정
+   - [x] user CRUD function added
+     - [x] 사용자 추가
+       - 'POST /api/users' 엔드포인트, 필수 항목과 선택 항목 검증
+     - [x] 사용자 수정
+       - 'PUT /api/users/:id' 엔드포인트, 필수 항목, 선택 항목 검증
+     - [x] 사용자 삭제
+       - 'DELETE /api/users/:id' 엔드포인트
+
  - adminpublic\js\displayUserNickname.js
 
  - adminpublic\js\fetchTableData.js
 
  - adminpublic\js\manageUser.js
+   - [x] 폼 데이터 검증
+     - 필수 항목, 선택 항목 검증 후 입력되지 않을시 경고 메세지
+     - 프로필 이미지 URL이 빈 값이면 기본 값 반환
 
  - adminpublic\admin.html
 
