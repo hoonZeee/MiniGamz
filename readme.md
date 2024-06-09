@@ -174,7 +174,6 @@ admin site : localhost:3000/admin<br/>
    - [x] usersTable DB 검색 기능
      - [x] 드롭다운 + 입력 필드 토대로 검색 기능
 
-
  - adminpublic\js\manageUser.js
    - [x] 사용자 데이터 가져오기
      - users Table info
@@ -190,7 +189,6 @@ admin site : localhost:3000/admin<br/>
    - [x] Dashboard DataTable에 DB 조회 기능 추가( ID,PW,Name,Nickname )
    - [x] datatablesSimple Table에 Data 동적 할당
    - [x] 데이터 테이블에 드롭다운 및 입력 필드 추가
-
 
  - adminpublic\html\manageUser.html
    - 기존 user-list.html 기반
