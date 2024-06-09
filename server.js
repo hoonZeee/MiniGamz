@@ -163,7 +163,6 @@ pool.getConnection((err, conn) => {
     });
 });
 
-
 // 기존 API 엔드포인트 (DB에서 사용자 데이터 가져오기)
 app.get('/api/users', (req, res) => {
     pool.getConnection((err, conn) => {
@@ -465,20 +464,11 @@ app.delete('/api/img/:id', (req, res) => {
 });
 
 // 사진게시판 파일 업로드 설정
-const port = 3000;
-
-// 사진게시판 파일 업로드 설정
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Ensure the uploads directory exists
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -593,129 +583,6 @@ app.get('/profile.html', (req, res) => {
         res.redirect('/login.html?redirectUrl=/profile.html');
     }
 });
-app.get('/shop.html', (req, res) => {
-    if (req.session.user) {
-        res.sendFile(path.join(__dirname, 'dbpublic/html', 'shop.html'));
-    } else {
-        res.redirect('/login.html?redirectUrl=/shop.html');
-    }
-});
-// 로그인 상태 확인 API
-app.get('/api/check-login', (req, res) => {
-    if (req.session.user) {
-        res.status(200).json({ loggedIn: true, user: req.session.user });
-    } else {
-        res.status(200).json({ loggedIn: false });
-    }
-});
-
-app.post('/guess', (req, res) => {
-    const { guess } = req.body;
-    const result = getHint(guess, targetNumber);
-    res.json({ ...result, targetNumber });
-});
-
-app.post('/newgame', (req, res) => {
-    targetNumber = generateRandomNumber();
-    res.sendStatus(200);
-});
-
-function getHint(guess, target) {
-    let strikes = 0;
-    let balls = 0;
-    for (let i = 0; i < guess.length; i++) {
-        if (guess[i] === target[i]) {
-            strikes++;
-        } else if (target.includes(guess[i])) {
-            balls++;
-        }
-    }
-    return { strikes, balls };
-}
-
-io.on('connection', (socket) => {
-    console.log('새 사용자 접속!');
-
-    socket.on('disconnect', () => {
-        console.log('사용자 접속 종료!');
-    });
-
-    socket.on('chat message', (msg) => {
-        console.log(`받은 메시지: ${msg}`);
-        io.emit('chat message', msg);
-    });
-});
-
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'mainpublic')));
-app.use(express.static(path.join(__dirname, 'basepublic')));
-app.use(express.static(path.join(__dirname, 'dbpublic')));
-app.use(express.static(path.join(__dirname, 'minion-bird-public/public')));
-app.use(express.static(path.join(__dirname, 'shootingpublic')));
-app.use(express.static(path.join(__dirname, 'minion-jump-public')));
-app.use(express.static(path.join(__dirname, '2048public')));
-app.use(express.static(path.join(__dirname, 'runningpublic')));
-
-// admin 라우터 불러오는 부분
-app.use('/admin', adminRouter); // admin 라우터 사용
-
-app.use(session({
-    secret: 'your_secret_key',
-    resave: false,
-    saveUninitialized: true
-}));
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'mainpublic/html', 'index.html'));
-});
-app.get('/login.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dbpublic/html', 'login.html'));
-});
-app.get('/signup.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dbpublic/html', 'adduser.html'));
-});
-app.get('/baseball.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'basepublic/html', 'baseball.html'));
-});
-app.get('/shooting', (req, res) => {
-    res.sendFile(path.join(__dirname, 'shootingpublic/html', 'shooting.html'));
-});
-app.get('/minionbird.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'minion-bird-public/public/html', 'minionbird.html'));
-});
-app.get('/minionjump', (req, res) => {
-    res.sendFile(path.join(__dirname, 'minion-jump-public', 'minionjump.html'));
-});
-app.get('/2048', (req, res) => {
-    res.sendFile(path.join(__dirname, '2048public', '2048.html'));
-});
-app.get('/minionrun.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'runningpublic', 'minionrun.html'));
-});
-app.get('/inquiry.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'inquiry/html', 'inquiry.html'));
-});
-app.get('/community.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'community/html', 'community.html'));
-});
-app.get('/free.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'free/html', 'free.html'));
-});
-app.get('/pic.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'pic', 'pic.html'));
-});
-app.get('/find.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dbpublic/html', 'find.html'));
-});
-app.get('/profile.html', (req, res) => {
-    if (req.session.user) {
-        res.sendFile(path.join(__dirname, 'dbpublic/html', 'profile.html'));
-    } else {
-        res.redirect('/login.html?redirectUrl=/profile.html');
-    }
-});
-
 app.get('/shop.html', (req, res) => {
     if (req.session.user) {
         res.sendFile(path.join(__dirname, 'dbpublic/html', 'shop.html'));
