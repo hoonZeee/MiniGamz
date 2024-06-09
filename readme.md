@@ -258,5 +258,7 @@ admin site : localhost:3000/admin<br/>
    - [x] 사용자 추가/수정 폼 CSS 추가
 
  - adminpublic\css\user-list.css
-
-
+6/9 권진호<br/>
+- 사진게시판 사진게시글 점수 평가시 데이터 베이스 반영되도록 수정
+- 서버에서 실행하고 아이템 구매및 사용까지 확인완료
+- server.js , pic.html 업데이트
