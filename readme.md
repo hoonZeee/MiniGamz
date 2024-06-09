@@ -222,7 +222,7 @@ admin site : localhost:3000/admin<br/>
  - server.js
    - [x] 프로필 이미지 URL 기본값 설정
      - profileImage 값이 없으면, 동적으로 기본 이미지 URL( ${req.headers.host}/images/bob.webp )으로 설정
-   - [x] user CRUD function added
+   - [x] added users Table CRUD function
      - [x] 사용자 추가
        - 'POST /api/users' 엔드포인트, 필수 항목과 선택 항목 검증
      - [x] 사용자 수정
