@@ -496,13 +496,6 @@ app.delete('/api/img/:id', (req, res) => {
 });
 
 // 사진게시판 파일 업로드 설정
-
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 const dbb = mysql.createConnection({
   host: 'localhost',
   user: 'root',
