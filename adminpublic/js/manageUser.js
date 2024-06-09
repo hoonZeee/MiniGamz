@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${user.travel}</td>
                 <td>${user.movie}</td>
                 <td>${user.points}</td>
-                <td><img src="${user.profileImage}" alt="Profile Image" width="50"></td>
+                <td><img src="${user.profileImage || '/default-profile.png'}" alt="Profile Image" width="50"></td>
                 <td>
                     <button class="edit-button" data-id="${user.id}">수정</button>
                     <button class="delete-button" data-id="${user.id}">삭제</button>
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             userForm.travel.value = user.children[7].textContent;
             userForm.movie.value = user.children[8].textContent;
             userForm.points.value = user.children[9].textContent;
-            userForm.profileImage.value = user.children[10].querySelector('img').src;
+            userForm.profileImage.value = user.children[10].querySelector('img').src === '/default-profile.png' ? '' : user.children[10].querySelector('img').src;
             userFormModal.style.display = 'block';
         }
     }
@@ -92,8 +92,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     userForm.addEventListener('submit', async (event) => {
         event.preventDefault();
+        
         const formData = new FormData(userForm);
         const userData = Object.fromEntries(formData.entries());
+
+        // 필수 항목 유효성 검사 추가
+        if (!userData.id || !userData.password || !userData.name || !userData.nickname) {
+            alert('ID, PW, Name, Nickname은 필수 입력 항목입니다.');
+            return;
+        }
+
+        // 선택 항목 중 하나는 반드시 입력해야 함
+        if (!userData.highschool && !userData.person && !userData.alias && !userData.travel && !userData.movie) {
+            alert('Highschool, Person, Alias, Travel, Movie 중 하나는 반드시 입력해야 합니다.');
+            return;
+        }
+
+        // Profile Image URL이 비어 있으면 서버에 전송하지 않음
+        if (!userData.profileImage) {
+            delete userData.profileImage;
+        }
+
+        // 서버로 요청 전 유효성 검사
+        if (userData.points === "") {
+            userData.points = 0; // 기본값 설정
+        }
+        
         try {
             const response = await fetch(`/api/users/${selectedUserId || ''}`, {
                 method: selectedUserId ? 'PUT' : 'POST',
@@ -110,8 +134,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    document.querySelector('.modal .close').addEventListener('click', () => {
-        userFormModal.style.display = 'none';
+    document.querySelectorAll('.modal .close').forEach(closeButton => {
+        closeButton.addEventListener('click', () => {
+            userFormModal.style.display = 'none';
+            deleteConfirmModal.style.display = 'none';
+        });
     });
 
     document.querySelector('#confirmDeleteButton').addEventListener('click', async () => {
@@ -139,8 +166,17 @@ document.addEventListener('DOMContentLoaded', () => {
         userFormModal.style.display = 'block';
     });
 
-    searchButton.addEventListener('click', () => {
-        fetchUserData().then(() => filterTable(data));
+    searchButton.addEventListener('click', async () => {
+        try {
+            const response = await fetch('/api/users');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            filterTable(data);
+        } catch (error) {
+            console.error('Error searching user data:', error);
+        }
     });
 
     fetchUserData();

@@ -18,10 +18,10 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown"><i class="fas fa-user fa-fw"></i></a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="#!">설정 (Settings)</a></li>
-                    <li><a class="dropdown-item" href="#!">로그 및 감사 (Logging & Auditing)</a></li>
+                    <li><a class="dropdown-item" href="/">메인화면</a></li>
+                    <li><a class="dropdown-item" href="/profile.html">프로필</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#!">로그아웃 (Logout)</a></li>
+                    <li><a class="dropdown-item" id="logoutBtn" href="#">로그아웃 (Logout)</a></li>
                 </ul>
             </li>
         </ul>
@@ -45,11 +45,7 @@
                         <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link" href="html/user-list.html">사용자 DB 보기</a>
-
-                                <a class="nav-link" href="#">사용자 추가/수정/삭제</a>
-
                                 <a class="nav-link" href="html/manageUser.html">사용자 추가/수정/삭제</a>
-
                                 <a class="nav-link" href="#">권한 관리</a>
                             </nav>
                         </div>
@@ -147,9 +143,10 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script src="js/scripts.js"></script>
-
     <script src="js/fetchTableData.js"></script>
     <script src="js/displayUserNickname.js"></script>
+    <script src="js/logout.js"></script>
 </body>
 </html>

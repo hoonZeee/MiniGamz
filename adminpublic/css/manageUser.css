@@ -120,6 +120,34 @@ table tbody td img {
     background-color: #45a049;
 }
 
+/* 수정 및 삭제 버튼 스타일 */
+.edit-button, .delete-button {
+    padding: 6px 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.edit-button {
+    background-color: #4CAF50; /* 초록색 */
+    color: white;
+}
+
+.edit-button:hover {
+    background-color: #45a049; /* 조금 더 어두운 초록색 */
+}
+
+.delete-button {
+    background-color: #f44336; /* 빨간색 */
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: #d32f2f; /* 조금 더 어두운 빨간색 */
+}
+
 /* 모달 설정 */
 .modal {
     display: none;
@@ -155,4 +183,73 @@ table tbody td img {
     color: black;
     text-decoration: none;
     cursor: pointer;
+}
+
+/* 삭제 확인 모달 버튼 스타일 */
+#confirmDeleteButton, #cancelDeleteButton {
+    padding: 8px 16px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 20px;
+}
+
+#confirmDeleteButton {
+    background-color: #f44336; /* 빨간색 */
+    color: white;
+}
+
+#confirmDeleteButton:hover {
+    background-color: #d32f2f; /* 조금 더 어두운 빨간색 */
+}
+
+#cancelDeleteButton {
+    background-color: #ccc; /* 회색 */
+    color: black;
+}
+
+#cancelDeleteButton:hover {
+    background-color: #bbb; /* 조금 더 어두운 회색 */
+}
+
+/* 사용자 추가/수정 모달 폼 스타일 */
+#userForm {
+    display: flex;
+    flex-direction: column;
+}
+
+#userForm label {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #333;
+}
+
+#userForm input[type="text"],
+#userForm input[type="password"],
+#userForm input[type="number"] {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#userForm input[type="submit"] {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    align-self: flex-end;
+}
+
+#userForm input[type="submit"]:hover {
+    background-color: #45a049;
 }
