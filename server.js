@@ -222,11 +222,11 @@ app.post('/api/users', (req, res) => {
 
 // 신규 API 엔드포인트 (사용자 수정)
 app.put('/api/users/:id', (req, res) => {
-    const { password, name, nickname, highschool, person, alias, travel, movie, points, profileImage } = req.body;
+    const { id, password, name, nickname, highschool, person, alias, travel, movie, points, profileImage } = req.body;
     const userId = req.params.id;
 
     // 필수 항목 유효성 검사
-    if (!password || !name || !nickname) {
+    if (!id || !password || !name || !nickname) {
         return res.status(400).json({ error: 'PW, Name, Nickname은 필수 항목입니다.' });
     }
 
@@ -984,7 +984,6 @@ app.post('/logout', (req, res) => {
         if (err) {
             return res.status(500).json({ error: '로그아웃 실패' });
         }
-        alert("로그아웃 되었습니다.");
         res.redirect('/');
     });
 });
