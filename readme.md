@@ -218,3 +218,22 @@ admin site : localhost:3000/admin<br/>
   - 아이템샵에서 프로필 추가 구매 가능(이미지는 전부 임시) + 구매하지않은 프로필은 선택불가
   - 아이템샵, 프로필 js+css 따로 빼놓음
   - 칭호 브론즈,실버,골드 잠궈놓음(추후결정)
+
+6/9 옥주헌 <br/>
+ - server.js
+  
+ - adminpublic\js\displayUserNickname.js
+
+ - adminpublic\js\fetchTableData.js
+
+ - adminpublic\js\manageUser.js
+
+ - adminpublic\admin.html
+
+ - adminpublic\html\manageUser.html
+
+ - adminpublic\html\user-list.html
+
+ - adminpublic\css\manageUser.css
+
+ - adminpublic\css\user-list.css
