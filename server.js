@@ -496,6 +496,13 @@ app.delete('/api/img/:id', (req, res) => {
 });
 
 // 사진게시판 파일 업로드 설정
+
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 const dbb = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -618,6 +625,42 @@ app.post('/rate', (req, res) => { // (3)
     }
   });
 
+  //ranking게시판
+
+// MySQL 연결 설정
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '00000000',
+    database: 'user'
+});
+
+// MySQL 연결
+connection.connect((err) => {
+    if (err) {
+        console.error('Error connecting to MySQL: ', err);
+        return;
+    }
+    console.log('Connected to MySQL');
+});
+
+// 정적 파일 제공
+app.use(express.static('public'));
+
+// 랭킹 데이터 가져오기
+app.get('/ranking', (req, res) => {
+    const query = 'SELECT points, nickname, profileImage FROM users ORDER BY points DESC';
+    connection.query(query, (error, results) => {
+        if (error) {
+            console.error('Error fetching data: ', error);
+            res.status(500).send('Server Error');
+            return;
+        }
+        res.json(results);
+    });
+});
+
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'mainpublic')));
@@ -677,6 +720,9 @@ app.get('/free.html', (req, res) => {
 });
 app.get('/pic.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'pic', 'pic.html'));
+});
+app.get('/ranking.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'ranking/html', 'ranking.html'));
 });
 app.get('/find.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'dbpublic/html', 'find.html'));
