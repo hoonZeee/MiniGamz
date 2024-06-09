@@ -235,5 +235,8 @@ admin site : localhost:3000/admin<br/>
  - adminpublic\html\user-list.html
 
  - adminpublic\css\manageUser.css
+   - [x] Action 부분 수정/삭제 버튼 CSS 추가
+   - [x] 사용자 삭제 확인 모달 CSS 추가
+   - [x] 사용자 추가/수정 폼 CSS 추가
 
  - adminpublic\css\user-list.css
