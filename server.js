@@ -409,7 +409,8 @@ ddb.connect((err) => {
             author VARCHAR(100) NOT NULL COMMENT '작성자',
             title VARCHAR(100) NOT NULL COMMENT '제목',
             content TEXT NOT NULL COMMENT '문의내용',
-            date DATETIME NOT NULL COMMENT '날짜'
+            date DATETIME NOT NULL COMMENT '날짜',
+            views INT Null default 0 COMMENT '조회수'
         ) COMMENT='게시글 테이블';
     `;
 
@@ -451,9 +452,9 @@ app.get('/api/img', (req, res) => {
 });
 
 app.post('/api/img', (req, res) => {
-    const { title, author, content, date } = req.body;
-    const sql = 'INSERT INTO img (title, author, content, date) VALUES (?, ?, ?, ?)';
-    ddb.query(sql, [title, author, content, date], (err, result) => {
+    const { title, author, content, date, views } = req.body;
+    const sql = 'INSERT INTO img (title, author, content, date, views) VALUES (?, ?, ?, ?, ?)';
+    ddb.query(sql, [title, author, content, date, views], (err, result) => {
         if (err) {
             console.error('Error adding post to database:', err);
             res.status(500).send('Database error');
@@ -463,12 +464,25 @@ app.post('/api/img', (req, res) => {
         }
     });
 });
+app.put('/api/img/:id/views', (req, res) => {
+    const postId = req.params.id;
+    const sql = 'UPDATE img SET views = views + 1 WHERE id = ?';
+    ddb.query(sql, [postId], (err, result) => {
+        if (err) {
+            console.error('Error updating views:', err);
+            res.status(500).send('Database error');
+        } else {
+            res.status(200).send('Views updated successfully');
+        }
+    });
+});
+
 
 app.put('/api/img/:id', (req, res) => {
     const postId = req.params.id;
-    const { title, author, content, date } = req.body;
-    const sql = 'UPDATE img SET title = ?, author = ?, content = ?, date = ? WHERE id = ?';
-    ddb.query(sql, [title, author, content, date, postId], (err, result) => {
+    const { title, author, content, date, views } = req.body;
+    const sql = 'UPDATE img SET title = ?, author = ?, content = ?, date = ?, views = ? WHERE id = ?';
+    ddb.query(sql, [title, author, content, date, views, postId], (err, result) => {
         if (err) {
             console.error('Error updating post in database:', err);
             res.status(500).send('Database error');

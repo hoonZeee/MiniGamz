@@ -268,3 +268,10 @@ admin site : localhost:3000/admin<br/>
   - 랭킹페이지 ranking.html 업로드
   - 데이터베이스저장된 유저들의 포인트순으로 랭킹정렬
   - server.js업데이트
+
+6/21 권진호<br/>
+  - community.html 업데이트
+  - 글작성 수정, 삭제, 글보기 기능추가.
+  - 데이터베이스에 연결
+  - server.js업데이트
+
