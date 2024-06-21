@@ -151,9 +151,9 @@ admin site : localhost:3000/admin<br/>
    업로드한 사진게시물에 평가기능(1~5점)
  - 커뮤니티 좌측 카테고리바수정
  - server.js 업데이트
- - pic 업로드
- - 사진게시판 유저평가 점수평가시 points 컬럼에 점수추가
-
+ - pic.html 업로드
+ - 유저들이 평가한 점수 데이터베이스에 연동
+   
 6/8 옥주헌<br/>
  - [x] added package.json multer define
    - "multer": "^1.4.5-lts.1"
@@ -259,4 +259,18 @@ admin site : localhost:3000/admin<br/>
 
  - adminpublic\css\user-list.css
 
+ 6/10 정현성<br/>
+  - 커뮤니티 게시판 디자인 변경
+  - community.html 업데이트
+  - styles.css 업데이트
 
+ 6/10 권진호<br/>
+  - 랭킹페이지 ranking.html 업로드
+  - 데이터베이스저장된 유저들의 포인트순으로 랭킹정렬
+  - server.js업데이트
+
+6/21 권진호<br/>
+  - community.html 업데이트
+  - 글작성 수정, 삭제, 글보기 기능추가.
+  - 데이터베이스에 연결
+  - server.js업데이트
