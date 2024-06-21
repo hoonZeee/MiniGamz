@@ -274,3 +274,4 @@ admin site : localhost:3000/admin<br/>
   - 글작성 수정, 삭제, 글보기 기능추가.
   - 데이터베이스에 연결
   - server.js업데이트
+
