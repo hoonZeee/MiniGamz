@@ -19,6 +19,3 @@
   },
   "description": ""
 }
-"scripts": {
-    "start": "node server.js" // Replace with your actual entry point file
-},
