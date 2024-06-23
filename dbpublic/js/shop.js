@@ -58,24 +58,33 @@ function logout() {
 
 // 아이템 구매
 function purchaseItem(button, type, value, cost) {
-    fetch('/api/purchase-item', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ type, value, cost })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('아이템이 성공적으로 구매되었습니다.');
-            button.parentElement.classList.remove('locked'); // 구매 성공 시 잠금 해제
-            checkLoginStatus(); // 구매 후 포인트 및 아이템 상태 업데이트
-        } else {
-            alert(data.error); // 아이템 실패 메시지 서버 문구로 대체
-        }
-    })
-    .catch(error => console.error('Error:', error));
+    fetch('/api/profile')
+        .then(response => response.json())
+        .then(profileData => {
+            if (profileData.points >= cost) {
+                fetch('/api/purchase-item', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ type, value, cost })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('아이템이 성공적으로 구매되었습니다.');
+                        button.parentElement.classList.remove('locked'); // 구매 성공 시 잠금 해제
+                        checkLoginStatus(); // 구매 후 포인트 및 아이템 상태 업데이트
+                    } else {
+                        alert(data.error); // 아이템 실패 메시지 서버 문구로 대체
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            } else {
+                alert('포인트가 부족합니다.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
 }
 
 // 버튼 상태 업데이트
@@ -93,13 +102,9 @@ function updateButtons(userPoints, purchasedItems) {
             button.innerText = '구매 완료';
             button.style.cursor = 'not-allowed';
         } else {
-            if (userPoints >= cost) {
-                button.disabled = false;
-                button.style.cursor = 'pointer';
-            } else {
-                button.disabled = true;
-                button.style.cursor = 'not-allowed';
-            }
+            button.disabled = false; // 버튼 항상 활성화
+            button.style.cursor = 'pointer';
+            button.onclick = () => purchaseItem(button, 'image', imageUrl, cost); // 클릭 이벤트 설정
         }
     });
 }
