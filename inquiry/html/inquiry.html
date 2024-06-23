@@ -359,9 +359,6 @@
             submitButton.onclick = addPost;
         }
         
-        // 나머지 코드 생략...
-        
-
         function addPost() {
             const title = document.getElementById('newTitle').value;
             const author = document.getElementById('newAuthor').textContent;
@@ -375,20 +372,14 @@
                 date
             };
 
-            fetch('/api/posts', {
+            fetch('/api/img', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(post)
             })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('Failed to add post');
-                }
-            })
+            .then(response => response.json())
             .then(data => {
                 posts.push({ ...post, id: data.id });
                 renderPosts();
@@ -487,13 +478,10 @@
             const title = document.getElementById('newTitle').value;
             const author = document.getElementById('newAuthor').textContent;
             const content = document.getElementById('newContent').value;
-            const date = new Date().toISOString().split('T')[0];
     
             const updatedPost = {
                 title,
-                author,
-                content,
-                date
+                content
             };
     
             fetch(`/api/posts/${id}`, {
@@ -504,11 +492,10 @@
                 body: JSON.stringify(updatedPost)
             })
             .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
+                if (!response.ok) {
                     throw new Error('Failed to update post');
                 }
+                return response.json();
             })
             .then(() => {
                 posts = posts.map(post => post.id === id ? { ...post, ...updatedPost } : post);

@@ -294,18 +294,19 @@ ddb.connect((err) => {
         return;
     }
     console.log('MySQL 연결 성공!');
-
+    
+    // 데이터베이스 및 테이블 생성
     const createDatabaseQuery = 'CREATE DATABASE IF NOT EXISTS post;';
     const useDatabaseQuery = 'USE post;';
     const createTableQuery = `
         CREATE TABLE IF NOT EXISTS img (
-            id INT AUTO_INCREMENT PRIMARY KEY COMMENT '게시글 ID',
-            author VARCHAR(100) NOT NULL COMMENT '작성자',
-            title VARCHAR(100) NOT NULL COMMENT '제목',
-            content TEXT NOT NULL COMMENT '문의내용',
-            date DATETIME NOT NULL COMMENT '날짜',
-            views INT Null default 0 COMMENT '조회수'
-        ) COMMENT='게시글 테이블';
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            author VARCHAR(100) NOT NULL,
+            title VARCHAR(100) NOT NULL,
+            content TEXT NOT NULL,
+            date DATETIME NOT NULL,
+            views INT DEFAULT 0
+        );
     `;
 
     ddb.query(createDatabaseQuery, (err) => {
@@ -325,28 +326,11 @@ ddb.connect((err) => {
             });
         });
     });
-
-    const createCommentTableQuery = `
-        CREATE TABLE IF NOT EXISTS comments (
-            id INT AUTO_INCREMENT PRIMARY KEY COMMENT '댓글 ID',
-            postId INT NOT NULL COMMENT '게시글 ID',
-            author VARCHAR(100) NOT NULL COMMENT '작성자',
-            content TEXT NOT NULL COMMENT '댓글 내용',
-            date DATETIME NOT NULL COMMENT '작성 날짜',
-            FOREIGN KEY (postId) REFERENCES img(id)
-        ) COMMENT='댓글 테이블';
-    `;
-
-    ddb.query(createCommentTableQuery, (err) => {
-        if (err) {
-            console.error('댓글 테이블 생성 실패:', err);
-        }
-    });
 });
 
 app.post('/api/img', (req, res) => {
-    const { title, author, content, date, views } = req.body;
-    const newPost = { title, author, content, date, views };
+    const { title, author, content, date } = req.body;
+    const newPost = { title, author, content, date, views: 0 };
 
     const insertPostQuery = 'INSERT INTO img (title, author, content, date, views) VALUES (?, ?, ?, ?, ?)';
     const updatePointsQuery = 'UPDATE user.users SET points = points + 10 WHERE nickname = ?';
@@ -357,7 +341,7 @@ app.post('/api/img', (req, res) => {
             return res.status(500).send('Database transaction error');
         }
 
-        ddb.query(insertPostQuery, [title, author, content, date, views], (err, result) => {
+        ddb.query(insertPostQuery, [title, author, content, date, 0], (err, result) => {
             if (err) {
                 return ddb.rollback(() => {
                     console.error('Error inserting post:', err);
@@ -382,99 +366,60 @@ app.post('/api/img', (req, res) => {
                     }
 
                     console.log('1 record inserted and points updated');
-                    res.status(201).send('Post added and points updated');
+                    res.status(201).json({ id: result.insertId, message: 'Post added and points updated' });
                 });
             });
         });
     });
 });
 
+app.put('/api/posts/:id', (req, res) => {
+    const { id } = req.params;
+    const { title, content } = req.body;
 
-app.put('/api/updatePoints', (req, res) => {
-    const { points } = req.body;
-    const updatePointsQuery = 'UPDATE users SET points = points + ? WHERE nickname = ?';
+    const updatePostQuery = 'UPDATE img SET title = ?, content = ? WHERE id = ?';
 
-    if (!req.user || !req.user.nickname) {
-        return res.status(401).send('Unauthorized');
-    }
-
-    ddb.query(updatePointsQuery, [points, req.user.nickname], (err, result) => {
+    ddb.query(updatePostQuery, [title, content, id], (err, result) => {
         if (err) {
-            console.error('Error updating points:', err);
-            return res.status(500).send('Database error');
+            console.error('Error updating post:', err);
+            return res.status(500).send('Database error updating post');
         }
-        res.status(200).send('Points updated successfully');
+
+        res.status(200).send('Post updated successfully');
     });
 });
 
-app.get('/api/img', (req, res) => {
-    const fetchPostsQuery = 'SELECT * FROM img ORDER BY id DESC';
+app.delete('/api/posts/:id', (req, res) => {
+    const { id } = req.params;
 
-    ddb.query(fetchPostsQuery, (err, results) => {
+    const deletePostQuery = 'DELETE FROM img WHERE id = ?';
+
+    ddb.query(deletePostQuery, [id], (err, result) => {
+        if (err) {
+            console.error('Error deleting post:', err);
+            return res.status(500).send('Database error deleting post');
+        }
+
+        res.status(200).send('Post deleted successfully');
+    });
+});
+
+app.get('/api/posts', (req, res) => {
+    const getPostsQuery = 'SELECT * FROM img ORDER BY date DESC';
+
+    ddb.query(getPostsQuery, (err, results) => {
         if (err) {
             console.error('Error fetching posts:', err);
-            return res.status(500).send('Database error');
+            return res.status(500).send('Database error fetching posts');
         }
+
         res.status(200).json(results);
     });
 });
 
-app.get('/api/img/:postId/comments', (req, res) => {
-    const postId = req.params.postId;
-    const fetchCommentsQuery = 'SELECT * FROM comments WHERE postId = ? ORDER BY id DESC';
 
-    ddb.query(fetchCommentsQuery, [postId], (err, results) => {
-        if (err) {
-            console.error('Error fetching comments:', err);
-            return res.status(500).send('Database error');
-        }
-        res.status(200).json(results);
-    });
-});
 
-app.post('/api/img/:postId/comments', (req, res) => {
-    const postId = req.params.postId;
-    const { author, content, date } = req.body;
-    const insertCommentQuery = 'INSERT INTO comments (postId, author, content, date) VALUES (?, ?, ?, ?)';
-    const updatePointsQuery = 'UPDATE user.users SET points = points + 5 WHERE nickname = ?';
 
-    ddb.beginTransaction(err => {
-        if (err) {
-            console.error('Error starting transaction:', err);
-            return res.status(500).send('Database transaction error');
-        }
-
-        ddb.query(insertCommentQuery, [postId, author, content, date], (err, result) => {
-            if (err) {
-                return ddb.rollback(() => {
-                    console.error('Error inserting comment:', err);
-                    res.status(500).send('Database error inserting comment');
-                });
-            }
-
-            ddb.query(updatePointsQuery, [author], (err, result) => {
-                if (err) {
-                    return ddb.rollback(() => {
-                        console.error('Error updating user points:', err);
-                        res.status(500).send('Database error updating points');
-                    });
-                }
-
-                ddb.commit(err => {
-                    if (err) {
-                        return ddb.rollback(() => {
-                            console.error('Error committing transaction:', err);
-                            res.status(500).send('Database commit error');
-                        });
-                    }
-
-                    console.log('Comment added and points updated');
-                    res.status(201).send('Comment added successfully and points updated');
-                });
-            });
-        });
-    });
-});
 
 
 
