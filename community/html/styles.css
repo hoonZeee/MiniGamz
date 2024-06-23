@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Gamja Flower", sans-serif;
     margin: 0;
     padding: 0;
 }
@@ -10,7 +10,7 @@ header {
     width: 100%; /* Make sure it spans the entire width of the screen */
     text-align: center;
     z-index: 1000; /* Ensure it appears above other content */
-    font-family: "Comic Neue", "Poppins", sans-serif; /* 귀여운 폰트 적용 */
+    font-family: "Gamja Flower", sans-serif; /* 귀여운 폰트 적용 */
     background-color: #ffd200;
 }
 
