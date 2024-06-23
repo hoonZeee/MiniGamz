@@ -229,18 +229,6 @@
             background-color: #555;
             color: white;
         }
-
-        /* 추가 스타일 */
-        #tableContainer {
-            position: relative;
-            display: inline-block;
-            width: 80%;
-        }
-        #newPostButton {
-            position: absolute;
-            right: 0;
-            top: -50px; /* 테이블 바로 위에 위치시키기 위해 설정 */
-        }
     </style>
 </head>
 <body>
@@ -270,24 +258,21 @@
         </div>
     </header>
     <h1><span>미니겜즈</span> 문의 게시판</h1>
-    
-    <div id="tableContainer">
-        <button id="newPostButton" onclick="showNewPostForm()">글쓰기</button>
-        <table>
-            <thead>
-            <tr>
-                <th>번호</th>
-                <th>제목</th>
-                <th>작성자</th>
-                <th>작성날짜</th>
-                <th>작업</th>
-            </tr>
-            </thead>
-            <tbody id="posts">
-            <!-- JavaScript를 사용하여 게시글을 추가할 예정 -->
-            </tbody>
-        </table>
-    </div>
+    <table>
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>작성날짜</th>
+            <th>작업</th>
+        </tr>
+        </thead>
+        <tbody id="posts">
+        <!-- JavaScript를 사용하여 게시글을 추가할 예정 -->
+        </tbody>
+    </table>
+    <button onclick="showNewPostForm()">글쓰기</button>
 
     <div id="newPostForm">
         <h2>새 글 작성</h2>
@@ -374,6 +359,9 @@
             submitButton.onclick = addPost;
         }
         
+        // 나머지 코드 생략...
+        
+
         function addPost() {
             const title = document.getElementById('newTitle').value;
             const author = document.getElementById('newAuthor').textContent;
@@ -387,14 +375,20 @@
                 date
             };
 
-            fetch('/api/imf', {
+            fetch('/api/posts', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(post)
             })
-            .then(response => response.json())
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to add post');
+                }
+            })
             .then(data => {
                 posts.push({ ...post, id: data.id });
                 renderPosts();
@@ -491,11 +485,15 @@
     
         function updatePost(id) {
             const title = document.getElementById('newTitle').value;
+            const author = document.getElementById('newAuthor').textContent;
             const content = document.getElementById('newContent').value;
+            const date = new Date().toISOString().split('T')[0];
     
             const updatedPost = {
                 title,
-                content
+                author,
+                content,
+                date
             };
     
             fetch(`/api/posts/${id}`, {
@@ -506,10 +504,11 @@
                 body: JSON.stringify(updatedPost)
             })
             .then(response => {
-                if (!response.ok) {
+                if (response.ok) {
+                    return response.json();
+                } else {
                     throw new Error('Failed to update post');
                 }
-                return response.json();
             })
             .then(() => {
                 posts = posts.map(post => post.id === id ? { ...post, ...updatedPost } : post);
