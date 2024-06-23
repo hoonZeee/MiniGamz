@@ -503,97 +503,112 @@ app.delete('/api/img/:id', (req, res) => {
 });
 
 //문의게시판
-
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'inquiry')));
-
 // 문의 게시판 DB 설정
-const inquiryDb = mysql.createConnection({
+const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '00000000',
-    database: 'inquiry'
+    database: 'post'
 });
 
-inquiryDb.connect((err) => {
+db.connect((err) => {
     if (err) {
         console.error('MySQL 연결 실패:', err);
         return;
     }
     console.log('MySQL 연결 성공!');
 
-    const createInquiryDatabaseQuery = 'CREATE DATABASE IF NOT EXISTS inquiry;';
-    const useInquiryDatabaseQuery = 'USE inquiry;';
-    const createInquiryTableQuery = `
-        CREATE TABLE IF NOT EXISTS inquiry_posts (
+    const createDatabaseQuery = 'CREATE DATABASE IF NOT EXISTS post;';
+    const useDatabaseQuery = 'USE post;';
+    const createTableQuery = `
+        CREATE TABLE IF NOT EXISTS posts (
             id INT AUTO_INCREMENT PRIMARY KEY COMMENT '게시글 ID',
             author VARCHAR(100) NOT NULL COMMENT '작성자',
             title VARCHAR(100) NOT NULL COMMENT '제목',
             content TEXT NOT NULL COMMENT '문의내용',
             date DATETIME NOT NULL COMMENT '날짜'
-        ) COMMENT='문의 게시판 테이블';
+        ) COMMENT='게시글 테이블';
     `;
 
-    inquiryDb.query(createInquiryDatabaseQuery, (err) => {
+    db.query(createDatabaseQuery, (err, result) => {
         if (err) {
             console.error('데이터베이스 생성 실패:', err);
             return;
         }
-        inquiryDb.query(useInquiryDatabaseQuery, (err) => {
+        console.log('데이터베이스 생성 성공!');
+
+        db.query(useDatabaseQuery, (err, result) => {
             if (err) {
-                console.error('데이터베이스 선택 실패:', err);
+                console.error('데이터베이스 사용 실패:', err);
                 return;
             }
-            inquiryDb.query(createInquiryTableQuery, (err) => {
+            console.log('데이터베이스 사용 성공!');
+
+            db.query(createTableQuery, (err, result) => {
                 if (err) {
                     console.error('테이블 생성 실패:', err);
                 } else {
-                    console.log('문의 게시판 테이블 생성 성공!');
+                    console.log('테이블 생성 성공!');
                 }
             });
         });
     });
 });
 
-// 문의 게시판 포스트 추가
-app.post('/api/inquiry_posts', (req, res) => {
-    const { title, author, content, date, views } = req.body;
-    const newPost = { title, author, content, date, views };
-
-    const insertInquiryPostQuery = 'INSERT INTO inquiry_posts (title, author, content, date, views) VALUES (?, ?, ?, ?, ?)';
-    inquiryDb.query(insertInquiryPostQuery, [title, author, content, date, views], (err, result) => {
+app.get('/api/posts', (req, res) => {
+    const sql = 'SELECT * FROM posts';
+    db.query(sql, (err, results) => {
         if (err) {
-            console.error('Error inserting post:', err);
-            return res.status(500).json({ error: 'Database error inserting post' });
+            console.error('Error retrieving posts from database:', err);
+            res.status(500).send('Database error');
+        } else {
+            res.status(200).json(results);
         }
-        res.status(201).json({ id: result.insertId, message: 'Post added successfully' });
     });
 });
 
-// 문의 게시판 포스트 조회
-app.get('/api/inquiry_posts', (req, res) => {
-    const fetchInquiryPostsQuery = 'SELECT * FROM inquiry_posts ORDER BY id DESC';
-    inquiryDb.query(fetchInquiryPostsQuery, (err, results) => {
+app.post('/api/posts', (req, res) => {
+    const { title, author, content, date } = req.body;
+    const sql = 'INSERT INTO posts (title, author, content, date) VALUES (?, ?, ?, ?)';
+    db.query(sql, [title, author, content, date], (err, result) => {
         if (err) {
-            console.error('Error fetching posts:', err);
-            return res.status(500).send('Database error');
+            console.error('Error adding post to database:', err);
+            res.status(500).send('Database error');
+        } else {
+            console.log('1 record inserted');
+            res.status(201).send('Post added');
         }
-        res.status(200).json(results);
     });
 });
 
-// 문의 게시판 포스트 삭제
-app.delete('/api/inquiry_posts/:id', (req, res) => {
+app.put('/api/posts/:id', (req, res) => {
     const postId = req.params.id;
-    const deleteInquiryPostQuery = 'DELETE FROM inquiry_posts WHERE id = ?';
-    inquiryDb.query(deleteInquiryPostQuery, [postId], (err, result) => {
+    const { title, author, content, date } = req.body;
+    const sql = 'UPDATE posts SET title = ?, author = ?, content = ?, date = ? WHERE id = ?';
+    db.query(sql, [title, author, content, date, postId], (err, result) => {
         if (err) {
-            console.error('Error deleting post:', err);
-            return res.status(500).send('Database error');
+            console.error('Error updating post in database:', err);
+            res.status(500).send('Database error');
+        } else if (result.affectedRows === 0) {
+            res.status(404).send('Post not found');
+        } else {
+            res.status(200).send('Post updated successfully');
         }
-        res.status(200).send('Post deleted successfully');
+    });
+});
+
+app.delete('/api/posts/:id', (req, res) => {
+    const postId = req.params.id;
+    const sql = 'DELETE FROM posts WHERE id = ?';
+    db.query(sql, [postId], (err, result) => {
+        if (err) {
+            console.error('Error deleting post from database:', err);
+            res.status(500).send('Database error');
+        } else if (result.affectedRows === 0) {
+            res.status(404).send('Post not found');
+        } else {
+            res.status(200).send('Post deleted successfully');
+        }
     });
 });
 

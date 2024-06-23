@@ -358,6 +358,9 @@
             submitButton.textContent = '작성';
             submitButton.onclick = addPost;
         }
+        
+        // 나머지 코드 생략...
+        
 
         function addPost() {
             const title = document.getElementById('newTitle').value;
@@ -369,11 +372,10 @@
                 title,
                 author,
                 content,
-                date,
-                views: 0
+                date
             };
 
-            fetch('/api/inquiry_posts', {
+            fetch('/api/posts', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -395,7 +397,7 @@
             .catch(error => {
                 console.error('Error adding post:', error);
             });
-            window.location.reload();
+            window.location.reload()
         }
 
         function renderPosts() {
@@ -446,7 +448,7 @@
                 return;
             }
         
-            fetch(`/api/inquiry_posts/${id}`, { method: 'DELETE' })
+            fetch(`/api/posts/${id}`, { method: 'DELETE' })
                 .then(response => {
                     if (response.ok) {
                         posts = posts.filter(post => post.id !== id);
@@ -494,7 +496,7 @@
                 date
             };
     
-            fetch(`/api/inquiry_posts/${id}`, {
+            fetch(`/api/posts/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -534,7 +536,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             checkLoginStatus();
-            fetch('/api/inquiry_posts')
+            fetch('/api/posts')
                 .then(response => response.json())
                 .then(data => {
                     posts = data;
