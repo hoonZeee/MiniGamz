@@ -229,6 +229,18 @@
             background-color: #555;
             color: white;
         }
+
+        /* 추가 스타일 */
+        #tableContainer {
+            position: relative;
+            display: inline-block;
+            width: 80%;
+        }
+        #newPostButton {
+            position: absolute;
+            right: 0;
+            top: -50px; /* 테이블 바로 위에 위치시키기 위해 설정 */
+        }
     </style>
 </head>
 <body>
@@ -258,21 +270,24 @@
         </div>
     </header>
     <h1><span>미니겜즈</span> 문의 게시판</h1>
-    <table>
-        <thead>
-        <tr>
-            <th>번호</th>
-            <th>제목</th>
-            <th>작성자</th>
-            <th>작성날짜</th>
-            <th>작업</th>
-        </tr>
-        </thead>
-        <tbody id="posts">
-        <!-- JavaScript를 사용하여 게시글을 추가할 예정 -->
-        </tbody>
-    </table>
-    <button onclick="showNewPostForm()">글쓰기</button>
+    
+    <div id="tableContainer">
+        <button id="newPostButton" onclick="showNewPostForm()">글쓰기</button>
+        <table>
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>작성날짜</th>
+                <th>작업</th>
+            </tr>
+            </thead>
+            <tbody id="posts">
+            <!-- JavaScript를 사용하여 게시글을 추가할 예정 -->
+            </tbody>
+        </table>
+    </div>
 
     <div id="newPostForm">
         <h2>새 글 작성</h2>
@@ -372,7 +387,7 @@
                 date
             };
 
-            fetch('/api/img', {
+            fetch('/api/imf', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -476,7 +491,6 @@
     
         function updatePost(id) {
             const title = document.getElementById('newTitle').value;
-            const author = document.getElementById('newAuthor').textContent;
             const content = document.getElementById('newContent').value;
     
             const updatedPost = {

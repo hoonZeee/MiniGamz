@@ -299,7 +299,7 @@ ddb.connect((err) => {
     const createDatabaseQuery = 'CREATE DATABASE IF NOT EXISTS post;';
     const useDatabaseQuery = 'USE post;';
     const createTableQuery = `
-        CREATE TABLE IF NOT EXISTS img (
+        CREATE TABLE IF NOT EXISTS imf (
             id INT AUTO_INCREMENT PRIMARY KEY,
             author VARCHAR(100) NOT NULL,
             title VARCHAR(100) NOT NULL,
@@ -328,11 +328,11 @@ ddb.connect((err) => {
     });
 });
 
-app.post('/api/img', (req, res) => {
+app.post('/api/imf', (req, res) => {
     const { title, author, content, date } = req.body;
     const newPost = { title, author, content, date, views: 0 };
 
-    const insertPostQuery = 'INSERT INTO img (title, author, content, date, views) VALUES (?, ?, ?, ?, ?)';
+    const insertPostQuery = 'INSERT INTO imf (title, author, content, date, views) VALUES (?, ?, ?, ?, ?)';
     const updatePointsQuery = 'UPDATE user.users SET points = points + 10 WHERE nickname = ?';
 
     ddb.beginTransaction(err => {
@@ -377,7 +377,7 @@ app.put('/api/posts/:id', (req, res) => {
     const { id } = req.params;
     const { title, content } = req.body;
 
-    const updatePostQuery = 'UPDATE img SET title = ?, content = ? WHERE id = ?';
+    const updatePostQuery = 'UPDATE imf SET title = ?, content = ? WHERE id = ?';
 
     ddb.query(updatePostQuery, [title, content, id], (err, result) => {
         if (err) {
@@ -392,7 +392,7 @@ app.put('/api/posts/:id', (req, res) => {
 app.delete('/api/posts/:id', (req, res) => {
     const { id } = req.params;
 
-    const deletePostQuery = 'DELETE FROM img WHERE id = ?';
+    const deletePostQuery = 'DELETE FROM imf WHERE id = ?';
 
     ddb.query(deletePostQuery, [id], (err, result) => {
         if (err) {
@@ -405,7 +405,7 @@ app.delete('/api/posts/:id', (req, res) => {
 });
 
 app.get('/api/posts', (req, res) => {
-    const getPostsQuery = 'SELECT * FROM img ORDER BY date DESC';
+    const getPostsQuery = 'SELECT * FROM imf ORDER BY date DESC';
 
     ddb.query(getPostsQuery, (err, results) => {
         if (err) {
@@ -416,6 +416,7 @@ app.get('/api/posts', (req, res) => {
         res.status(200).json(results);
     });
 });
+
 
 
 
