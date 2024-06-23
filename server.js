@@ -532,8 +532,7 @@ inquiryDb.connect((err) => {
             author VARCHAR(100) NOT NULL COMMENT '작성자',
             title VARCHAR(100) NOT NULL COMMENT '제목',
             content TEXT NOT NULL COMMENT '문의내용',
-            date DATETIME NOT NULL COMMENT '날짜',
-            views INT Null default 0 COMMENT '조회수'
+            date DATETIME NOT NULL COMMENT '날짜'
         ) COMMENT='문의 게시판 테이블';
     `;
 
