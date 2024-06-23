@@ -8,9 +8,7 @@
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Permanent+Marker&display=swap" rel="stylesheet">
     <style>
-        /* Styles here */
-         /* Main layout and styles */
-         :root {
+        :root {
             --tran: all 0.5s ease 0s;
             --dark: #1c2429;
             --back: #1d659f;
@@ -36,15 +34,21 @@
             height: 100%;
             padding-left: 60px;
         }
+
         #filter-form label {
             display: inline-block;
             margin-right: 30px; /* 각 체크박스 사이의 간격 조정 */
         }
 
-        /* Sidebar styles */
+        .category-labels {
+            display: flex;
+            gap: 20px;
+        }
+
         .fa-2x {
             font-size: 2em;
         }
+
         .fa {
             position: relative;
             display: table-cell;
@@ -150,10 +154,12 @@
             margin:0;
             padding:0;
         }
+
         .main-menu li:hover>a,nav.main-menu li.active>a,.dropdown-menu>li>a:hover,.dropdown-menu>li>a:focus,.dropdown-menu>.active>a,.dropdown-menu>.active>a:hover,.dropdown-menu>.active>a:focus,.no-touch .dashboard-page nav.dashboard-menu ul li:hover a,.dashboard-page nav.dashboard-menu ul li.active a {
             color:#000000;
             background-color:#fefbd5;
         }
+
         .area {
             float: left;
             background: #e2e2e2;
@@ -161,33 +167,39 @@
             height: 100%;
         }
 
-        /* Form and image styles */
         #filter-form {
             margin: 20px 0;
         }
+
         #upload-section {
             margin: 20px 0;
         }
+
         #images-section {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
         }
+
         #images-section article {
             background: white;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+
         #images-section img {
             max-width: 100%;
             height: auto;
+            cursor: pointer;
         }
+
         .star-rating {
             display: flex;
             align-items: center;
             gap: 5px;
         }
+
         .stars label {
             cursor: pointer;
         }
@@ -249,6 +261,61 @@
         #loginModal button:hover {
             background: #14548a;
         }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: #ffcc00;
+            border-bottom: 2px solid #e5e5e5;
+        }
+
+        .header i {
+            font-size: 3em;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin: 0;
+        }
+
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 60px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
+        }
+
+        .lightbox-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -272,7 +339,6 @@
                         커뮤니티
                     </span>
                 </a>
-            </li>
             </li>
             <li class="has-subnav">
                 <a href="profile.html">
@@ -307,8 +373,8 @@
         </ul>
         <ul class="logout">
             <li>
-               <a href="#">
-                     <i class="fa fa-2x"></i>
+                <a href="#">
+                    <i class="fa fa-2x"></i>
                     <span class="nav-text">
                         <div class="auth">
                             <ul id="authMenu">
@@ -320,19 +386,26 @@
             </li>  
         </ul>
     </nav>
+
     <div class="area">
+        <div class="header">
+            <i class="fa fa-camera"></i>
+            <h1>사진게시판</h1>
+        </div>
         <section>
             <form id="filter-form">
                 <p>카테고리별 보기:</p>
-                <label>
-                    <input type="checkbox" name="컴공" checked />컴공
-                </label>
-                <label>
-                    <input type="checkbox" name="타학과" checked />타학과
-                </label>
-                <label>
-                    <input type="checkbox" name="직장인" checked />직장인
-                </label>
+                <div class="category-labels">
+                    <label>
+                        <input type="checkbox" name="컴공" checked />컴공
+                    </label>
+                    <label>
+                        <input type="checkbox" name="타학과" checked />타학과
+                    </label>
+                    <label>
+                        <input type="checkbox" name="직장인" checked />직장인
+                    </label>
+                </div>
             </form>
             <div id="upload-section">
                 <h3>사진 업로드</h3>
@@ -352,6 +425,13 @@
             </div>
         </section>
     </div>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox">
+        <span class="close" onclick="closeLightbox()">&times;</span>
+        <img class="lightbox-content" id="lightbox-img">
+    </div>
+
     <!-- Login Modal -->
     <div id="loginModal">
         <form id="login-form">
@@ -361,6 +441,7 @@
             <button type="submit">Login</button>
         </form>
     </div>
+
     <script>
         function checkLoginStatus() {
             fetch('/api/profile')
@@ -400,6 +481,15 @@
             loadImages();
         });
 
+        function openLightbox(src) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox').style.display = 'block';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+        }
+
         function loadImages() {
             fetch('/images')
             .then(response => response.json())
@@ -410,7 +500,7 @@
                 images.filter(image => filters.includes(image.category)).forEach(image => {
                     const article = document.createElement('article');
                     article.innerHTML = `
-                        <img src="${image.image_url}" alt="${image.category}" />
+                        <img src="${image.image_url}" alt="${image.category}" onclick="openLightbox('${image.image_url}')" />
                         <h2>${image.title}</h2>
                         <p class="categories" data-category="${image.category}">${image.category}</p>
                         <div class="star-rating" data-image-id="${image.id}">
