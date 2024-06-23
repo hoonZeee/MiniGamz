@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const attemptsLeft = document.getElementById('attemptsLeft');
     const result = document.getElementById('result');
     const history = document.getElementById('history');
+    const gameOverMessage = document.getElementById('gameOverMessage');
+    const retryButton = document.getElementById('retryButton');
 
     let answer = generateAnswer();
     let attempts = 10;
@@ -16,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    retryButton.addEventListener('click', resetGame);
 
     function hasDuplicateDigits(number) {
         const digits = number.split('');
@@ -31,20 +34,20 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         if (hasDuplicateDigits(guess)) {
-        showErrorMessage('중복된 숫자가 있습니다. 다시 입력하세요.');
-        return;
-    }
-        
+            showErrorMessage('중복된 숫자가 있습니다. 다시 입력하세요.');
+            return;
+        }
+
         attempts--;
         attemptsLeft.textContent = `남은 횟수: ${attempts}`;
         const feedback = getFeedback(guess);
 
         if (feedback.strikes === 4) {
             result.textContent = '정답입니다! 당신이 이겼어요!';
-            guessButton.disabled = true;
+            endGame();
         } else if (attempts === 0) {
             result.textContent = `게임 오버! 정답은 ${answer.join('')} 입니다.`;
-            guessButton.disabled = true;
+            endGame();
         } else {
             addHistory(guess, feedback);
         }
@@ -95,6 +98,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const listItem = document.createElement('li');
         listItem.textContent = `입력한 숫자: ${guess}, 스트라이크: ${feedback.strikes}, 볼: ${feedback.balls}`;
         history.appendChild(listItem);
+    }
+
+    function endGame() {
+        guessButton.disabled = true;
+        guessInput.disabled = true;
+        gameOverMessage.style.display = 'block';
+    }
+
+    function resetGame() {
+        attempts = 10;
+        answer = generateAnswer();
+        attemptsLeft.textContent = `남은 횟수: ${attempts}`;
+        result.textContent = '';
+        history.innerHTML = '';
+        guessButton.disabled = false;
+        guessInput.disabled = false;
+        gameOverMessage.style.display = 'none';
     }
 
     // Instructions toggle logic
