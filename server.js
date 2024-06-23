@@ -504,6 +504,13 @@ app.delete('/api/img/:id', (req, res) => {
 
 //문의게시판
 // 문의 게시판 DB 설정
+
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// MySQL DB 설정
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -520,41 +527,60 @@ db.connect((err) => {
 
     const createDatabaseQuery = 'CREATE DATABASE IF NOT EXISTS post;';
     const useDatabaseQuery = 'USE post;';
-    const createTableQuery = `
+    const createUsersTableQuery = `
+        CREATE TABLE IF NOT EXISTS users (
+            id VARCHAR(100) NOT NULL COMMENT '사용자 로그인 아이디',
+            name VARCHAR(100) NOT NULL COMMENT '사용자의 이름',
+            nickname VARCHAR(100) DEFAULT NULL COMMENT '사용자의 닉네임',
+            password VARCHAR(300) NOT NULL COMMENT '로그인 암호, 패스워드',
+            highschool VARCHAR(300) DEFAULT NULL COMMENT '본인확인 고등학교',
+            person VARCHAR(300) DEFAULT NULL COMMENT '본인확인 인물',
+            alias VARCHAR(300) DEFAULT NULL COMMENT '본인확인 별명',
+            travel VARCHAR(300) DEFAULT NULL COMMENT '본인확인 여행',
+            movie VARCHAR(300) DEFAULT NULL COMMENT '본인확인 영화',
+            profileImage VARCHAR(300) DEFAULT NULL COMMENT '프로필 이미지',
+            points INT DEFAULT 0 COMMENT '사용자 포인트',
+            PRIMARY KEY (id),
+            UNIQUE KEY unique_nickname (nickname)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+    `;
+    const createPostsTableQuery = `
         CREATE TABLE IF NOT EXISTS posts (
             id INT AUTO_INCREMENT PRIMARY KEY COMMENT '게시글 ID',
-            author VARCHAR(100) NOT NULL COMMENT '작성자',
+            author VARCHAR(100) NOT NULL COMMENT '작성자 닉네임',
             title VARCHAR(100) NOT NULL COMMENT '제목',
             content TEXT NOT NULL COMMENT '문의내용',
             date DATETIME NOT NULL COMMENT '날짜'
         ) COMMENT='게시글 테이블';
     `;
 
-    db.query(createDatabaseQuery, (err, result) => {
+    db.query(createDatabaseQuery, (err) => {
         if (err) {
             console.error('데이터베이스 생성 실패:', err);
             return;
         }
-        console.log('데이터베이스 생성 성공!');
-
-        db.query(useDatabaseQuery, (err, result) => {
+        db.query(useDatabaseQuery, (err) => {
             if (err) {
                 console.error('데이터베이스 사용 실패:', err);
                 return;
             }
-            console.log('데이터베이스 사용 성공!');
-
-            db.query(createTableQuery, (err, result) => {
+            db.query(createUsersTableQuery, (err) => {
                 if (err) {
-                    console.error('테이블 생성 실패:', err);
-                } else {
-                    console.log('테이블 생성 성공!');
+                    console.error('사용자 테이블 생성 실패:', err);
+                    return;
                 }
+                db.query(createPostsTableQuery, (err) => {
+                    if (err) {
+                        console.error('게시글 테이블 생성 실패:', err);
+                    } else {
+                        console.log('테이블 생성 성공!');
+                    }
+                });
             });
         });
     });
 });
-
+// 게시글 조회
 app.get('/api/posts', (req, res) => {
     const sql = 'SELECT * FROM posts';
     db.query(sql, (err, results) => {
@@ -567,6 +593,7 @@ app.get('/api/posts', (req, res) => {
     });
 });
 
+// 게시글 추가
 app.post('/api/posts', (req, res) => {
     const { title, author, content, date } = req.body;
     const sql = 'INSERT INTO posts (title, author, content, date) VALUES (?, ?, ?, ?)';
@@ -581,6 +608,7 @@ app.post('/api/posts', (req, res) => {
     });
 });
 
+// 게시글 수정
 app.put('/api/posts/:id', (req, res) => {
     const postId = req.params.id;
     const { title, author, content, date } = req.body;
@@ -597,6 +625,7 @@ app.put('/api/posts/:id', (req, res) => {
     });
 });
 
+// 게시글 삭제
 app.delete('/api/posts/:id', (req, res) => {
     const postId = req.params.id;
     const sql = 'DELETE FROM posts WHERE id = ?';
@@ -611,6 +640,7 @@ app.delete('/api/posts/:id', (req, res) => {
         }
     });
 });
+
 
 
 
