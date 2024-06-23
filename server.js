@@ -507,7 +507,7 @@ app.delete('/api/img/:id', (req, res) => {
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'inquiry')));
 
 // 문의 게시판 DB 설정
 const inquiryDb = mysql.createConnection({
