@@ -805,22 +805,13 @@ app.post('/process/login', (req, res) => {
 
     console.log('로그인 요청' + paramId + '' + paramPassword);
 
-    if (!paramId || !paramPassword) {
-        res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' });
-        res.write('<h2>로그인 실패. 아이디와 비밀번호를 입력해 주세요.</h2>');
-        res.end();
-        return;
-    }
-
     pool.getConnection((err, conn) => {
         if (err) {
             console.log('Mysql getConnection error. aborted');
-            res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' });
-            res.write('<h1>DB서버 연결 실패</h1>');
-            res.end();
+            res.status(500).json({ error: 'DB서버 연결 실패' });
             return;
         }
-        const exec = conn.query('select `id`, `name`, `nickname`, `profileImage`, `points` from `users` where `id`=? and `password`=?',
+        const exec = conn.query('SELECT `id`, `name`, `nickname`, `profileImage`, `points` FROM `users` WHERE `id`=? AND `password`=?',
             [paramId, paramPassword],
             (err, rows) => {
                 conn.release();
@@ -828,11 +819,10 @@ app.post('/process/login', (req, res) => {
 
                 if (err) {
                     console.dir(err);
-                    res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' });
-                    res.write('<h1>SQL query 실행 실패</h1>');
-                    res.end();
+                    res.status(500).json({ error: 'SQL query 실행 실패' });
                     return;
                 }
+
                 if (rows.length > 0) {
                     const user = rows[0];
                     if (user.points === null) {
@@ -840,12 +830,10 @@ app.post('/process/login', (req, res) => {
                     }
                     console.log('아이디[%s], 패스워드가 일치하는 사용자 [%s] 찾음', paramId, user.name);
                     req.session.user = { id: user.id, name: user.name, nickname: user.nickname, profileImage: user.profileImage, points: user.points }; // 세션에 사용자 정보 저장
-                    res.redirect(redirectUrl);    // 로그인 성공시 리디렉션 URL로 이동
+                    res.json({ success: true, redirectUrl: redirectUrl });    // 로그인 성공 시 JSON 응답으로 성공 여부와 리디렉션 URL 반환
                 } else {
                     console.log('아이디[%s], 패스워드가 일치없음', paramId);
-                    res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' });
-                    res.write('<h2>로그인 실패. 아이디와 패스워드를 확인하세요.</h2>');
-                    res.end();
+                    res.status(401).json({ success: false, error: '로그인 실패ㅠㅠ 아이디와 패스워드를 확인하세요.' });
                 }
             }
         );
