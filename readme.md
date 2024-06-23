@@ -273,5 +273,6 @@ admin site : localhost:3000/admin<br/>
   - community.html 업데이트
   - 글작성 수정, 삭제, 글보기 기능추가.
   - 데이터베이스에 연결
+  - 댓글작성시 5포인트상승, 글작성시 10포인트상승
   - server.js업데이트
 
