@@ -807,6 +807,7 @@ app.post('/process/login', (req, res) => {
     const redirectUrl = req.body.redirectUrl || '/';
 
     console.log('로그인 요청' + paramId + '' + paramPassword);
+
     
     pool.getConnection((err, conn) => {
         if (err) {
@@ -836,7 +837,9 @@ app.post('/process/login', (req, res) => {
                     res.json({ success: true, redirectUrl: redirectUrl });    // 로그인 성공 시 JSON 응답으로 성공 여부와 리디렉션 URL 반환
                 } else {
                     console.log('아이디[%s], 패스워드가 일치없음', paramId);
-                    res.status(401).json({ error: '로그인 실패. 아이디와 패스워드를 확인하세요.' });
+
+                    res.status(401).json({ success: false, error: '로그인 실패ㅠㅠ 아이디와 패스워드를 확인하세요.' });
+
                 }
             }
         );
