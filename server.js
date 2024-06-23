@@ -277,7 +277,7 @@ app.delete('/api/users/:id', (req, res) => {
     });
 });
 
-// 문의 게시판 DB 설정
+// 커뮤니티 게시판 DB 설정
 app.use(bodyParser.json());
 app.use(cors());
 
@@ -476,8 +476,6 @@ app.post('/api/img/:postId/comments', (req, res) => {
     });
 });
 
-
-
 app.put('/api/img/:postId/views', (req, res) => {
     const postId = req.params.postId;
     const updateViewsQuery = 'UPDATE img SET views = views + 1 WHERE id = ?';
@@ -503,6 +501,104 @@ app.delete('/api/img/:id', (req, res) => {
         res.status(200).send('Post deleted successfully');
     });
 });
+
+//문의게시판
+
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// 문의 게시판 DB 설정
+const inquiryDb = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '00000000',
+    database: 'inquiry'
+});
+
+inquiryDb.connect((err) => {
+    if (err) {
+        console.error('MySQL 연결 실패:', err);
+        return;
+    }
+    console.log('MySQL 연결 성공!');
+
+    const createInquiryDatabaseQuery = 'CREATE DATABASE IF NOT EXISTS inquiry;';
+    const useInquiryDatabaseQuery = 'USE inquiry;';
+    const createInquiryTableQuery = `
+        CREATE TABLE IF NOT EXISTS inquiry_posts (
+            id INT AUTO_INCREMENT PRIMARY KEY COMMENT '게시글 ID',
+            author VARCHAR(100) NOT NULL COMMENT '작성자',
+            title VARCHAR(100) NOT NULL COMMENT '제목',
+            content TEXT NOT NULL COMMENT '문의내용',
+            date DATETIME NOT NULL COMMENT '날짜',
+            views INT Null default 0 COMMENT '조회수'
+        ) COMMENT='문의 게시판 테이블';
+    `;
+
+    inquiryDb.query(createInquiryDatabaseQuery, (err) => {
+        if (err) {
+            console.error('데이터베이스 생성 실패:', err);
+            return;
+        }
+        inquiryDb.query(useInquiryDatabaseQuery, (err) => {
+            if (err) {
+                console.error('데이터베이스 선택 실패:', err);
+                return;
+            }
+            inquiryDb.query(createInquiryTableQuery, (err) => {
+                if (err) {
+                    console.error('테이블 생성 실패:', err);
+                } else {
+                    console.log('문의 게시판 테이블 생성 성공!');
+                }
+            });
+        });
+    });
+});
+
+// 문의 게시판 포스트 추가
+app.post('/api/inquiry_posts', (req, res) => {
+    const { title, author, content, date, views } = req.body;
+    const newPost = { title, author, content, date, views };
+
+    const insertInquiryPostQuery = 'INSERT INTO inquiry_posts (title, author, content, date, views) VALUES (?, ?, ?, ?, ?)';
+    inquiryDb.query(insertInquiryPostQuery, [title, author, content, date, views], (err, result) => {
+        if (err) {
+            console.error('Error inserting post:', err);
+            return res.status(500).json({ error: 'Database error inserting post' });
+        }
+        res.status(201).json({ id: result.insertId, message: 'Post added successfully' });
+    });
+});
+
+// 문의 게시판 포스트 조회
+app.get('/api/inquiry_posts', (req, res) => {
+    const fetchInquiryPostsQuery = 'SELECT * FROM inquiry_posts ORDER BY id DESC';
+    inquiryDb.query(fetchInquiryPostsQuery, (err, results) => {
+        if (err) {
+            console.error('Error fetching posts:', err);
+            return res.status(500).send('Database error');
+        }
+        res.status(200).json(results);
+    });
+});
+
+// 문의 게시판 포스트 삭제
+app.delete('/api/inquiry_posts/:id', (req, res) => {
+    const postId = req.params.id;
+    const deleteInquiryPostQuery = 'DELETE FROM inquiry_posts WHERE id = ?';
+    inquiryDb.query(deleteInquiryPostQuery, [postId], (err, result) => {
+        if (err) {
+            console.error('Error deleting post:', err);
+            return res.status(500).send('Database error');
+        }
+        res.status(200).send('Post deleted successfully');
+    });
+});
+
+
 
 
 // 사진게시판 파일 업로드 설정
