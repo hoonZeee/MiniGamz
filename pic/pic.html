@@ -398,6 +398,9 @@
                 <p>카테고리별 보기:</p>
                 <div class="category-labels">
                     <label>
+                        <input type="checkbox" name="전체보기" id="전체보기" checked />전체보기
+                    </label>
+                    <label>
                         <input type="checkbox" name="숫자야구" />숫자야구
                     </label>
                     <label>
@@ -423,9 +426,6 @@
                     <input type="text" name="title" placeholder="사진제목입력" required />
                     <input type="file" name="image" accept="image/*" required />
                     <select name="category" required>
-                        <option value="컴공">컴공</option>
-                        <option value="타학과">타학과</option>
-                        <option value="직장인">직장인</option>
                         <option value="숫자야구">숫자야구</option>
                         <option value="미니언버드">미니언버드</option>
                         <option value="슈팅게임">슈팅게임</option>
@@ -476,7 +476,7 @@
                     }
                 })
                 .catch(error => {
-                    console.error('Error checking login status:', error);
+                    console.error('로그인 상태를 확인하는 중 오류가 발생했습니다:', error);
                 });
         }
 
@@ -488,12 +488,21 @@
                 body: formData
             }).then(response => response.text())
             .then(data => {
-                alert(data);
+                alert('업로드가 완료되었습니다.');
                 loadImages();
+            }).catch(error => {
+                alert('업로드 중 오류가 발생했습니다.');
             });
         });
 
-        document.getElementById('filter-form').addEventListener('change', function() {
+        document.getElementById('filter-form').addEventListener('change', function(e) {
+            const checkboxes = document.querySelectorAll('#filter-form input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                if (checkbox !== e.target) {
+                    checkbox.checked = false;
+                }
+            });
+            e.target.checked = true;
             loadImages();
         });
 
@@ -510,10 +519,10 @@
             fetch('/images')
             .then(response => response.json())
             .then(images => {
-                const filters = Array.from(document.querySelectorAll('#filter-form input:checked')).map(cb => cb.name);
+                const selectedCategory = document.querySelector('#filter-form input[type="checkbox"]:checked').name;
                 const imagesSection = document.getElementById('images-section');
                 imagesSection.innerHTML = '';
-                images.filter(image => filters.includes(image.category)).forEach(image => {
+                images.filter(image => selectedCategory === '전체보기' || image.category === selectedCategory).forEach(image => {
                     const article = document.createElement('article');
                     article.innerHTML = `
                         <img src="${image.image_url}" alt="${image.category}" onclick="openLightbox('${image.image_url}')" />
@@ -533,6 +542,8 @@
                     `;
                     imagesSection.appendChild(article);
                 });
+            }).catch(error => {
+                alert('이미지를 불러오는 중 오류가 발생했습니다.');
             });
         }
 
@@ -549,8 +560,10 @@
                     body: JSON.stringify({ imageId, rating, userId })
                 }).then(response => response.text())
                 .then(data => {
-                    alert(data);
+                    alert('평가가 완료되었습니다.');
                     loadImages();
+                }).catch(error => {
+                    alert('평가 중 오류가 발생했습니다.');
                 });
             }
         });
@@ -568,9 +581,11 @@
                 body: formData
             }).then(response => response.text())
             .then(data => {
-                alert(data);
+                alert('로그인이 완료되었습니다.');
                 document.getElementById('loginModal').style.display = 'none';
                 checkLoginStatus();
+            }).catch(error => {
+                alert('로그인 중 오류가 발생했습니다.');
             });
         });
 
@@ -578,8 +593,10 @@
             e.preventDefault();
             fetch('/logout').then(response => response.text())
             .then(data => {
-                alert(data);
+                alert('로그아웃이 완료되었습니다.');
                 checkLoginStatus();
+            }).catch(error => {
+                alert('로그아웃 중 오류가 발생했습니다.');
             });
         });
 
@@ -587,4 +604,4 @@
         loadImages();
     </script>
 </body>
-</html
+</html>
