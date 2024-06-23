@@ -2,6 +2,73 @@
 <html lang="ko">
 <head>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        
+        header p {
+            margin: 5px 0 0;
+            color: gray;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        thead {
+            background-color: #f8f8f8;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        
+        .notice {
+            background-color: #fff3cd;
+        }
+        
+        .ad {
+            background-color: #d1ecf1;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        
         .fa-2x {
             font-size: 2em;
             }
@@ -126,7 +193,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>자유게시판</title>
-    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <nav class="main-menu">
@@ -157,18 +223,10 @@
                 </a>
             </li>
             <li class="has-subnav">
-                <a href="community.html">
+                <a href="ranking.html">
                     <i class="fa  fa-2x"></i>
                     <span class="nav-text">
-                        자랑게시판
-                    </span>
-                </a>
-            </li>
-            <li class="has-subnav">
-                <a href="community.html">
-                    <i class="fa  fa-2x"></i>
-                    <span class="nav-text">
-                        잡담 및 정보공유
+                        랭킹게시판
                     </span>
                 </a>
             </li>
