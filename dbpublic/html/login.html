@@ -12,7 +12,7 @@
             <img src="/images/idmini.png" alt="Minion" class="minion">
             <div class="form sign-in">
                 <h1>사용자 로그인</h1>
-                <form id="loginForm" method="post" action="/process/login" onsubmit="handleSubmit(event)">
+                <form id="loginForm">
                     <input type="hidden" name="redirectUrl" value="">
                     <div class="input-group">
                         <i class='bx bxs-user'></i>
@@ -21,11 +21,12 @@
                     <div class="input-group">
                         <i class='bx bxs-lock-alt'></i>
                         <input type="password" placeholder="패스워드" name="password" id="password" required>
-                        <span class="toggle-password"></span>
+                        <span class="toggle-password" onclick="togglePassword()"></span>
                     </div>
                     <button type="submit">로그인</button>
                     <audio id="sound" src="/sound/halo.mp3" preload="auto"></audio>
                 </form>
+                <div id="error-message" style="color: red; margin-top: 20px;"></div>
                 <p style="margin-top: 30px; font-size: 18px;">
                     <span>비밀번호를 잊으셨나요?</span>
                     <b onclick="findPassword()" class="pointer">find ID/PASSWORD</b>
@@ -80,14 +81,38 @@
         const handleSubmit = (event) => {
             event.preventDefault();
             playSound();
-            const form = document.getElementById('loginForm');
-            setTimeout(() => form.submit(), 500); // 약간의 지연 후 폼을 제출하여 소리가 끝날 때까지 기다림
+
+            const userId = document.querySelector('input[name="id"]').value;
+            const userPassword = document.querySelector('input[name="password"]').value;
+            const redirectUrl = document.querySelector('input[name="redirectUrl"]').value;
+
+            fetch('/process/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: userId, password: userPassword, redirectUrl: redirectUrl })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    setTimeout(() => {
+                        window.location.href = data.redirectUrl;
+                    }, 500); // 약간의 지연 후 리디렉션하여 소리가 끝날 때까지 기다림
+                } else {
+                    document.getElementById('error-message').textContent = data.error;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             const params = new URLSearchParams(window.location.search);
             const redirectUrl = params.get('redirectUrl') || '/';
             document.querySelector('input[name="redirectUrl"]').value = redirectUrl;
+            document.getElementById('loginForm').addEventListener('submit', handleSubmit);
         });
     </script>
 </body>
