@@ -1,7 +1,8 @@
 # 필독<br/>
 작업간에 소통 부재로 파일 충돌 시 문제가 커질 수 있으므로 프로젝트에서 꼭! in progress 해주시고 카톡방에 작업중이라는 카톡 남겨주세요~~~ 안했을 시 일어나는 오류는 본인책임!!<br/>
-본인 작업한 후에 작업 결과는 readme.md에 계속 수정사항 추가작성 해야합니다!! 추후 보고서 작성 및 과제 평가 매우중요!~~!<br/><br/><br/>
+본인 작업한 후에 작업 결과는 readme.md에 계속 수정사항 추가작성 해야합니다!! 추후 보고서 작성 및 과제 평가 매우중요!~~!<br/>
 
+admin site : localhost:3000/admin<br/>
 
 ## 수정사항<br/>
 5/20<br/>
@@ -127,6 +128,7 @@
   - 키보드 방향키로 크기가 같은 셀을 합쳐 높은 숫자를 만드는 게임 구현
   - 모든 게임 화면에 게임 규칙및 게임 조작법 추가
   - 접고 펴기 함수로 조작법 박스 구현
+  - 모든 게임 상단 헤더부분 베너 구현 및 기능 추가
 
 
 6/7 고태현<br/>
@@ -149,32 +151,127 @@
    업로드한 사진게시물에 평가기능(1~5점)
  - 커뮤니티 좌측 카테고리바수정
  - server.js 업데이트
- - pic 업로드
-
+ - pic.html 업로드
+ - 유저들이 평가한 점수 데이터베이스에 연동
+   
 6/8 옥주헌<br/>
- - package.json multer define
-   - [x] "multer": "^1.4.5-lts.1"
- - admin 대시보드에 접속시 가입된 DB 조회 기능 추가( ID,PW,Name,Nickname )
-   - [x] added fetchTableData.js
-   - [x] fixed admin.html
- - admin Dashboard에 접속된 userName 표시
-   - [x] added displayUserNickname.js
- - fixed admin.html
-   - error page 경로 변경
+ - [x] added package.json multer define
+   - "multer": "^1.4.5-lts.1"
+ - [x] error page (401,404,500) 경로 변경 및 admin.html 링크 수정
+ - [x] dbpublic - fixed Title Detail
 
-6/8 옥주헌<br/>
- - package.json multer define
-   - [x] "multer": "^1.4.5-lts.1"
- - admin 대시보드에 접속시 가입된 DB 조회 기능 추가( ID,PW,Name,Nickname )
-   - [x] added fetchTableData.js
-   - [x] fixed admin.html
- - admin Dashboard에 접속된 userName 표시
-   - [x] added displayUserNickname.js
- - fixed admin.html
-   - error page 경로 변경
+ - server.js
+   - [x] api/users endpoint fixed ( Changed list of data convert to json )
+  
+ - adminpublic\js\displayUserNickname.js
+   - [x] 현재 Admin에 로그인 되어 있는 사용자 정보 가져오기
+     - user.nickname 정보
+   - [x] added Login Status Check logic
+     - 로그인 되어 있지 않다면 (/login.html로 리다이렉트)
+
+ - adminpublic\js\fetchTableData.js
+   - [x] 각 테이블 정의 및 데이터 가져오기
+     - user.id, user.name, user.nickname, user.password, user.highscool, user.person, user.alias, user.travel, user.movie, user.profileImage, user.points
+   - [x] usersTable DB 검색 기능
+     - [x] 드롭다운 + 입력 필드 토대로 검색 기능
+
+ - adminpublic\js\manageUser.js
+   - [x] 사용자 데이터 가져오기
+     - users Table info
+   - [x] 검색 및 필터링
+     - 검색어, 카테고리로 데이터 필터링 후 테이블에 출력.
+   - [x] 사용자 추가 / 수정
+   - [x] 사용자 삭제
+   - [x] 모달 제어
+     - 열기, 닫기, 삭제 확인 기능 제어
+
+ - adminpublic\admin.html
+   - [x] 현재 로그인 된 user.name 출력
+   - [x] Dashboard DataTable에 DB 조회 기능 추가( ID,PW,Name,Nickname )
+   - [x] datatablesSimple Table에 Data 동적 할당
+   - [x] 데이터 테이블에 드롭다운 및 입력 필드 추가
+
+ - adminpublic\html\manageUser.html
+   - 기존 user-list.html 기반
+   - [x] 사용자 추가 버튼
+   - [x] 사용자 추가/수정 모달
+   - [x] 삭제 확인 모달
+
+ - adminpublic\html\user-list.html
+   - [x] userTable Table에 Data 동적 할당
+     - user.id, user.name, user.nickname, user.password, user.highscool, user.person, user.alias, user.travel, user.movie, user.profileImage, user.points
+   - [x] 데이터 테이블에 드롭다운 및 입력 필드 추가
+
+ - adminpublic\css\manageUser.css
+   - 기존 user-list.css 기반
+   - [x] 버튼 스타일
+     - 사용자 추가, 삭제, 수정 버튼 스타일
+
+ - adminpublic\css\user-list.css
+   - 전체적인 컨테이너 스타일링
+   - back-to-admin 링크 스타일링
+   - 드랍다운 메뉴 스타일링
+   - 검색 컨테이너, 입력 스타일링
 
 6/8 황정인<br/>
   - 아이디 자릿수 제한
-  - 아이템샵에서 프로필 추가 구매 가능(이미지는 전부 임시)
-  - 구매하지않은 프로필은 선택불가
+  - 아이템샵에서 프로필 추가 구매 가능(이미지는 전부 임시) + 구매하지않은 프로필은 선택불가
+  - 아이템샵, 프로필 js+css 따로 빼놓음
   - 칭호 브론즈,실버,골드 잠궈놓음(추후결정)
+
+6/9 옥주헌 <br/>
+ - server.js
+   - [x] 프로필 이미지 URL 기본값 설정
+     - profileImage 값이 없으면, 동적으로 기본 이미지 URL( ${req.headers.host}/images/bob.webp )으로 설정
+   - [x] added users Table CRUD function
+     - [x] 사용자 추가
+       - 'POST /api/users' 엔드포인트, 필수 항목과 선택 항목 검증
+     - [x] 사용자 수정
+       - 'PUT /api/users/:id' 엔드포인트, 필수 항목, 선택 항목 검증
+     - [x] 사용자 삭제
+       - 'DELETE /api/users/:id' 엔드포인트
+
+ - adminpublic\js\logout.js
+   - [x] added logout function
+     - 로그아웃 시 알람, login 페이지로 리다이렉트
+
+ - adminpublic\js\displayUserNickname.js
+
+ - adminpublic\js\fetchTableData.js
+
+ - adminpublic\js\manageUser.js
+   - [x] 폼 데이터 검증
+     - 필수 항목, 선택 항목 검증 후 입력되지 않을시 경고 메세지
+     - 프로필 이미지 URL이 빈 값이면 기본 값 반환
+
+ - adminpublic\admin.html
+   - [x] 로그아웃 구현
+   - [x] 메인화면, 프로필 이동 링크
+
+ - adminpublic\html\manageUser.html
+
+ - adminpublic\html\user-list.html
+
+ - adminpublic\css\manageUser.css
+   - [x] Action 부분 수정/삭제 버튼 CSS 추가
+   - [x] 사용자 삭제 확인 모달 CSS 추가
+   - [x] 사용자 추가/수정 폼 CSS 추가
+
+ - adminpublic\css\user-list.css
+
+ 6/10 정현성<br/>
+  - 커뮤니티 게시판 디자인 변경
+  - community.html 업데이트
+  - styles.css 업데이트
+
+ 6/10 권진호<br/>
+  - 랭킹페이지 ranking.html 업로드
+  - 데이터베이스저장된 유저들의 포인트순으로 랭킹정렬
+  - server.js업데이트
+
+6/21 권진호<br/>
+  - community.html 업데이트
+  - 글작성 수정, 삭제, 글보기 기능추가.
+  - 데이터베이스에 연결
+  - server.js업데이트
+

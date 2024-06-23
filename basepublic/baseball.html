@@ -5,8 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>숫자 야구 게임</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&family=Comic+Neue:wght@300;400;700&display=swap">
 </head>
 <body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="/">
+                    <h2>Mini Gamz</h2>
+                </a>
+            </div>
+            <div class="menu">
+                <ul>
+                    <li><a href="community.html">커뮤니티</a></li>
+                    <li><a href="inquiry.html">문의 게시판</a></li>
+                    <li><a href="#" id="profileLink">프로필</a></li>
+                    <li><a href="shop.html">아이템샵</a></li>
+                </ul>
+            </div>
+            <div class="auth">
+                <ul id="authMenu">
+                    <li><a href="login.html" id="loginLink">로그인</a></li>
+                    <li><a href="signup.html" id="signupLink">회원가입</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
     <div class="container">
         <h1>숫자 야구</h1>
         <div class="status-bar">
@@ -35,6 +60,36 @@
             <img src="images/baseball.gif" alt="미니언 야구" class="instructions-image">
         </div>
     </div>
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function checkLoginStatus() {
+                fetch('/api/profile')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.nickname) {
+                            isLoggedIn = true;
+                            document.getElementById('authMenu').innerHTML = `
+                                <li class="auth-profile">
+                                    <img src="${data.profileImage}" alt="Profile Image" class="profile-image">
+                                    <span>${data.nickname} (${data.points} 점)</span>
+                                </li>
+                            `;
+                            document.getElementById('logoutLink').addEventListener('click', logout);
+                        } else {
+                            isLoggedIn = false;
+                            document.getElementById('authMenu').innerHTML = `
+                                <li><a href="login.html" id="loginLink">로그인</a></li>
+                                <li><a href="signup.html" id="signupLink">회원가입</a></li>
+                            `;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('로그인 상태 확인 중 오류 발생:', error);
+                    });
+            }
+            checkLoginStatus();
+        });
+      </script>
+    <script src="script.js" defer></script>
 </body>
 </html>

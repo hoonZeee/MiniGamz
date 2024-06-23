@@ -20,6 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/admin', express.static(path.join(__dirname, 'adminpublic'))); // 정적 파일 서빙 설정
 
 // MySQL 연결 설정
 const pool = mysql.createPool({
@@ -57,7 +58,7 @@ pool.getConnection((err, conn) => {
         alias varchar(300) DEFAULT NULL COMMENT '본인확인 별명',
         travel varchar(300) DEFAULT NULL COMMENT '본인확인 여행',
         movie varchar(300) DEFAULT NULL COMMENT '본인확인 영화',
-        profileImage varchar(300) DEFAULT '/images/bob.webp' COMMENT '프로필 이미지',
+        profileImage varchar(300) DEFAULT 'NULL' COMMENT '프로필 이미지',
         points INT DEFAULT 0 COMMENT '사용자 포인트',
         PRIMARY KEY (id),
         UNIQUE KEY unique_nickname (nickname)
@@ -70,7 +71,7 @@ pool.getConnection((err, conn) => {
     `;
 
     const alterProfileImageColumnQuery = `
-    ALTER TABLE users ADD COLUMN profileImage VARCHAR(300) DEFAULT '/images/bob.webp' COMMENT '프로필 이미지';
+    ALTER TABLE users ADD COLUMN profileImage VARCHAR(300) DEFAULT 'NULL' COMMENT '프로필 이미지';
     `;
     
     const checkPointsColumnQuery = `
@@ -162,8 +163,7 @@ pool.getConnection((err, conn) => {
     });
 });
 
-
-// API 엔드포인트 (DB)
+// 기존 API 엔드포인트 (DB에서 사용자 데이터 가져오기)
 app.get('/api/users', (req, res) => {
     pool.getConnection((err, conn) => {
         if (err) {
@@ -171,7 +171,7 @@ app.get('/api/users', (req, res) => {
             return res.status(500).json({ error: 'MySQL 연결 실패' });
         }
 
-        const query = 'SELECT id, password, nickname, name FROM users';
+        const query = 'SELECT id, name, nickname, password, highschool, person, alias, travel, movie, profileImage, points FROM users';
         conn.query(query, (err, results) => {
             conn.release();
             if (err) {
@@ -180,6 +180,99 @@ app.get('/api/users', (req, res) => {
             }
 
             res.json(results);
+        });
+    });
+});
+
+// 신규 API 엔드포인트 (사용자 추가)
+app.post('/api/users', (req, res) => {
+    const { id, password, name, nickname, highschool, person, alias, travel, movie, points, profileImage } = req.body;
+
+    // 필수 항목 유효성 검사
+    if (!id || !password || !name || !nickname) {
+        return res.status(400).json({ error: 'ID, PW, Name, Nickname은 필수 항목입니다.' });
+    }
+
+    // 선택 항목 중 하나는 반드시 입력해야 함
+    if (!highschool && !person && !alias && !travel && !movie) {
+        return res.status(400).json({ error: 'Highschool, Person, Alias, Travel, Movie 중 하나는 반드시 입력해야 합니다.' });
+    }
+
+    // Profile Image URL이 비어 있으면 기본 이미지로 설정
+    const profileImageURL = profileImage || `http://${req.headers.host}/images/bob.webp`;
+
+    const defaultPoints = points ? points : 0;
+
+    pool.getConnection((err, conn) => {
+        if (err) {
+            console.error('MySQL 연결 실패:', err);
+            return res.status(500).json({ error: 'MySQL 연결 실패' });
+        }
+        const query = 'INSERT INTO users (id, password, name, nickname, highschool, person, alias, travel, movie, points, profileImage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        conn.query(query, [id, password, name, nickname, highschool, person, alias, travel, movie, defaultPoints, profileImageURL], (err) => {
+            conn.release();
+            if (err) {
+                console.error('사용자 추가 실패:', err);
+                return res.status(500).json({ error: '사용자 추가 실패' });
+            }
+            res.status(201).json({ success: true });
+        });
+    });
+});
+
+// 신규 API 엔드포인트 (사용자 수정)
+app.put('/api/users/:id', (req, res) => {
+    const { id, password, name, nickname, highschool, person, alias, travel, movie, points, profileImage } = req.body;
+    const userId = req.params.id;
+
+    // 필수 항목 유효성 검사
+    if (!id || !password || !name || !nickname) {
+        return res.status(400).json({ error: 'PW, Name, Nickname은 필수 항목입니다.' });
+    }
+
+    // 선택 항목 중 하나는 반드시 입력해야 함
+    if (!highschool && !person && !alias && !travel && !movie) {
+        return res.status(400).json({ error: 'Highschool, Person, Alias, Travel, Movie 중 하나는 반드시 입력해야 합니다.' });
+    }
+
+    // Profile Image URL이 비어 있으면 기본 이미지로 설정
+    const profileImageURL = profileImage || `http://${req.headers.host}/images/bob.webp`;
+
+    const defaultPoints = points ? points : 0;
+
+    pool.getConnection((err, conn) => {
+        if (err) {
+            console.error('MySQL 연결 실패:', err);
+            return res.status(500).json({ error: 'MySQL 연결 실패' });
+        }
+        const query = 'UPDATE users SET password = ?, name = ?, nickname = ?, highschool = ?, person = ?, alias = ?, travel = ?, movie = ?, points = ?, profileImage = ? WHERE id = ?';
+        conn.query(query, [password, name, nickname, highschool, person, alias, travel, movie, defaultPoints, profileImageURL, userId], (err) => {
+            conn.release();
+            if (err) {
+                console.error('사용자 수정 실패:', err);
+                return res.status(500).json({ error: '사용자 수정 실패' });
+            }
+            res.status(200).json({ success: true });
+        });
+    });
+});
+
+// 신규 API 엔드포인트 (사용자 삭제)
+app.delete('/api/users/:id', (req, res) => {
+    const userId = req.params.id;
+    pool.getConnection((err, conn) => {
+        if (err) {
+            console.error('MySQL 연결 실패:', err);
+            return res.status(500).json({ error: 'MySQL 연결 실패' });
+        }
+        const query = 'DELETE FROM users WHERE id = ?';
+        conn.query(query, [userId], (err) => {
+            conn.release();
+            if (err) {
+                console.error('사용자 삭제 실패:', err);
+                return res.status(500).json({ error: '사용자 삭제 실패' });
+            }
+            res.status(200).json({ success: true });
         });
     });
 });
@@ -316,7 +409,8 @@ ddb.connect((err) => {
             author VARCHAR(100) NOT NULL COMMENT '작성자',
             title VARCHAR(100) NOT NULL COMMENT '제목',
             content TEXT NOT NULL COMMENT '문의내용',
-            date DATETIME NOT NULL COMMENT '날짜'
+            date DATETIME NOT NULL COMMENT '날짜',
+            views INT Null default 0 COMMENT '조회수'
         ) COMMENT='게시글 테이블';
     `;
 
@@ -358,9 +452,9 @@ app.get('/api/img', (req, res) => {
 });
 
 app.post('/api/img', (req, res) => {
-    const { title, author, content, date } = req.body;
-    const sql = 'INSERT INTO img (title, author, content, date) VALUES (?, ?, ?, ?)';
-    ddb.query(sql, [title, author, content, date], (err, result) => {
+    const { title, author, content, date, views } = req.body;
+    const sql = 'INSERT INTO img (title, author, content, date, views) VALUES (?, ?, ?, ?, ?)';
+    ddb.query(sql, [title, author, content, date, views], (err, result) => {
         if (err) {
             console.error('Error adding post to database:', err);
             res.status(500).send('Database error');
@@ -370,12 +464,25 @@ app.post('/api/img', (req, res) => {
         }
     });
 });
+app.put('/api/img/:id/views', (req, res) => {
+    const postId = req.params.id;
+    const sql = 'UPDATE img SET views = views + 1 WHERE id = ?';
+    ddb.query(sql, [postId], (err, result) => {
+        if (err) {
+            console.error('Error updating views:', err);
+            res.status(500).send('Database error');
+        } else {
+            res.status(200).send('Views updated successfully');
+        }
+    });
+});
+
 
 app.put('/api/img/:id', (req, res) => {
     const postId = req.params.id;
-    const { title, author, content, date } = req.body;
-    const sql = 'UPDATE img SET title = ?, author = ?, content = ?, date = ? WHERE id = ?';
-    ddb.query(sql, [title, author, content, date, postId], (err, result) => {
+    const { title, author, content, date, views } = req.body;
+    const sql = 'UPDATE img SET title = ?, author = ?, content = ?, date = ?, views = ? WHERE id = ?';
+    ddb.query(sql, [title, author, content, date, views, postId], (err, result) => {
         if (err) {
             console.error('Error updating post in database:', err);
             res.status(500).send('Database error');
@@ -403,20 +510,39 @@ app.delete('/api/img/:id', (req, res) => {
 });
 
 // 사진게시판 파일 업로드 설정
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+const dbb = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: '00000000',
+  database: 'user'
+});
+
+dbb.connect(err => {
+  if (err) throw err;
+  console.log('MySQL Connected...');
+});
+app.use(session({  //세션 가져오기
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // HTTPS 환경에서는 true로 설정
+  }));
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    cb(null, path.join(__dirname, 'uploads')); // 절대 경로로 변경
   },
   filename: (req, file, cb) => {
     const title = req.body.title.replace(/\s+/g, '-'); // 제목의 공백을 대시(-)로 변경
     const ext = path.extname(file.originalname); // 파일 확장자 추출
-    cb(null, `${title}${ext}`);
+    cb(null, `${title}-${Date.now()}${ext}`); // 파일 이름에 타임스탬프 추가
   }
 });
 
@@ -424,33 +550,130 @@ const upload = multer({ storage: storage });
 
 let images = [];
 
-app.post('/upload', upload.single('image'), (req, res) => {
-  const { title, category } = req.body;
-  const image = {
-    id: Date.now().toString(),
-    image_url: `/uploads/${req.file.filename}`,
-    category: category,
-    title: title,
-    rating: 0
-  };
-  images.push(image);
-  res.send('Image uploaded successfully!');
-});
+app.post('/upload', (req, res) => {
+    if (!req.session.user) {
+      return res.status(401).send('Unauthorized: Please log in to upload images.');
+    }
+    upload.single('image')(req, res, (err) => {
+      if (err) {
+        return res.status(500).send('Error uploading image.');
+      }
+      const { title, category } = req.body;
+      const image = {
+        id: Date.now().toString(),
+        image_url: `/uploads/${req.file.filename}`,
+        category: category,
+        title: title,
+        rating: 0
+      };
+      images.push(image);
+      res.send('Image uploaded successfully!');
+    });
+  });
+  
 
 app.get('/images', (req, res) => {
   res.json(images);
 });
 
-app.post('/rate', (req, res) => {
-  const { imageId, rating } = req.body;
-  const image = images.find(img => img.id === imageId);
-  if (image) {
-    image.rating = rating;
-    res.send('Rating updated successfully!');
-  } else {
-    res.status(404).send('Image not found!');
-  }
+app.post('/rate', (req, res) => { // (3)
+    const { imageId, rating } = req.body;
+    if (!req.session.user) { // (4)
+      return res.status(401).send('Unauthorized');
+    }
+    const image = images.find(img => img.id === imageId);
+    if (image) {
+      image.rating = rating;
+  
+      const updateUserPointsQuery = `
+        UPDATE users
+        SET points = points + ?
+        WHERE id = ?
+      `;
+        
+      dbb.query(updateUserPointsQuery, [rating, req.session.user.id], (err, result) => {
+        if (err) {
+          res.status(500).send('Error updating user points!');
+          return;
+        }
+        res.send('Rating updated and user points updated successfully!');
+      });
+    } else {
+      res.status(404).send('Image not found!');
+    }
+  });
+  app.post('/login', (req, res) => { // (5)
+    const { id, password } = req.body;
+    const loginQuery = `
+      SELECT * FROM users
+      WHERE id = ? AND password = ?
+    `;
+    dbb.query(loginQuery, [id, password], (err, results) => {
+      if (err) {
+        res.status(500).send('Error logging in!');
+        return;
+      }
+      if (results.length > 0) {
+        req.session.user = results[0];
+        res.send('Login successful!');
+      } else {
+        res.status(401).send('Invalid credentials');
+      }
+    });
+  });
+  
+  app.get('/logout', (req, res) => { // (6)
+    req.session.destroy(err => {
+      if (err) {
+        return res.status(500).send('Error logging out!');
+      }
+      res.send('Logout successful!');
+    });
+  });
+  
+  app.get('/session', (req, res) => { // (7)
+    if (req.session.user) {
+      res.json(req.session.user);
+    } else {
+      res.status(401).send('No session');
+    }
+  });
+
+  //ranking게시판
+
+// MySQL 연결 설정
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '00000000',
+    database: 'user'
 });
+
+// MySQL 연결
+connection.connect((err) => {
+    if (err) {
+        console.error('Error connecting to MySQL: ', err);
+        return;
+    }
+    console.log('Connected to MySQL');
+});
+
+// 정적 파일 제공
+app.use(express.static('public'));
+
+// 랭킹 데이터 가져오기
+app.get('/ranking', (req, res) => {
+    const query = 'SELECT points, nickname, profileImage FROM users ORDER BY points DESC';
+    connection.query(query, (error, results) => {
+        if (error) {
+            console.error('Error fetching data: ', error);
+            res.status(500).send('Server Error');
+            return;
+        }
+        res.json(results);
+    });
+});
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -512,6 +735,9 @@ app.get('/free.html', (req, res) => {
 app.get('/pic.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'pic', 'pic.html'));
 });
+app.get('/ranking.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'ranking/html', 'ranking.html'));
+});
 app.get('/find.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'dbpublic/html', 'find.html'));
 });
@@ -552,7 +778,7 @@ app.post('/newgame', (req, res) => {
 function getHint(guess, target) {
     let strikes = 0;
     let balls = 0;
-    for (let i = 0; i < guess.length; i++) {
+    for (let i = 0; guess && i < guess.length; i++) {
         if (guess[i] === target[i]) {
             strikes++;
         } else if (target.includes(guess[i])) {
@@ -657,6 +883,7 @@ app.post('/process/checknickname', (req, res) => {
         });
     });
 });
+
 app.post('/process/checkduplicate', (req, res) => {
     const userId = req.body.id;
 
@@ -894,12 +1121,6 @@ app.post('/logout', (req, res) => {
     });
 });
 
-
-
-
-
-
-
 app.post('/api/purchase-item', (req, res) => {
     if (!req.session.user) {
         return res.status(401).json({ error: '로그인 상태가 아닙니다.' });
@@ -972,7 +1193,6 @@ app.post('/api/purchase-item', (req, res) => {
     });
 });
 
-
 // 아이템샵에서 이미지 구매
 app.get('/api/purchased-images', (req, res) => {
     if (!req.session.user) {
@@ -1001,9 +1221,7 @@ app.get('/api/purchased-images', (req, res) => {
     });
 });
 
-
-
-
+// 서버 설정
 server.listen(PORT, () => {
     console.log(`http://localhost:${PORT} 에서 실행 중..`);
 });
