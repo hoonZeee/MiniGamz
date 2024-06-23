@@ -77,11 +77,6 @@ function submitForm() {
         return false;
     }
 
-    // 비밀번호 검증 코드
-    if (!/^[A-Za-z0-9]{4,15}$/.test(p1)) {
-        alert('패스워드는 4~15자리의 영어와 숫자만 가능합니다.');
-        return false;
-    }
 
     var form = document.getElementById('signupForm');
     var formData = new FormData(form);
@@ -157,3 +152,16 @@ function render() {
     }
 }
 
+const handleSignup = (event) => {
+    event.preventDefault();
+
+    const form = document.getElementById('signupForm');
+    const formData = new FormData(form);
+};
+
+document.getElementById('signupForm').addEventListener('submit', handleSignup);
+function setAnswerInputName() {
+    const securityQuestion = document.getElementById('securityQuestion').value;
+    const securityAnswerInput = document.getElementById('securityAnswer');
+    securityAnswerInput.name = securityQuestion;
+}
