@@ -1,11 +1,10 @@
 /* 기존 스타일 코드 */
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Gamja Flower", sans-serif;
     background-color: #f0f0f0;
     color: #333;
     text-align: center;
     background-size: cover;
-    font-family: "Gamja Flower", cursive;
     font-size: 20px;
 }
 

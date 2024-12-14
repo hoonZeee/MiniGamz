@@ -157,3 +157,49 @@ function render() {
     }
 }
 
+
+
+
+
+
+//로그인 추가
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        login();
+    });
+});
+
+function login() {
+    var form = document.getElementById('loginForm');
+    var formData = new FormData(form);
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/process/login', true);
+    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            var response = JSON.parse(xhr.responseText);
+            if (response.success) {
+                window.location.href = response.redirectUrl;
+            } else {
+                displayError(response.error);
+            }
+        }
+    };
+    var object = {};
+    formData.forEach((value, key) => { object[key] = value });
+    xhr.send(JSON.stringify(object));
+}
+
+function displayError(errorMessage) {
+    var errorDiv = document.getElementById('loginError');
+    if (!errorDiv) {
+        errorDiv = document.createElement('div');
+        errorDiv.id = 'loginError';
+        errorDiv.style.color = 'red';
+        errorDiv.style.marginTop = '10px';
+        document.getElementById('loginForm').appendChild(errorDiv);
+    }
+    errorDiv.innerText = errorMessage;
+}
