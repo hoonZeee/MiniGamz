@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>게시판</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Permanent+Marker&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: "Gamja Flower", sans-serif;
             margin: 0;
             padding: 0;
         }
@@ -18,7 +19,7 @@
             width: 100%; /* Make sure it spans the entire width of the screen */
             text-align: center;
             z-index: 1000; /* Ensure it appears above other content */
-            font-family: "Comic Neue", "Poppins", sans-serif; /* 귀여운 폰트 적용 */
+            font-family:"Gamja Flower", sans-serif; /* 귀여운 폰트 적용 */
             background-color: #ffd200;
         }
         
@@ -390,33 +391,39 @@
             color: #fff;
         }
 
+
+        /* Modal styling */
         .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1; /* Sit on top */
-            padding-top: 100px; /* Location of the box */
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
             left: 0;
             top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgb(0,0,0); /* Fallback color */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.6); 
         }
         
         .modal-content {
-            background-color: #fefefe;
-            margin: auto;
+            background-color: #fff;
+            margin: 10% auto;
             padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
+            border: none;
+            border-radius: 10px;
+            width: 60%;
+            max-width: 800px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
         }
         
         .close {
-            color: #aaaaaa;
+            color: #aaa;
             float: right;
             font-size: 28px;
             font-weight: bold;
+            cursor: pointer;
+
         }
         
         .close:hover,
@@ -426,160 +433,228 @@
             cursor: pointer;
         }
         
-    </style>
-<body>
-    <header>
-        <nav>
-            <div class="logo">
-                <a href="/">
-                    <h2>Mini Gamz</h2>
-                </a>
-            </div>
-            <div class="menu">
-                <ul>
-                    <li><a href="community.html">커뮤니티</a></li>
-                    <li><a href="inquiry.html">문의 게시판</a></li>
-                    <li><a href="#" id="profileLink">프로필</a></li>
-                    <li><a href="shop.html">아이템샵</a></li>
-                </ul>
-            </div>
-            <div class="auth">
-                <ul id="authMenu">
-                    <li><a href="login.html" id="loginLink">로그인</a></li>
-                    <li><a href="signup.html" id="signupLink">회원가입</a></li>
-                </ul>
-            </div>
-        </nav>
-    </header>
-    <nav class="main-menu">
-        <ul>
-            <li class="has-subnav">
-                <a href="/">
-                    <i class="fa-2x">MENU</i>
-                </a>      
-            <li class="has-subnav">
-                <a href="profile.html">
-                    <i class="fa fa-2x"></i>
-                    <span class="nav-text">
-                        프로필
-                    </span>
-                </a>
-            </li>
-            <li class="has-subnav">
-                <a href="ranking.html">
-                    <i class="fa fa-2x"></i>
-                    <span class="nav-text">
-                        랭킹게시판
-                    </span>
-                </a>
-            </li>
-            <li class="has-subnav">
-                <a href="pic.html">
-                    <i class="fa fa-2x"></i>
-                    <span class="nav-text">
-                        사진게시판
-                    </span>
-                </a>
-            </li>
-            <li class="has-subnav">
-                <a href="free.html">
-                    <i class="fa fa-2x"></i>
-                    <span class="nav-text">
-                        자유게시판
-                    </span>
-                </a>
-            </li>
-            <li>
-                <a href="inquiry.html">
-                    <i class="fa fa-2x"></i>
-                    <span class="nav-text">
-                        문의 게시판
-                    </span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i class="fa fa-2x"></i>
-                    <span class="nav-text">Document</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <div class="container">
-        <div class="search-box">
-            <div>
-                <label for="start-date">등록일:</label>
-                <input type="date" id="start-date">
-                <label for="end-date">부터</label>
-                <input type="date" id="end-date">
-            </div>
-            <div>
-                <select>
-                    <option value="제목">제목</option>
-                    <option value="내용">내용</option>
-                </select>
-                <input type="text">
-                <button>검색</button>
-            </div>
-        </div>
-        <p>
-            본 게시판은 고객 여러분의 커뮤니티 활동을 게시판입니다.<br>
-            ※ 건전한 이용(욕설,비방,도배 등)을 하시기 바랍니다.<br>
-        </p>
-        <div class="write-btn-container">
-            <button class="write-btn" onclick="handleWriteButtonClick()">글쓰기</button>
-        </div>
+
         
-        <div class="write-form" id="writeForm" style="display: none;">
-            <input type="text" id="postTitle" placeholder="제목을 입력하세요">
-            <textarea id="postContent" placeholder="내용을 입력하세요"></textarea>
-            <button onclick="submitPost()">작성</button>
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>번호</th>
-                    <th>제목</th>
-                    <th>작성자</th>
-                    <th>등록일</th>
-                    <th>조회수</th>
-                    <th>상태</th>
-                </tr>
-            </thead>
-            <tbody id="postList">
-                <!-- 게시글 목록이 들어갈 자리 -->
-            </tbody>
-        </table>
-        <div id="myModal" class="modal">
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
 
-            <!-- Modal content -->
-            <div class="modal-content">
-              <span class="close">&times;</span>
-              <h2 id="postTitleModal"></h2>
-              <p id="postContentModal"></p>
+        .modal-body {
+            margin-bottom: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .modal-footer button {
+            background-color: #ffcc00;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin-left: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .modal-footer button:hover {
+            background-color: #ff9900;
+        }
+        
+        #commentsSection {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        #commentInput {
+            width: calc(100% - 22px);
+            height: 50px;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: none;
+        }
+        
+        #submitComment {
+            margin-top: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        
+        #submitComment:hover {
+            background-color: #0056b3;
+        }
+        .auth-profile img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+
+    </style>
+    <body>
+        <header>
+            <nav>
+                <div class="logo">
+                    <a href="/">
+                        <h2>Mini Gamz</h2>
+                    </a>
+                </div>
+                <div class="menu">
+                    <ul>
+                        <li><a href="community.html">커뮤니티</a></li>
+                        <li><a href="inquiry.html">문의 게시판</a></li>
+                        <li><a href="#" id="profileLink">프로필</a></li>
+                        <li><a href="shop.html">아이템샵</a></li>
+                    </ul>
+                </div>
+                <div class="auth">
+                    <ul id="authMenu">
+                        <li><a href="login.html" id="loginLink">로그인</a></li>
+                        <li><a href="signup.html" id="signupLink">회원가입</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+    
+            <nav class="main-menu">
+                <ul>
+                    <li class="has-subnav">
+                        <a href="/">
+                            <i class="fa fa-home fa-2x"></i>
+                            <span class="nav-text">홈</span>
+                        </a>
+                    </li>
+                    <li class="has-subnav">
+                        <a href="profile.html">
+                            <i class="fa fa-user fa-2x"></i>
+                            <span class="nav-text">프로필</span>
+                        </a>
+                    </li>
+                    <li class="has-subnav">
+                        <a href="ranking.html">
+                            <i class="fa fa-trophy fa-2x"></i>
+                            <span class="nav-text">랭킹게시판</span>
+                        </a>
+                    </li>
+                    <li class="has-subnav">
+                        <a href="pic.html">
+                            <i class="fa fa-picture-o fa-2x"></i>
+                            <span class="nav-text">사진게시판</span>
+                        </a>
+                    </li>
+    
+                    <li>
+                        <a href="inquiry.html">
+                            <i class="fa fa-question fa-2x"></i>
+                            <span class="nav-text">문의 게시판</span>
+                        </a>
+                    </li>
+                </ul>
+    
+        </nav>
+        <div class="container">
+            <div class="search-box">
+                <div>
+                    <label for="start-date">등록일:</label>
+                    <input type="date" id="start-date">
+                    <label for="end-date">부터</label>
+                    <input type="date" id="end-date">
+                </div>
+                <div>
+                    <select>
+                        <option value="제목">제목</option>
+                        <option value="내용">내용</option>
+                    </select>
+                    <input type="text">
+                    <button>검색</button>
+                </div>
             </div>
-
-        <div class="pagination">
-            <a href="#">&laquo;</a>
-            <a href="#" class="active">1</a>
-            <a href="#">2</a>
-            <a href="#">3</a>
-            <a href="#">4</a>
-            <a href="#">5</a>
-            <a href="#">6</a>
-            <a href="#">7</a>
-            <a href="#">8</a>
-            <a href="#">9</a>
-            <a href="#">10</a>
-            <a href="#">&raquo;</a>
+            <p>
+                본 게시판은 고객 여러분의 커뮤니티 활동을 게시판입니다.<br>
+                ※ 건전한 이용(욕설,비방,도배 등)을 하시기 바랍니다.<br>
+            </p>
+            <div class="write-btn-container">
+                <button class="write-btn" onclick="handleWriteButtonClick()">글쓰기</button>
+            </div>
+            
+            <div class="write-form" id="writeForm" style="display: none;">
+                <input type="text" id="postTitle" placeholder="제목을 입력하세요">
+                <textarea id="postContent" placeholder="내용을 입력하세요"></textarea>
+                <button onclick="submitPost()">작성</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>제목</th>
+                        <th>작성자</th>
+                        <th>등록일</th>
+                        <th>조회수</th>
+                        <th>상태</th>
+                    </tr>
+                </thead>
+                <tbody id="postList">
+                    <!-- 게시글 목록이 들어갈 자리 -->
+                </tbody>
+            </table>
+    
+            <!-- Modal -->
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>제목:</h2>
+                    <h3 id="postTitleModal"></h3>
+                    <h2>내용:</h2>
+                    <p id="postContentModal"></p>
+                    <h2>댓글</h2>
+                    <div id="commentsSection"></div>
+                    <textarea id="commentInput" placeholder="댓글을 입력하세요"></textarea>
+                    <button id="submitComment">댓글 달기</button>
+                </div>
+            </div>
+            
+            
+    
+            <div class="pagination">
+                <a href="#">&laquo;</a>
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">4</a>
+                <a href="#">5</a>
+                <a href="#">6</a>
+                <a href="#">7</a>
+                <a href="#">8</a>
+                <a href="#">9</a>
+                <a href="#">10</a>
+                <a href="#">&raquo;</a>
+            </div>
         </div>
-    </div>
-
+    
+        <!-- 추가된 포인트 시스템과 연결된 스크립트 -->
     <script>
         let isAuthenticated = false;
         let posts = [];
         let currentUser = null;
-
+        let currentPostId = null; // 현재 모달 창에 표시되는 게시글 ID
+        
         function checkLoginStatus() {
             fetch('/api/profile')
                 .then(response => response.json())
@@ -588,7 +663,11 @@
                         isAuthenticated = true;
                         currentUser = data.nickname;
                         document.getElementById('authMenu').innerHTML = `
-                            <li><a href="#" id="logoutLink">로그아웃</a></li>
+                             <li class="auth-profile">
+                                    <img src="${data.profileImage}" alt="Profile Image">
+                                    <span>${data.nickname} (${data.points} 점)</span>
+                                </li>
+                            <li><a href="#" id="logoutLink"></a></li>
                         `;
                         document.getElementById('logoutLink').addEventListener('click', logout);
                         document.getElementById('profileLink').addEventListener('click', () => {
@@ -606,12 +685,12 @@
                     console.error('Error checking login status:', error);
                 });
         }
-
+        
         document.addEventListener("DOMContentLoaded", function() {
             checkLoginStatus();
             fetchPosts();
         });
-
+        
         function logout() {
             fetch('/api/logout', { method: 'POST' })
                 .then(response => {
@@ -622,7 +701,7 @@
                     }
                 });
         }
-
+        
         function handleWriteButtonClick() {
             if (!isAuthenticated) {
                 alert("로그인이 필요합니다");
@@ -632,21 +711,20 @@
             }
         }
         
-
         function toggleWriteForm() {
             const writeForm = document.getElementById("writeForm");
             writeForm.style.display = writeForm.style.display === "none" ? "block" : "none";
         }
-
+        
         function submitPost() {
             const postTitle = document.getElementById("postTitle").value;
             const postContent = document.getElementById("postContent").value;
-
+        
             if (postTitle.trim() === "" || postContent.trim() === "") {
                 alert("제목과 내용을 모두 입력하세요.");
                 return;
             }
-
+        
             const newPost = {
                 title: postTitle,
                 author: currentUser,
@@ -654,8 +732,7 @@
                 date: new Date().toISOString().slice(0, 19).replace('T', ' '),
                 views: 0  // 조회수를 0으로 설정
             };
-                      
-
+        
             fetch('/api/img', {
                 method: 'POST',
                 headers: {
@@ -665,8 +742,10 @@
             })
             .then(response => {
                 if (response.ok) {
-                    alert('게시글이 성공적으로 등록되었습니다.');
+                    alert('게시글이 성공적으로 등록되었습니다.(10포인트추가)');
+                    updatePoints(10); // 글 작성 시 포인트 추가
                     fetchPosts();
+                    location.reload();
                 } else {
                     alert('게시글 등록에 실패했습니다.');
                 }
@@ -675,12 +754,32 @@
                 console.error('Error submitting post:', error);
                 alert('게시글 등록 중 오류가 발생했습니다.');
             });
-
+        
             document.getElementById("postTitle").value = "";
             document.getElementById("postContent").value = "";
             toggleWriteForm();
         }
-
+        
+        function updatePoints(points) {
+            fetch(`/api/updatePoints`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ points: points })
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Points updated successfully');
+                } else {
+                    console.error('Error updating points');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating points:', error);
+            });
+        }
+        
         function fetchPosts() {
             fetch('/api/img')
                 .then(response => response.json())
@@ -692,7 +791,7 @@
                     console.error('Error fetching posts:', error);
                 });
         }
-
+        
         function renderPosts() {
             const postList = document.getElementById("postList");
             postList.innerHTML = "";
@@ -701,8 +800,8 @@
                 const postRow = document.createElement('tr');
         
                 postRow.innerHTML = `
-                    <td>${post.id}</td>
-                    <td><a href="#" onclick="showPostContent(${post.id}, '${post.content}', '${post.title}')">${post.title}</a></td>
+                    <td class="clickable" data-id="${post.id}" data-content="${post.content}" data-title="${post.title}">${post.id}</td>
+                    <td class="clickable" data-id="${post.id}" data-content="${post.content}" data-title="${post.title}"><a href="#">${post.title}</a></td>
                     <td>${post.author}</td>
                     <td>${new Date(post.date).toLocaleDateString()}</td>
                     <td>${post.views}</td>
@@ -714,32 +813,41 @@
                     </td>
                 `;
         
-                postRow.addEventListener('click', () => {
-                    showPostContent(post.id, post.content, post.title);
+                // 번호와 제목 셀에 클릭 이벤트 추가
+                postRow.querySelectorAll('.clickable').forEach(cell => {
+                    cell.addEventListener('click', function () {
+                        const id = this.getAttribute('data-id');
+                        const content = this.getAttribute('data-content');
+                        const title = this.getAttribute('data-title');
+                        showPostContent(id, content, title);
+                    });
                 });
         
                 postList.appendChild(postRow);
             });
         }
         
+        
         // Get the modal
         var modal = document.getElementById("myModal");
-
+        
         // Get the <span> element that closes the modal
         var span = document.getElementsByClassName("close")[0];
-
+        
         // When the user clicks on <span> (x), close the modal
         span.onclick = function() {
           modal.style.display = "none";
+          location.reload();
         }
-
+        
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function(event) {
           if (event.target == modal) {
            modal.style.display = "none";
+           location.reload();
          }
         }
-
+        
         function showPostContent(postId, content, title) {
             // 조회수 증가 요청
             fetch(`/api/img/${postId}/views`, { method: 'PUT' })
@@ -755,48 +863,83 @@
             document.getElementById('postTitleModal').innerText = title;
             document.getElementById('postContentModal').innerText = content;
             modal.style.display = "block";
+            currentPostId = postId; // 현재 게시글 ID 설정
+            fetchComments(postId); // 댓글 불러오기
         }
         
+        function fetchComments(postId) {
+            fetch(`/api/img/${postId}/comments`)
+                .then(response => response.json())
+                .then(data => {
+                    renderComments(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching comments:', error);
+                });
+        }
         
+        function renderComments(comments) {
+            const commentsSection = document.getElementById("commentsSection");
+            commentsSection.innerHTML = "";
         
-
-        function editPost(postId) {
-            const post = posts.find(post => post.id === postId);
-            if (post) {
-                const newContent = prompt("새로운 내용을 입력하세요:", post.content);
-                if (newContent !== null && newContent.trim() !== "") {
-                    post.content = newContent;
-                    fetch(`/api/img/${postId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(post)
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            alert('게시글이 성공적으로 수정되었습니다.');
-                            fetchPosts();
-                        } else {
-                            alert('게시글 수정에 실패했습니다.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error updating post:', error);
-                        alert('게시글 수정 중 오류가 발생했습니다.');
-                    });
-                }
+            comments.forEach(comment => {
+                const commentElement = document.createElement('div');
+                commentElement.innerHTML = `
+                    <strong>${comment.author}</strong>
+                    <p>${comment.content}</p>
+                `;
+                commentsSection.appendChild(commentElement);
+            });
+        }
+        
+        document.getElementById("submitComment").addEventListener("click", function() {
+            const commentInput = document.getElementById("commentInput").value;
+        
+            if (commentInput.trim() === "") {
+                alert("댓글을 입력하세요.");
+                return;
             }
-        }
-
+        
+            const newComment = {
+                author: currentUser,
+                content: commentInput,
+                date: new Date().toISOString().slice(0, 19).replace('T', ' ')
+            };
+        
+            fetch(`/api/img/${currentPostId}/comments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newComment)
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById("commentInput").value = "";
+                    fetchComments(currentPostId); // 댓글 다시 불러오기
+                    updatePoints(5); // 댓글 작성 시 포인트 추가
+                } else {
+                    alert('로그인을 해주세요.');
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting comment:', error);
+                alert('댓글 등록 중 오류가 발생했습니다.');
+            });
+        });
+        
         function deletePost(postId) {
+            if (!confirm('정말로 삭제하시겠습니까?')) {
+                return;
+            }
+        
             fetch(`/api/img/${postId}`, {
                 method: 'DELETE'
             })
             .then(response => {
                 if (response.ok) {
                     alert('게시글이 성공적으로 삭제되었습니다.');
-                    fetchPosts();
+                    fetchPosts(); // Reload posts after deletion
                 } else {
                     alert('게시글 삭제에 실패했습니다.');
                 }
@@ -806,6 +949,45 @@
                 alert('게시글 삭제 중 오류가 발생했습니다.');
             });
         }
-    </script>
-</body>
-</html>
+        
+        function editPost(postId) {
+            // Example implementation - You can customize this based on your application's UI/UX
+            const newTitle = prompt('수정할 제목을 입력하세요:');
+            const newContent = prompt('수정할 내용을 입력하세요:');
+        
+            if (newTitle === null || newContent === null) {
+                return; // If user cancels editing
+            }
+        
+            fetch(`/api/img/${postId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: newTitle,
+                    content: newContent
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('게시글이 성공적으로 수정되었습니다.');
+                    fetchPosts(); // Reload posts after editing
+                } else {
+                    alert('게시글 수정에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error editing post:', error);
+                alert('게시글 수정 중 오류가 발생했습니다.');
+            });
+        }
+        function refreshPage(){
+            location.reload();
+        }
+        </script>
+        
+    
+    </body>
+    </html>
+    

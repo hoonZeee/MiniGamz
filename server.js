@@ -277,116 +277,10 @@ app.delete('/api/users/:id', (req, res) => {
     });
 });
 
-// 문의 게시판 DB 설정
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '00000000',
-    database: 'post'
-});
+// 커뮤니티 게시판 DB 설정
+app.use(bodyParser.json());
+app.use(cors());
 
-db.connect((err) => {
-    if (err) {
-        console.error('MySQL 연결 실패:', err);
-        return;
-    }
-    console.log('MySQL 연결 성공!');
-
-    const createDatabaseQuery = 'CREATE DATABASE IF NOT EXISTS post;';
-    const useDatabaseQuery = 'USE post;';
-    const createTableQuery = `
-        CREATE TABLE IF NOT EXISTS posts (
-            id INT AUTO_INCREMENT PRIMARY KEY COMMENT '게시글 ID',
-            author VARCHAR(100) NOT NULL COMMENT '작성자',
-            title VARCHAR(100) NOT NULL COMMENT '제목',
-            content TEXT NOT NULL COMMENT '문의내용',
-            date DATETIME NOT NULL COMMENT '날짜'
-        ) COMMENT='게시글 테이블';
-    `;
-
-    db.query(createDatabaseQuery, (err, result) => {
-        if (err) {
-            console.error('데이터베이스 생성 실패:', err);
-            return;
-        }
-        console.log('데이터베이스 생성 성공!');
-
-        db.query(useDatabaseQuery, (err, result) => {
-            if (err) {
-                console.error('데이터베이스 사용 실패:', err);
-                return;
-            }
-            console.log('데이터베이스 사용 성공!');
-
-            db.query(createTableQuery, (err, result) => {
-                if (err) {
-                    console.error('테이블 생성 실패:', err);
-                } else {
-                    console.log('테이블 생성 성공!');
-                }
-            });
-        });
-    });
-});
-
-app.get('/api/posts', (req, res) => {
-    const sql = 'SELECT * FROM posts';
-    db.query(sql, (err, results) => {
-        if (err) {
-            console.error('Error retrieving posts from database:', err);
-            res.status(500).send('Database error');
-        } else {
-            res.status(200).json(results);
-        }
-    });
-});
-
-app.post('/api/posts', (req, res) => {
-    const { title, author, content, date } = req.body;
-    const sql = 'INSERT INTO posts (title, author, content, date) VALUES (?, ?, ?, ?)';
-    db.query(sql, [title, author, content, date], (err, result) => {
-        if (err) {
-            console.error('Error adding post to database:', err);
-            res.status(500).send('Database error');
-        } else {
-            console.log('1 record inserted');
-            res.status(201).send('Post added');
-        }
-    });
-});
-
-app.put('/api/posts/:id', (req, res) => {
-    const postId = req.params.id;
-    const { title, author, content, date } = req.body;
-    const sql = 'UPDATE posts SET title = ?, author = ?, content = ?, date = ? WHERE id = ?';
-    db.query(sql, [title, author, content, date, postId], (err, result) => {
-        if (err) {
-            console.error('Error updating post in database:', err);
-            res.status(500).send('Database error');
-        } else if (result.affectedRows === 0) {
-            res.status(404).send('Post not found');
-        } else {
-            res.status(200).send('Post updated successfully');
-        }
-    });
-});
-
-app.delete('/api/posts/:id', (req, res) => {
-    const postId = req.params.id;
-    const sql = 'DELETE FROM posts WHERE id = ?';
-    db.query(sql, [postId], (err, result) => {
-        if (err) {
-            console.error('Error deleting post from database:', err);
-            res.status(500).send('Database error');
-        } else if (result.affectedRows === 0) {
-            res.status(404).send('Post not found');
-        } else {
-            res.status(200).send('Post deleted successfully');
-        }
-    });
-});
-
-// 커뮤니티 게시판 설정
 const ddb = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -414,36 +308,284 @@ ddb.connect((err) => {
         ) COMMENT='게시글 테이블';
     `;
 
-    ddb.query(createDatabaseQuery, (err, result) => {
+    ddb.query(createDatabaseQuery, (err) => {
         if (err) {
             console.error('데이터베이스 생성 실패:', err);
             return;
         }
-        console.log('데이터베이스 생성 성공!');
-
-        ddb.query(useDatabaseQuery, (err, result) => {
+        ddb.query(useDatabaseQuery, (err) => {
             if (err) {
-                console.error('데이터베이스 사용 실패:', err);
+                console.error('데이터베이스 선택 실패:', err);
                 return;
             }
-            console.log('데이터베이스 사용 성공!');
-
-            ddb.query(createTableQuery, (err, result) => {
+            ddb.query(createTableQuery, (err) => {
                 if (err) {
                     console.error('테이블 생성 실패:', err);
-                } else {
-                    console.log('테이블 생성 성공!');
                 }
+            });
+        });
+    });
+
+    const createCommentTableQuery = `
+        CREATE TABLE IF NOT EXISTS comments (
+            id INT AUTO_INCREMENT PRIMARY KEY COMMENT '댓글 ID',
+            postId INT NOT NULL COMMENT '게시글 ID',
+            author VARCHAR(100) NOT NULL COMMENT '작성자',
+            content TEXT NOT NULL COMMENT '댓글 내용',
+            date DATETIME NOT NULL COMMENT '작성 날짜',
+            FOREIGN KEY (postId) REFERENCES img(id)
+        ) COMMENT='댓글 테이블';
+    `;
+
+    ddb.query(createCommentTableQuery, (err) => {
+        if (err) {
+            console.error('댓글 테이블 생성 실패:', err);
+        }
+    });
+});
+
+app.post('/api/img', (req, res) => {
+    const { title, author, content, date, views } = req.body;
+    const newPost = { title, author, content, date, views };
+
+    const insertPostQuery = 'INSERT INTO img (title, author, content, date, views) VALUES (?, ?, ?, ?, ?)';
+    const updatePointsQuery = 'UPDATE user.users SET points = points + 10 WHERE nickname = ?';
+
+    ddb.beginTransaction(err => {
+        if (err) {
+            console.error('Error starting transaction:', err);
+            return res.status(500).send('Database transaction error');
+        }
+
+        ddb.query(insertPostQuery, [title, author, content, date, views], (err, result) => {
+            if (err) {
+                return ddb.rollback(() => {
+                    console.error('Error inserting post:', err);
+                    res.status(500).send('Database error inserting post');
+                });
+            }
+
+            ddb.query(updatePointsQuery, [author], (err, result) => {
+                if (err) {
+                    return ddb.rollback(() => {
+                        console.error('Error updating user points:', err);
+                        res.status(500).send('Database error updating points');
+                    });
+                }
+
+                ddb.commit(err => {
+                    if (err) {
+                        return ddb.rollback(() => {
+                            console.error('Error committing transaction:', err);
+                            res.status(500).send('Database commit error');
+                        });
+                    }
+
+                    console.log('1 record inserted and points updated');
+                    res.status(201).send('Post added and points updated');
+                });
             });
         });
     });
 });
 
-app.get('/api/img', (req, res) => {
-    const sql = 'SELECT * FROM img';
-    ddb.query(sql, (err, results) => {
+
+app.put('/api/updatePoints', (req, res) => {
+    const { points } = req.body;
+    const updatePointsQuery = 'UPDATE users SET points = points + ? WHERE nickname = ?';
+
+    if (!req.user || !req.user.nickname) {
+        return res.status(401).send('Unauthorized');
+    }
+
+    ddb.query(updatePointsQuery, [points, req.user.nickname], (err, result) => {
         if (err) {
-            console.error('Error retrieving img from database:', err);
+            console.error('Error updating points:', err);
+            return res.status(500).send('Database error');
+        }
+        res.status(200).send('Points updated successfully');
+    });
+});
+
+app.get('/api/img', (req, res) => {
+    const fetchPostsQuery = 'SELECT * FROM img ORDER BY id DESC';
+
+    ddb.query(fetchPostsQuery, (err, results) => {
+        if (err) {
+            console.error('Error fetching posts:', err);
+            return res.status(500).send('Database error');
+        }
+        res.status(200).json(results);
+    });
+});
+
+app.get('/api/img/:postId/comments', (req, res) => {
+    const postId = req.params.postId;
+    const fetchCommentsQuery = 'SELECT * FROM comments WHERE postId = ? ORDER BY id DESC';
+
+    ddb.query(fetchCommentsQuery, [postId], (err, results) => {
+        if (err) {
+            console.error('Error fetching comments:', err);
+            return res.status(500).send('Database error');
+        }
+        res.status(200).json(results);
+    });
+});
+
+app.post('/api/img/:postId/comments', (req, res) => {
+    const postId = req.params.postId;
+    const { author, content, date } = req.body;
+    const insertCommentQuery = 'INSERT INTO comments (postId, author, content, date) VALUES (?, ?, ?, ?)';
+    const updatePointsQuery = 'UPDATE user.users SET points = points + 5 WHERE nickname = ?';
+
+    ddb.beginTransaction(err => {
+        if (err) {
+            console.error('Error starting transaction:', err);
+            return res.status(500).send('Database transaction error');
+        }
+
+        ddb.query(insertCommentQuery, [postId, author, content, date], (err, result) => {
+            if (err) {
+                return ddb.rollback(() => {
+                    console.error('Error inserting comment:', err);
+                    res.status(500).send('Database error inserting comment');
+                });
+            }
+
+            ddb.query(updatePointsQuery, [author], (err, result) => {
+                if (err) {
+                    return ddb.rollback(() => {
+                        console.error('Error updating user points:', err);
+                        res.status(500).send('Database error updating points');
+                    });
+                }
+
+                ddb.commit(err => {
+                    if (err) {
+                        return ddb.rollback(() => {
+                            console.error('Error committing transaction:', err);
+                            res.status(500).send('Database commit error');
+                        });
+                    }
+
+                    console.log('Comment added and points updated');
+                    res.status(201).send('Comment added successfully and points updated');
+                });
+            });
+        });
+    });
+});
+
+app.put('/api/img/:postId/views', (req, res) => {
+    const postId = req.params.postId;
+    const updateViewsQuery = 'UPDATE img SET views = views + 1 WHERE id = ?';
+
+    ddb.query(updateViewsQuery, [postId], (err, result) => {
+        if (err) {
+            console.error('Error updating views:', err);
+            return res.status(500).send('Database error');
+        }
+        res.status(200).send('Views updated successfully');
+    });
+});
+
+app.delete('/api/img/:id', (req, res) => {
+    const postId = req.params.id;
+    const deletePostQuery = 'DELETE FROM img WHERE id = ?';
+
+    ddb.query(deletePostQuery, [postId], (err, result) => {
+        if (err) {
+            console.error('Error deleting post:', err);
+            return res.status(500).send('Database error');
+        }
+        res.status(200).send('Post deleted successfully');
+    });
+});
+
+//문의게시판
+// 문의 게시판 DB 설정
+
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// MySQL DB 설정
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '00000000',
+    database: 'post'
+});
+
+db.connect((err) => {
+    if (err) {
+        console.error('MySQL 연결 실패:', err);
+        return;
+    }
+    console.log('MySQL 연결 성공!');
+
+    const createDatabaseQuery = 'CREATE DATABASE IF NOT EXISTS post;';
+    const useDatabaseQuery = 'USE post;';
+    const createUsersTableQuery = `
+        CREATE TABLE IF NOT EXISTS users (
+            id VARCHAR(100) NOT NULL COMMENT '사용자 로그인 아이디',
+            name VARCHAR(100) NOT NULL COMMENT '사용자의 이름',
+            nickname VARCHAR(100) DEFAULT NULL COMMENT '사용자의 닉네임',
+            password VARCHAR(300) NOT NULL COMMENT '로그인 암호, 패스워드',
+            highschool VARCHAR(300) DEFAULT NULL COMMENT '본인확인 고등학교',
+            person VARCHAR(300) DEFAULT NULL COMMENT '본인확인 인물',
+            alias VARCHAR(300) DEFAULT NULL COMMENT '본인확인 별명',
+            travel VARCHAR(300) DEFAULT NULL COMMENT '본인확인 여행',
+            movie VARCHAR(300) DEFAULT NULL COMMENT '본인확인 영화',
+            profileImage VARCHAR(300) DEFAULT NULL COMMENT '프로필 이미지',
+            points INT DEFAULT 0 COMMENT '사용자 포인트',
+            PRIMARY KEY (id),
+            UNIQUE KEY unique_nickname (nickname)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+    `;
+    const createPostsTableQuery = `
+        CREATE TABLE IF NOT EXISTS posts (
+            id INT AUTO_INCREMENT PRIMARY KEY COMMENT '게시글 ID',
+            author VARCHAR(100) NOT NULL COMMENT '작성자 닉네임',
+            title VARCHAR(100) NOT NULL COMMENT '제목',
+            content TEXT NOT NULL COMMENT '문의내용',
+            date DATETIME NOT NULL COMMENT '날짜'
+        ) COMMENT='게시글 테이블';
+    `;
+
+    db.query(createDatabaseQuery, (err) => {
+        if (err) {
+            console.error('데이터베이스 생성 실패:', err);
+            return;
+        }
+        db.query(useDatabaseQuery, (err) => {
+            if (err) {
+                console.error('데이터베이스 사용 실패:', err);
+                return;
+            }
+            db.query(createUsersTableQuery, (err) => {
+                if (err) {
+                    console.error('사용자 테이블 생성 실패:', err);
+                    return;
+                }
+                db.query(createPostsTableQuery, (err) => {
+                    if (err) {
+                        console.error('게시글 테이블 생성 실패:', err);
+                    } else {
+                        console.log('테이블 생성 성공!');
+                    }
+                });
+            });
+        });
+    });
+});
+// 게시글 조회
+app.get('/api/posts', (req, res) => {
+    const sql = 'SELECT * FROM posts';
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Error retrieving posts from database:', err);
             res.status(500).send('Database error');
         } else {
             res.status(200).json(results);
@@ -451,10 +593,11 @@ app.get('/api/img', (req, res) => {
     });
 });
 
-app.post('/api/img', (req, res) => {
-    const { title, author, content, date, views } = req.body;
-    const sql = 'INSERT INTO img (title, author, content, date, views) VALUES (?, ?, ?, ?, ?)';
-    ddb.query(sql, [title, author, content, date, views], (err, result) => {
+// 게시글 추가
+app.post('/api/posts', (req, res) => {
+    const { title, author, content, date } = req.body;
+    const sql = 'INSERT INTO posts (title, author, content, date) VALUES (?, ?, ?, ?)';
+    db.query(sql, [title, author, content, date], (err, result) => {
         if (err) {
             console.error('Error adding post to database:', err);
             res.status(500).send('Database error');
@@ -464,25 +607,13 @@ app.post('/api/img', (req, res) => {
         }
     });
 });
-app.put('/api/img/:id/views', (req, res) => {
-    const postId = req.params.id;
-    const sql = 'UPDATE img SET views = views + 1 WHERE id = ?';
-    ddb.query(sql, [postId], (err, result) => {
-        if (err) {
-            console.error('Error updating views:', err);
-            res.status(500).send('Database error');
-        } else {
-            res.status(200).send('Views updated successfully');
-        }
-    });
-});
 
-
-app.put('/api/img/:id', (req, res) => {
+// 게시글 수정
+app.put('/api/posts/:id', (req, res) => {
     const postId = req.params.id;
-    const { title, author, content, date, views } = req.body;
-    const sql = 'UPDATE img SET title = ?, author = ?, content = ?, date = ?, views = ? WHERE id = ?';
-    ddb.query(sql, [title, author, content, date, views, postId], (err, result) => {
+    const { title, author, content, date } = req.body;
+    const sql = 'UPDATE posts SET title = ?, author = ?, content = ?, date = ? WHERE id = ?';
+    db.query(sql, [title, author, content, date, postId], (err, result) => {
         if (err) {
             console.error('Error updating post in database:', err);
             res.status(500).send('Database error');
@@ -494,10 +625,11 @@ app.put('/api/img/:id', (req, res) => {
     });
 });
 
-app.delete('/api/img/:id', (req, res) => {
+// 게시글 삭제
+app.delete('/api/posts/:id', (req, res) => {
     const postId = req.params.id;
-    const sql = 'DELETE FROM img WHERE id = ?';
-    ddb.query(sql, [postId], (err, result) => {
+    const sql = 'DELETE FROM posts WHERE id = ?';
+    db.query(sql, [postId], (err, result) => {
         if (err) {
             console.error('Error deleting post from database:', err);
             res.status(500).send('Database error');
@@ -508,6 +640,10 @@ app.delete('/api/img/:id', (req, res) => {
         }
     });
 });
+
+
+
+
 
 // 사진게시판 파일 업로드 설정
 
@@ -809,22 +945,13 @@ app.post('/process/login', (req, res) => {
 
     console.log('로그인 요청' + paramId + '' + paramPassword);
 
-    if (!paramId || !paramPassword) {
-        res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' });
-        res.write('<h2>로그인 실패. 아이디와 비밀번호를 입력해 주세요.</h2>');
-        res.end();
-        return;
-    }
-
     pool.getConnection((err, conn) => {
         if (err) {
             console.log('Mysql getConnection error. aborted');
-            res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' });
-            res.write('<h1>DB서버 연결 실패</h1>');
-            res.end();
+            res.status(500).json({ error: 'DB서버 연결 실패' });
             return;
         }
-        const exec = conn.query('select `id`, `name`, `nickname`, `profileImage`, `points` from `users` where `id`=? and `password`=?',
+        const exec = conn.query('SELECT `id`, `name`, `nickname`, `profileImage`, `points` FROM `users` WHERE `id`=? AND `password`=?',
             [paramId, paramPassword],
             (err, rows) => {
                 conn.release();
@@ -832,11 +959,10 @@ app.post('/process/login', (req, res) => {
 
                 if (err) {
                     console.dir(err);
-                    res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' });
-                    res.write('<h1>SQL query 실행 실패</h1>');
-                    res.end();
+                    res.status(500).json({ error: 'SQL query 실행 실패' });
                     return;
                 }
+
                 if (rows.length > 0) {
                     const user = rows[0];
                     if (user.points === null) {
@@ -844,12 +970,10 @@ app.post('/process/login', (req, res) => {
                     }
                     console.log('아이디[%s], 패스워드가 일치하는 사용자 [%s] 찾음', paramId, user.name);
                     req.session.user = { id: user.id, name: user.name, nickname: user.nickname, profileImage: user.profileImage, points: user.points }; // 세션에 사용자 정보 저장
-                    res.redirect(redirectUrl);    // 로그인 성공시 리디렉션 URL로 이동
+                    res.json({ success: true, redirectUrl: redirectUrl });    // 로그인 성공 시 JSON 응답으로 성공 여부와 리디렉션 URL 반환
                 } else {
                     console.log('아이디[%s], 패스워드가 일치없음', paramId);
-                    res.writeHead('200', { 'Content-Type': 'text/html; charset=utf8' });
-                    res.write('<h2>로그인 실패. 아이디와 패스워드를 확인하세요.</h2>');
-                    res.end();
+                    res.status(401).json({ success: false, error: '로그인 실패ㅠㅠ 아이디와 패스워드를 확인하세요.' });
                 }
             }
         );
